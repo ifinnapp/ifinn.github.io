@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ระบบรับชำระเงิน</title>
+  <link href="https://unpkg.com/tailwindcss@^2.0.0/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+  <style>
+    .rounded-xl {
+      border-radius: 12px;
+    }
+    
+    @keyframes running-border-light-purple {
+  0%, 100%  { border-color: #c170fa #c170fa #c170fa transparent; } /* Light Purple */
+  10% { border-color: transparent #c170fa #c170fa #c170fa; }
+  20% { border-color: #c170fa transparent #c170fa #c170fa; }
+  30% { border-color: #c170fa #c170fa transparent #c170fa; }
+  40% { border-color: #c170fa #c170fa #c170fa transparent; }
+  50% { border-color: transparent #c170fa #c170fa #c170fa; }
+  60% { border-color: #c170fa transparent #c170fa #c170fa; }
+  70% { border-color: #c170fa #c170fa transparent #c170fa; }
+  80% { border-color: #c170fa #c170fa #c170fa transparent; }
+  90% { border-color: transparent #c170fa #c170fa #c170fa; }
+}
+
+@keyframes running-border-pink {
+  0%, 100%  { border-color: #ff85f9 #ff85f9 #ff85f9 transparent; }
+  10% { border-color: transparent #ff85f9 #ff85f9 #ff85f9; }
+  20% { border-color: #ff85f9 transparent #ff85f9 #ff85f9; }
+  30% { border-color: #ff85f9 #ff85f9 transparent #ff85f9; }
+  40% { border-color: #ff85f9 #ff85f9 #ff85f9 transparent; }
+  50% { border-color: transparent #ff85f9 #ff85f9 #ff85f9; }
+  60% { border-color: #ff85f9 transparent #ff85f9 #ff85f9; }
+  70% { border-color: #ff85f9 #ff85f9 transparent #ff85f9; }
+  80% { border-color: #ff85f9 #ff85f9 #ff85f9 transparent; }
+  90% { border-color: transparent #ff85f9 #ff85f9 #ff85f9; }
+}
+    
+    @keyframes running-border-light-green {
+  0%, 100%  { border-color: #90ee90 #90ee90 #90ee90 transparent; } /* Light Green */
+  10% { border-color: transparent #90ee90 #90ee90 #90ee90; }
+  20% { border-color: #90ee90 transparent #90ee90 #90ee90; }
+  30% { border-color: #90ee90 #90ee90 transparent #90ee90; }
+  40% { border-color: #90ee90 #90ee90 #90ee90 transparent; }
+  50% { border-color: transparent #90ee90 #90ee90 #90ee90; }
+  60% { border-color: #90ee90 transparent #90ee90 #90ee90; }
+  70% { border-color: #90ee90 #90ee90 transparent #90ee90; }
+  80% { border-color: #90ee90 #90ee90 #90ee90 transparent; }
+  90% { border-color: transparent #90ee90 #90ee90 #90ee90; }
+}
+
+.border-animated-light-purple {
+  border: 4px solid #c170fa; /* Light Purple */
+  border-radius: 12px;
+  animation: running-border-light-purple 4s infinite linear;
+}
+
+.border-animated-pink {
+  border: 4px solid #ff85f9;
+  border-radius: 12px;
+  animation: running-border-pink 4s infinite linear;
+}
+    
+    .border-animated-light-green {
+  border: 4px solid #90ee90; /* Light Green */
+  border-radius: 12px;
+  animation: running-border-light-green 4s infinite linear;
+}
+
+  </style>
+</head>
+<body class="bg-black h-screen font-sans text-white text-6xl">
+  <form action="">
+  <div x-data="{ step: 1, paymentFor: '', friendName: '', bankAccount: '', amount: null, finalAmount: null, showCopyPopup: false, copiedAccount: '', copyToClipboard(text) { navigator.clipboard.writeText(text); this.showCopyPopup = true; this.copiedAccount = text; setTimeout(() => { this.showCopyPopup = false }, 2000); } }" class="h-full flex flex-col items-center justify-start">
+ 
+  <!-- Step 1 -->
+  <div x-show="step === 1" class="w-full bg-black rounded-xl p-20 flex flex-col">
+
+    <h2 class="mb-8 text-8xl font-semibold text-white">กดเลือกเพื่อชำระ</h2>
+
+    <!-- Payment Type -->
+    <div class="p-12 border rounded-xl bg-gray-700 mb-12">
+  <div class="mb-8 text-6xl text-white">ชำระให้ :</div>
+  <div class="flex space-x-8">
+    <div @click="paymentFor = 'self'; friendName = ''" class="w-1/2 p-12 border rounded-xl cursor-pointer" :class="{'bg-gray-600': paymentFor === 'self', 'text-green-500': paymentFor === 'self', 'border-animated-light-green': paymentFor === 'self'}">
+      <center><img id="picurl"
+        src="https://media.giphy.com/media/eNwGfck2Awo3d2gB32/giphy.gif"
+        class="dark:shadow-xl border-white dark:border-gray-500 rounded-full align-middle border-2 " width=95%
+      /></center>
+      <div class="text-center mt-6">ตัวเอง</div>
+    </div>
+    <div @click="paymentFor = 'friend'" class="w-1/2 p-12 border rounded-xl cursor-pointer" :class="{'bg-gray-600': paymentFor === 'friend', 'text-green-500': paymentFor === 'friend', 'border-animated-light-green': paymentFor === 'friend'}">
+      <center><img id="picurl2"
+        src="https://media.giphy.com/media/eNwGfck2Awo3d2gB32/giphy.gif"
+        class="dark:shadow-xl border-white dark:border-gray-500 rounded-full align-middle border-2 " width=95%
+      /></center>
+      <div class="text-center mt-6">เพื่อน</div>
+    </div>
+  </div>
+  <div x-show="paymentFor === 'friend'" class="mt-4">
+    <input type="text" id="name" name="name" x-model="friendName" placeholder="ชื่อ-สกุล เพื่อน" class="p-6 w-full bg-gray-800 border rounded-xl text-6xl">
+  </div>
+</div>
+
+
+    <div class="p-12 border rounded-xl bg-gray-700 mb-12">
+  <div class="mb-8 text-6xl text-white">บัญชีรับโอน :</div>
+  <div class="flex space-x-8">
+    <div @click="bankAccount = 'SCB'" class="w-1/2 p-12 border rounded-xl cursor-pointer flex flex-col items-center" :class="{'bg-gray-600': bankAccount === 'SCB', 'text-purple-900': bankAccount === 'SCB', 'border-animated-light-purple': bankAccount === 'SCB'}">
+      <img src="https://sv1.picz.in.th/images/2023/09/23/dWmZWUE.png" alt="SCB Logo" class="object-cover w-96 h-94 mb-2">
+      <div class="text-center text-5xl">7482481785</div>
+      <div class="text-center text-3xl mt-2">บริษัท ไอฟินน์ จำกัด</div>
+      <button x-show="bankAccount === 'SCB'" @click="copyToClipboard('7482481785')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-xl text-4xl mt-4">คัดลอง</button>
+    </div>
+    <div @click="bankAccount = 'GSB'" class="w-1/2 p-12 border rounded-xl cursor-pointer flex flex-col items-center" :class="{'bg-gray-600': bankAccount === 'GSB', 'text-pink-600': bankAccount === 'GSB', 'border-animated-pink': bankAccount === 'GSB'}">
+      <img src="https://sv1.picz.in.th/images/2023/09/23/dWmKDQD.png" alt="GSB Logo" class="object-cover w-96 h-94 mb-2">
+      <div class="text-center text-4xl">020365729050</div>
+      <div class="text-center text-3xl mt-2">นายนิติพล ศรีคิรินทร์</div>
+      <button x-show="bankAccount === 'GSB'" @click="copyToClipboard('020365729050')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-xl text-4xl mt-4">คัดลอง</button>
+    </div>
+  </div>
+</div>
+
+    
+    <!-- Amount in a card -->
+    <div class="p-12 border rounded-xl bg-gray-700 mb-12">
+      <div class="mb-8 text-6xl text-white">จำนวนเงินที่ต้องการชำระ :</div>
+      <div class="mb-16">
+        <input type="number" x-model="amount" @input="finalAmount = parseFloat(amount) - parseFloat((Math.random() * 0.99 + 0.01).toFixed(2));" placeholder="จำนวนเงิน" class="p-6 w-full bg-gray-800 border rounded-xl text-6xl">
+      </div>
+
+    <!-- Final Amount and Countdown in a card -->
+<div x-show="bankAccount && amount && parseFloat(amount) > 0 && finalAmount !== null" class="text-center">
+  <div class="mb-8 text-4xl text-green-300">โอนตามระบบแจ้ง เพื่อง่ายต่อการตรวจสอบยอด</div>
+  <div>
+    <span class="text-4xl">โอน</span> 
+    <span class="text-8xl font-semibold" x-text="parseFloat(finalAmount).toFixed(2)" style="color: orange;"></span> 
+    <span class="text-4xl">บาท</span>
+  </div>
+</div>
+
+
+      </div>
+    
+    <!-- Buttons -->
+    <div class="flex justify-end space-x-8 mt-12">
+      <button type="button" @click="step = 2" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-6 px-12 rounded-xl text-6xl">ถัดไป</button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+<div x-show="step === 2" class="w-full bg-gray-800 rounded-xl p-20 flex flex-col">
+  <h2 class="mb-8 text-8xl font-semibold text-white">แนบสลิปการชำระ</h2>
+  <div class="p-12 border rounded-xl bg-gray-700 mb-12">
+    <input name="file" id="uploadfile" type="file" class="text-6xl p-6 w-full bg-gray-800 border rounded-xl">
+  </div>
+  <!-- Preview Image -->
+  <img id="preview" class="mb-12" style="max-width: 100%;"/>
+  <!-- Buttons -->
+  <div class="flex justify-between space-x-8 mt-12">
+    <button type="button" @click="step = 1" class="bg-red-500 hover:bg-red-700 text-white font-bold py-6 px-12 rounded-xl text-6xl">ย้อนกลับ</button>
+    <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-6 px-12 rounded-xl text-6xl">ส่งสลิป</button>
+  </div>
+</div>
+
+  
+  <!-- Popup for Copy Success -->
+  <div x-show="showCopyPopup" class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div class="bg-white text-black p-8 rounded-lg text-center">
+      <div class="text-6xl">คัดลอกบัญชี</div>
+      <div class="text-8xl" x-text="copiedAccount"></div>
+      <div class="text-6xl">เรียบร้อย</div>
+    </div>
+  </div>
+</div>
+</form>
+  
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+      <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+      <script>
+        liff.init({
+       liffId: '1661371622-0pZDWJqj', withLoginOnExternalBrowser: true,
+     }).catch((err) => {
+       console.log(err);
+     });
+ 
+     liff.ready.then(() => {
+       if (!liff.isLoggedIn()) {
+         liff.login();
+       }
+      
+       const idToken = liff.getDecodedIDToken();
+       const userId = idToken.sub;
+       const displayName = idToken.name;
+       const pictureUrl = idToken.picture;
+       const email = idToken.email;
+       document.getElementById("picurl").src = pictureUrl
+
+
+       $('form').append(`<input type="hidden" name="userId" value="${userId}">`);
+       $('form').append(`<input type="hidden" name="displayName" value="${displayName}">`);
+       $('form').append(`<input type="hidden" name="pictureUrl" value="${pictureUrl}">`);
+       $('form').append(`<input type="hidden" name="email" value="${email}">`);
+       
+     })
+ 
+     $('form').submit(function( event ) {
+       event.preventDefault();
+       $.post( 'https://script.google.com/macros/s/AKfycbz7bKaFcWNU07es-T4Q9_8AVvggly5ogRSj56G7tYUq8_ivOP9aJxt7rcPc3ZWvCWPHSA/exec', $('form').serialize() );
+        setTimeout( Swal.fire(
+   'ดำเนินการสำเร็จ',
+   'คุณได้ลงทะเบียนเรียบร้อยแล้ว',
+   'success'
+ ).then((result) => {
+       const paymentFor = document.getElementById("paymentFor").value
+       const friendName = document.getElementById("friendName").value
+       const bankAccount = document.getElementById("bankAccount").value
+       const amount = document.getElementById("amount").value
+       const finalAmount = document.getElementById("finalAmount").value
+       const idToken = liff.getDecodedIDToken();
+       const userId = idToken.sub;
+       const displayName = idToken.name;
+       const pictureUrl = idToken.picture;
+       const email = idToken.email;
+       const ss = [{ "type": "flex", 
+                "altText": "ลงทะเบียนสำเร็จ", "contents": 
+{
+  "type": "bubble",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "image",
+        "url": "https://sv1.picz.in.th/images/2023/09/06/dWl8fs8.jpeg",
+        "size": "full",
+        "aspectMode": "cover",
+        "aspectRatio": "1000:600",
+        "gravity": "center"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "image",
+            "url": "" + pictureUrl,
+            "aspectMode": "cover"
+          }
+        ],
+        "position": "absolute",
+        "width": "72px",
+        "height": "72px",
+        "cornerRadius": "100px",
+        "offsetTop": "7%",
+        "offsetStart": "7%"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "" + displayName,
+            "color": "#000000",
+            "size": "xs",
+            "flex": 0,
+            "align": "center",
+            "weight": "bold"
+          }
+        ],
+        "position": "absolute",
+        "offsetTop": "50%",
+        "offsetStart": "1%",
+        "width": "35%",
+        "height": "15%"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [],
+        "position": "absolute",
+        "width": "28%",
+        "height": "20%",
+        "offsetTop": "75%",
+        "offsetStart": "51%",
+        "action": {
+          "type": "uri",
+          "label": "action",
+          "uri": "https://liff.line.me/1661277248-9DQ8Qpde"
+        }
+      }
+    ],
+    "paddingAll": "0px"
+  }
+}
+               }]        
+   sendMsgLiff(ss)
+ }), 5000) 
+       
+     });
+     
+        /* SendMessage */
+        function sendMsgLiff(flex){
+          liff.sendMessages(flex).then(() => {
+    liff.closeWindow();
+  })
+        }
+     /*===== FOCUS =====*/
+ const inputs = document.querySelectorAll(".form__input")
+ 
+ /*=== Add focus ===*/
+ function addfocus(){
+     let parent = this.parentNode.parentNode
+     parent.classList.add("focus")
+ }
+ 
+ /*=== Remove focus ===*/
+ function remfocus(){
+     let parent = this.parentNode.parentNode
+     if(this.value == ""){
+         parent.classList.remove("focus")
+     }
+ }
+ 
+ /*=== To call function===*/
+ inputs.forEach(input=>{
+     input.addEventListener("focus",addfocus)
+     input.addEventListener("blur",remfocus)
+ })
+     </script>
+<script>
+       $('#uploadfile').on("change", function() {
+           var file = this.files[0];
+           var fr = new FileReader();
+           fr.fileName = file.name;
+           fr.onload = function(e) {$('#preview').attr('src', e.target.result);}
+           fr.readAsDataURL(file);
+       });
+       </script>    
+
+</body>
+</html>
