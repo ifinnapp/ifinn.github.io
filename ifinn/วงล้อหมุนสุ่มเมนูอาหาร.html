@@ -1,0 +1,605 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="displayname">หมุนวงล้อสุ่มอาหาร</title>
+
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8" />
+  <style type="text/css">
+    body {
+      font-family: 'line_seed_sans_th';
+      position: relative;
+
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      height: 100vh;
+      margin: 0;
+      background-color: #222;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      background-color: white;
+      padding: 20px;
+      margin: 10;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .winnerBox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      background: black;
+      color: white;
+      width: 100vw;
+      border-radius: 10px;
+      font-size: 20px;
+      padding: 20px;
+      gap: 20px;
+      height: 100vh;
+    }
+
+    #winnerName {
+      font-size: 50px;
+      animation: pushAni 1s ease 0s infinite normal forwards;
+    }
+
+    @keyframes pushAni {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .wheelCont {
+      position: relative;
+      max-width: 90vw;
+      display: block;
+      box-sizing: border-box;
+      min-width: 300px;
+    }
+
+    .centerImg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      border-radius: 50%;
+    }
+
+    .centerImgCont {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: none;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      box-sizing: border-box;
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+      background: white;
+      border: 1px solid black;
+    }
+
+
+
+    .pointer {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: -15px;
+      width: 0;
+      height: 0;
+      border-top: 4vw solid transparent;
+      border-bottom: 4vw solid transparent;
+      border-right: 10vw solid black;
+    }
+
+    #name-input {
+      font-family: 'line_seed_sans_th';
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      resize: none;
+      box-sizing: border-box;
+    }
+
+    button {
+      font-family: 'line_seed_sans_th';
+      /*   background-color: #4caf50; */
+      background-color: #ff0000;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #result {
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+
+    canvas {
+      margin-top: 10px;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      background-color: pink;
+      max-width: 90vw;
+      min-width: 300px;
+      box-sizing: border-box;
+    }
+
+    @media (min-width: 600px) {
+      .pointer {
+        border-top: 20px solid transparent;
+        border-bottom: 20px solid transparent;
+        border-right: 50px solid black;
+        right: -15px;
+      }
+    }
+
+    #wheel {
+      border: 1px solid black;
+      box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    #winnerImg {
+      max-height: 60vh;
+      max-width: 80vw;
+      border-radius: 20px;
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="rounded-lg overflow-hidden p-2 flex items-center justify-center">
+      <img src="https://i.pinimg.com/originals/97/e9/4d/97e94d340c2cd2504c6e25b74fb3dd8a.gif" alt="Profile avatar"
+        class="h-12 w-12 rounded-full object-cover" id="picurl" />
+      <div class="flex flex-col justify-start ml-2">
+        <div class="text-black font-medium" id="nameline">DisplayName</div>
+        <div class="text-xs text-zinc-500 -mt-[2px]">วงล้อโปรโมชั่น</div>
+      </div>
+    </div>
+
+    <div class="wheelCont">
+      <canvas id="wheel" width="500" height="500"></canvas>
+      <div class="pointer"></div>
+      <div class="centerImgCont"><img class="centerImg"
+          src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExZWg2bHk4eGtxbHAxcnBib2hjbGFjYWUwNHdvZTVvczRuNTExbjhjciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/JJvj6wwTtmQcce6Pdw/giphy.gif" />
+      </div>
+
+    </div>
+    <div id="result"></div>
+    <div class="winnerBox"><br>
+      <span id="winnerName"></span>
+      <img id="winnerImg" src="#" />
+      <span id="winnerDetail"></span>
+      <div class="winModelButtons">
+       
+        <button
+          class="bg-green-500 text-white px-6 py-3 rounded-lg animate-pulse hover:animate-none transition duration-300"
+          id="remove-name-button">❌ ปิดรายการ</button>
+      </div>
+    </div>
+
+    <button
+      class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+      id="reset-wheel-button">
+      รีเซ็ทวงล้อ
+    </button>
+
+  </div>
+
+  <script>
+    const liffId = "1661371622-gyeVE5Ka";
+    const deploySheet = "https://script.google.com/macros/s/AKfycbxw3z2b03FVZ_u-960lcvJ6hGdznQcwZBt6Rkd-Mc3O9WaJ9vTmJm9KofJbNCmv7Kotmw/exec"
+    const lineOAbasicId = "@hqg1050l"
+
+    window.onload = function (e) {
+      liff.init({
+        liffId: liffId,
+        withLoginOnExternalBrowser: true
+      }, function (data) {
+        const profile = liff.getProfile().then((profile) => {
+          document.getElementById("displayname").textContent = `สวัสดีคุณ ${profile.displayName} เกมหมุนวงล้อ`;
+          document.getElementById("nameline").textContent = `${profile.displayName}`;
+          document.getElementById("picurl").src = `${profile.pictureUrl}`;
+        })
+
+        liff.getFriendship().then((data) => {
+          if (!data.friendFlag) {
+            Swal.fire('เดี๋ยวก่อน!', 'คุณยังไม่ได้เป็นเพื่อนกับเรา', 'error').then(() => {
+              window.location = 'https://line.me/R/ti/p/' + lineOAbasicId;
+            });
+          }
+        })
+          .catch(err => console.error("LIFF initialization failed", err));
+      });
+
+
+    };
+
+    $(document).ready(function () {
+      const canvas = document.getElementById("wheel");
+      const ctx = canvas.getContext("2d");
+      const spinButton = $("#spin-button");
+      const clearButton = $("#clear-button");
+      const shuffleButton = $("#shuffle-button");
+      const closeWinModelButton = $("#close-win-model-button");
+      const removeNameButton = $("#remove-name-button");
+      const resultDiv = $("#result");
+      const wheelCont = $(".wheelCont");
+      const winnerBox = $(".winnerBox");
+      const winnerName = $("#winnerName");
+      const winnerImg = $("#winnerImg");
+      const winnerDetail = $("#winnerDetail");
+      const resetWheelButton = $("#reset-wheel-button");
+
+
+      const storageKey = "";
+
+
+      let isWinnerboxVisible = false;
+      let isConfirmVisible = false;
+
+
+      const originalEntries = [
+        {
+          name: "Sorry",
+          imgName: "https://i.pinimg.com/474x/76/e0/86/76e086304ed8b5411cc1c64d47da9c1d.jpg",
+          detailDesc:
+            "รอบหน้าถึงได้ส่วนลดนะ"
+        }, {
+          name: "Sorry",
+          imgName: "https://i.pinimg.com/474x/76/e0/86/76e086304ed8b5411cc1c64d47da9c1d.jpg",
+          detailDesc:
+            "รอบหน้าถึงได้ส่วนลดนะ"
+        },
+        {
+          name: "Starbucks",
+          imgName: "https://i.pinimg.com/474x/9b/5b/9c/9b5b9c252122612c7a7dd2cf88231463.jpg",
+          detailDesc:
+            "Starbucks Thailand Member's Day Buy 1 FREE 1 Promotion"
+        },
+        {
+          name: "Burger King",
+          imgName: "https://i.pinimg.com/474x/13/69/43/136943c9c789821b8c0660eba516deca.jpg",
+          detailDesc:
+            "Burger King Buy 1 FREE 1 Iced Milo Promotion"
+        },
+        {
+          name: "KOI The",
+          imgName: "https://i.pinimg.com/474x/79/45/11/794511d685dcaeff93908834da7a8c0b.jpg",
+          detailDesc: "โปรโมชั่นซื้อ 1 แถม 1"
+        }, {
+          name: "KFC",
+          imgName: "https://i.pinimg.com/474x/06/57/fd/0657fdd8c34522fffc0896709460c472.jpg",
+          detailDesc: "ส่วนลดเฉพาะร้าน iton5 เท่านั้น เงื่อนไขตามที่บริษัทกำหนด"
+        }
+      ];
+
+
+      let entries = [...originalEntries];
+
+      let isSpinning = false;
+      let startAngle = 0;
+      let arc = 0;
+      let offset = 0.01;
+
+      const baseSpinDuration = 10000;
+      const maxDeviation = 1000;
+      let spinTime = 0;
+      let maxSpinSpeed = Math.PI / 4;
+      let spinDuration = baseSpinDuration;
+      const slowdownRate = 0.2;
+
+      function easeOut(t) {
+        return Math.pow(Math.sin((t * Math.PI) / 2), slowdownRate);
+      }
+
+      function drawSegment(text, color, startAngle, endAngle) {
+        ctx.beginPath();
+        ctx.moveTo(250, 250);
+        ctx.arc(250, 250, 250, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.save();
+        ctx.translate(250, 250);
+        ctx.rotate((startAngle + endAngle) / 2);
+        ctx.textAlign = "right";
+        ctx.font = "bold 16px Arial";
+
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#000";
+        ctx.strokeText(text, 230, 10);
+
+        ctx.fillStyle = "#fff";
+        ctx.fillText(text, 230, 10);
+
+        ctx.restore();
+      }
+
+      function drawWheel() {
+        const colors = [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4CAF50",
+          "#FF9F40",
+          "#9966FF"
+        ];
+        ctx.clearRect(0, 0, 500, 500);
+        arc = (Math.PI * 2) / entries.length;
+        for (let i = 0; i < entries.length; i++) {
+          const angle = startAngle + i * arc;
+          drawSegment(
+            entries[i].name,
+            colors[i % colors.length],
+            angle,
+            angle + arc
+          );
+        }
+      }
+
+      function rotateWheel() {
+        const currentTime = new Date().getTime();
+        const elapsed = currentTime - spinTime;
+        const t = Math.min(elapsed / spinDuration, 1);
+
+        if (t < 1) {
+          const easeValue = easeOut(t);
+          const currentSpinSpeed = maxSpinSpeed * (1 - easeValue);
+          startAngle += currentSpinSpeed;
+          updateCurrentName();
+          drawWheel();
+          requestAnimationFrame(rotateWheel);
+        } else {
+          stopRotateWheel();
+        }
+      }
+
+      function updateCurrentName() {
+        const degrees = (((startAngle + offset) * 180) / Math.PI) % 360;
+        const index = Math.floor((360 - degrees) / (360 / entries.length));
+        resultDiv.text(`${entries[index].name}`);
+      }
+
+      function stopRotateWheel() {
+        const degrees = (((startAngle + offset) * 180) / Math.PI) % 360;
+        const index = Math.floor((360 - degrees) / (360 / entries.length));
+        const winner = entries[index];
+        resultDiv.text(`Promotion Winner: ${winner.name}`);
+        showWinner(winner);
+        isSpinning = false;
+      }
+
+      function showWinner(winner) {
+        winnerName.text(winner.name);
+        winnerImg.attr(
+          "src",
+          "" + winner.imgName
+        );
+        winnerDetail.text(winner.detailDesc);
+
+        liff
+          .getProfile()
+          .then((profile) => {
+            const userId = profile.userId;
+            const name = profile.displayName;
+            const picture = profile.pictureUrl;
+            const email = liff.getDecodedIDToken().email;
+            const language = liff.getAppLanguage();
+            sendToSheet({
+              userId: userId,
+              displayName: name,
+              pictureUrl: picture,
+              email: email,
+              language: language,
+              promotion: winner.name,
+              imagePro: winner.imgName,
+              detailPro: winner.detailDesc
+
+            })
+          })
+          .catch((err) => {
+            console.log("error", err);
+          });
+
+        setTimeout(function () {
+          winnerBox.css("display", "flex");
+          isWinnerboxVisible = true;
+        }, 300);
+      }
+
+      function spin() {
+        if (entries.length < 1) {
+          Swal.fire("ไม่มีข้อมูล", "โปรดรีเซ็ทวงล้อใหม่", "error");
+          return;
+        }
+        if (isSpinning) return;
+
+        isSpinning = true;
+        resultDiv.text("");
+        winnerBox.hide();
+        isWinnerboxVisible = false;
+
+        const randomDeviation =
+          Math.floor(Math.random() * (maxDeviation * 2 + 1)) - maxDeviation;
+        spinDuration = baseSpinDuration + randomDeviation;
+
+        spinTime = new Date().getTime();
+        rotateWheel();
+      }
+
+      function shuffleEntries() {
+        for (let i = entries.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [entries[i], entries[j]] = [entries[j], entries[i]];
+        }
+        drawWheel();
+        saveEntriesToLocalStorage();
+      }
+
+      function closeWinModel() {
+        winnerBox.hide();
+        isWinnerboxVisible = false;
+        liff.closeWindow();
+      }
+
+      function removeWinner() {
+        const winner = winnerName.text();
+        entries = entries.filter((entry) => entry.name !== winner);
+        drawWheel();
+        winnerBox.hide();
+        isWinnerboxVisible = false;
+        resultDiv.text(`Removed: ${winner}`);
+
+        saveEntriesToLocalStorage();
+        liff.closeWindow();
+      }
+
+
+      function saveEntriesToLocalStorage() {
+        localStorage.setItem(storageKey, JSON.stringify(entries));
+      }
+
+
+      function loadEntriesFromLocalStorage() {
+        const storedEntries = localStorage.getItem(storageKey);
+        if (storedEntries) {
+          entries = JSON.parse(storedEntries);
+        } else {
+          entries = [...originalEntries];
+        }
+      }
+
+
+      function resetWheel() {
+        entries = [...originalEntries];
+        localStorage.removeItem(storageKey);
+        shuffleEntries();
+        resultDiv.text("");
+        winnerBox.hide();
+        isWinnerboxVisible = false;
+      }
+
+
+      loadEntriesFromLocalStorage();
+
+
+      wheelCont.click(spin);
+      spinButton.click(spin);
+      clearButton.click(() => {
+        entries = [];
+        drawWheel();
+        resultDiv.text("");
+        saveEntriesToLocalStorage();
+      });
+      shuffleButton.click(shuffleEntries);
+      closeWinModelButton.click(closeWinModel);
+      removeNameButton.click(removeWinner);
+
+
+      resetWheelButton.click(resetWheel);
+
+
+      shuffleEntries();
+      drawWheel();
+
+
+
+
+    });
+
+    function sendToSheet(data) {
+
+      $.post('' + deploySheet, {
+        data: JSON.stringify(data),
+      })
+        .done((response) => {
+          try {
+            if (response.statusCode === 200) {
+
+              const flexMessage = JSON.parse(response.body);
+
+              if (!flexMessage || typeof flexMessage !== "object") {
+                throw new Error("รูปแบบ Flex Message ไม่ถูกต้อง");
+              }
+
+              liff.sendMessages([flexMessage])
+                .then(() => {
+                  Swal.fire({
+                    title: "🎉สุ่มโปรโมชั่น🎉",
+                    text: "ทำการส่ง Message เรียบร้อย",
+                    icon: "success",
+                    confirmButtonText: 'ตกลง'
+                  })
+                })
+                .catch((error) => {
+                  console.error("Send Message Error:", error);
+                  Swal.fire("ข้อผิดพลาด", "ดำเนินการแจ้งเจ้าหน้าที่เรียบร้อยแล้ว", "error");
+                });
+
+
+            } else {
+              Swal.fire("ข้อผิดพลาด", "ไม่สามารถดำเนินการแจ้งเจ้าหน้าที่ได้", "error");
+            }
+          } catch (err) {
+            console.error("Response Parsing Error:", err);
+            Swal.fire("ข้อผิดพลาด", "เกิดปัญหาในการประมวลผลข้อมูลที่ส่งกลับ", "error");
+          }
+        })
+        .fail((error) => {
+          console.error("API Error:", error);
+          Swal.fire("ข้อผิดพลาด", "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", "error");
+        });
+    }
+
+  </script>
+
+
+</body>
+
+</html>
