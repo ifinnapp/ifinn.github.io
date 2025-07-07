@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Image Map</title>
+    <style>
+        /* CSS for responsive image */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* CSS for centering image in x-axis */
+        img.center-horizontal {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+    <img id="clickable-image" class="center-horizontal" src="https://lh3.googleusercontent.com/d/15rmIwHQ6QARi5r-lT6Oh3gw1X9fOrejs?key=123" alt="Map" style="cursor: pointer;">
+
+    <script>
+        $('#clickable-image').on('click', function (event) {
+            var x = event.offsetX / this.width;
+            var y = event.offsetY / this.height;
+
+            // Define the areas in percentages
+            var areas = [
+                {
+                    name: "ไอฟินน์ : กาฬสินธุ์",
+                    url: "https://www.ifinnplus.com/payment/0001",
+                    coords: [11.0833 / 100, 18.6486 / 100, 44 / 100, 41.5676 / 100]
+                },
+                {
+                    name: "ไอฟินน์ : ลพบุรี",
+                    url: "https://www.ifinnplus.com/payment/0002",
+                    coords: [55.75 / 100, 18.7027 / 100, 89.3333 / 100, 41.5676 / 100]
+                },
+                {
+                    name: "iCloudPawn : กาฬสินธุ์",
+                    url: "https://icloudpawn.com/payment/0001",
+                    coords: [10.8333 / 100, 64.1622 / 100, 44.25 / 100, 86.5405 / 100]
+                },
+                {
+                    name: "iCloudPawn : ร้อยเอ็ด",
+                    url: "https://icloudpawn.com/payment/0002",
+                    coords: [55.6667 / 100, 63.9459 / 100, 88.9167 / 100, 86.5405 / 100]
+                }
+            ];
+
+            // Check if clicked position is within an area
+            for (var i = 0; i < areas.length; i++) {
+                var area = areas[i];
+                if (x >= area.coords[0] && x <= area.coords[2] && y >= area.coords[1] && y <= area.coords[3]) {
+                    window.open(area.url, '_blank'); // Redirect to the specified URL
+                    return;  // Exit the loop once we find a match
+                }
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>
