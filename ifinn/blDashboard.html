@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ไอฟินน์ : สรุปการขาย</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8" />
+    <style type="text/css">
+        body {
+
+            font-family: 'line_seed_sans_th';
+
+        }
+
+        #sidebar {
+            --tw-translate-x: -100%;
+        }
+
+        #menu-close-icon {
+            display: none;
+        }
+
+        #menu-open:checked~#sidebar {
+            --tw-translate-x: 0;
+        }
+
+        #menu-open:checked~* #mobile-menu-button {
+            background-color: rgba(31, 41, 55, var(--tw-bg-opacity));
+        }
+
+        #menu-open:checked~* #menu-open-icon {
+            display: none;
+        }
+
+        #menu-open:checked~* #menu-close-icon {
+            display: block;
+        }
+
+        @media (min-width: 768px) {
+            #sidebar {
+                --tw-translate-x: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- mobile navbar -->
+    <div class="lg:hidden flex justify-between p-5 h-20">
+        <img src="https://sv1.picz.in.th/images/2020/05/17/q0f9Tz.png" width="10%">
+        <svg onclick="Openbar()" class="cursor-pointer w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </div>
+    <div class=" grid lg:grid-cols-8 grid-cols-1  h-screen">
+        <!-- sidebar -->
+        <div id="sidebar" class="hidden lg:flex col-span-1 bg-gray-100 p-5 gap-4 flex flex-col ">
+            <!-- logo -->
+            <img src="https://sv1.picz.in.th/images/2020/05/17/q0f9Tz.png" class="hidden lg:block w-4/5 p-2">
+            <!-- avatar -->
+            <div class="flex space-y-0 space-x-2 p-2 cursor-pointer items-center">
+                <img id="profileurl" class="w-9 h-9 rounded-full"
+                    src="https://media.giphy.com/media/D101ONNCxxmKrK84Hr/giphy.gif" alt="">
+                <div class="space-y-0 font-medium basis-3/4 items-center">
+                    <div class="text-gray-800 text-sm" id="displaynamefield">displayName</div>
+                    <div class="text-xs  text-gray-400">ยินดีต้อนรับ</div>
+                </div>
+                <a href="https://line.me/R/nv/profile">
+                    <div class="basis-1/4 text-gray-500  items-end gap-0 flex flex-col justify-center">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+
+                    </div>
+                </a>
+            </div>
+            <!-- search box -->
+
+            <!-- navbar -->
+            <div class="flex flex-col">
+                <ul class="space-y-1 text-gray-700">
+                    <li>
+                        <a href="#"
+                            class="flex items-center p-2 text-sm font-medium rounded-lg  dark:hover:bg-gray-200 bg-gray-200">
+                            <svg class="w-6 h-6 text-gray-400 transition " fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                                </path>
+                            </svg>
+                            <span class="ml-3">Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#"
+                            class="flex items-center p-2 text-sm font-medium rounded-lg  dark:hover:bg-gray-200">
+                            <svg class="w-6 h-6 text-gray-400 transition " fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                            </svg>
+                            <span class="ml-3">My tasks</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+        <!-- main -->
+        <div class="col-span-7 border border-gray-200">
+            <!-- home section -->
+            <div class="flex p-5 flex-row justify-between items-center">
+                <h1 class="font-bold text-gray-600">Dashboard</h1>
+                <div>
+                    <button type="button"
+                        class="text-white bg-[#FF9119] hover:bg-[#FF9119]/80 focus:ring-4 focus:outline-none focus:ring-[#FF9119]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2"
+                        onclick="refreshPage()">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-4 h-4 me-2 -ms-1">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>
+
+                        Ref
+                    </button>
+                    <button type="button"
+                        class="text-white bg-[#7e22ce] hover:bg-[#7e22ce]/80 focus:ring-4 focus:outline-none focus:ring-[#7e22ce]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#7e22ce]/80 dark:focus:ring-[#7e22ce]/40 me-2 mb-2"
+                        id="flex">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-4 h-4 me-2 -ms-1">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                        </svg>
+
+                        Share
+                    </button>
+
+                </div>
+            </div>
+            <hr />
+            <!-- projects -->
+            <section class="flex flex-col mt-20">
+
+                <h2 class="text-3xl font-extrabold dark:text-white text-center"><span
+                        class="text-orange-400 dark:text-orange-300">Earnings Sticker Report</span></h2>
+                <div>
+                    <h3 class="text-xl font-extrabold text-center">เวลา : <span style="color: #2176ff;"
+                            id="time"></span></h3>
+                </div>
+                <div id="result">
+                    <div class="flex justify-center items-center">
+                        <div class="rounded-full h-20 w-20 bg-orange-800 animate-ping"></div>
+                    </div>
+
+                </div>
+
+
+            </section>
+            <!-- project -->
+
+        </div>
+    </div>
+    <script>
+        function Openbar() {
+            document.querySelector('#sidebar').classList.toggle('hidden')
+        }
+    </script>
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+
+    <script>
+        const result = document.getElementById('result');
+        const listItems = [];
+        let a;
+        let date;
+        let time;
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+
+        setInterval(() => {
+            a = new Date();
+            date = a.toLocaleDateString(undefined, options);
+            time = a.getHours() + ':' + a.getMinutes() + ':' + a.getSeconds();
+            document.getElementById('time').innerHTML = time + "<br>  " + date;
+
+        }, 1000);
+        window.onload = function () {
+            getData()
+            $.getScript("https://ifinn.glitch.me/blDashboardScript.js", function () {
+
+                //initializeLiff("1661371622-Ykv6a1kb");
+
+
+            });
+        }
+        function getData() {
+            fetch('https://opensheet.elk.sh/1Ees9tYq-TOzU8OqFV411BTOWHGJNsiW9HXLRn8O23zA/data')
+                .then(res => res.json())
+                .then(data => {
+
+                    result.innerHTML = '';
+
+                    const filteredData = data.filter(user => {
+                        const li = document.createElement('div');
+
+                        listItems.push(li);
+
+                        li.innerHTML = `
+                       <div  
+         class="mt-10 grid grid-cols-2 lg:grid-cols-3 gap-y-5 lg:gap-y-0 gap-x-5 place-items-center w-full mx-auto max-w-7xl px-5">
+                       <div
+           class="flex flex-col justify-center items-center bg-[#FFF6F3] px-4 h-[126px] w-[100%] md:w-[281px] md:h-[192px] rounded-lg justify-self-center">
+           <div class="flex flex-row justify-center items-center">
+             <svg class="w-[35px] h-[35px] md:w-[50px] md:h-[50px]" viewBox="0 0 50 50" fill="none"
+               xmlns="http://www.w3.org/2000/svg">
+               <path
+                 d="M39.37 18.432c0 3.058-.906 5.862-2.466 8.203a14.728 14.728 0 0 1-10.079 6.367c-.717.127-1.455.19-2.214.19-.759 0-1.497-.063-2.214-.19a14.728 14.728 0 0 1-10.078-6.368 14.692 14.692 0 0 1-2.467-8.202c0-8.16 6.6-14.76 14.76-14.76s14.759 6.6 14.759 14.76Z"
+                 stroke="#FF6D42" stroke-width="3.473" stroke-linecap="round" stroke-linejoin="round"></path>
+               <path
+                 d="m44.712 38.17-3.431.83a2.063 2.063 0 0 0-1.539 1.572l-.728 3.122c-.09.384-.281.734-.554 1.012a2.068 2.068 0 0 1-.992.564c-.375.09-.768.073-1.134-.052a2.078 2.078 0 0 1-.938-.653l-9.92-11.64-9.92 11.661a2.078 2.078 0 0 1-.938.653 2.038 2.038 0 0 1-1.134.052 2.067 2.067 0 0 1-.992-.563 2.137 2.137 0 0 1-.554-1.012l-.728-3.123a2.13 2.13 0 0 0-.55-1.01 2.06 2.06 0 0 0-.988-.562L6.24 38.19a2.073 2.073 0 0 1-.956-.533 2.14 2.14 0 0 1-.563-.953 2.175 2.175 0 0 1-.015-1.113c.091-.366.276-.7.536-.97l8.11-8.284a14.672 14.672 0 0 0 4.307 4.281 14.34 14.34 0 0 0 5.634 2.134 12.29 12.29 0 0 0 2.183.191c.749 0 1.477-.063 2.184-.19 4.138-.617 7.694-3.017 9.94-6.416l8.11 8.285c1.144 1.147.583 3.165-.998 3.547Zm-18.03-26.532 1.227 2.507c.167.34.603.68.998.743l2.226.383c1.414.233 1.747 1.296.727 2.336l-1.726 1.764c-.29.297-.457.87-.353 1.295l.499 2.188c.395 1.721-.5 2.4-1.996 1.487l-2.08-1.253a1.434 1.434 0 0 0-1.372 0l-2.08 1.253c-1.497.892-2.392.234-1.996-1.487l.499-2.188c.083-.403-.063-.998-.354-1.295l-1.726-1.764c-1.019-1.04-.686-2.081.728-2.336l2.225-.383c.375-.063.811-.403.977-.743l1.227-2.507c.604-1.36 1.685-1.36 2.35 0Z"
+                 stroke="#FF6D42" stroke-width="3.473" stroke-linecap="round" stroke-linejoin="round"></path>
+             </svg>
+             <p class="font-bold text-3xl sm:text-4xl lg:text-5xl leading-9 text-primary ml-2">${user.userActive}</p>
+           </div>
+           <p class="font-medium text-base sm:text-lg leading-6 mt-3 md:mt-6 text-center">User Active</p>
+         </div>
+         <div
+           class="flex flex-col justify-center items-center bg-[#FFF6F3] px-4 h-[126px] w-[100%] md:w-[281px] md:h-[192px] rounded-lg justify-self-center">
+           <div class="flex flex-row justify-center items-center">
+             <svg class="w-[35px] h-[35px] md:w-[50px] md:h-[50px]" viewBox="0 0 51 50" fill="none"
+               xmlns="http://www.w3.org/2000/svg">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+   <path stroke-linecap="round" stroke="#FF6D42" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+             </svg>
+             <p class="font-bold text-3xl sm:text-4xl lg:text-5xl leading-9 text-primary ml-2">${user.userExpire}</p>
+           </div>
+           <p class="font-medium text-base sm:text-lg leading-6 mt-3 md:mt-6 text-center">User Renew</p>
+         </div>
+         <div
+           class="flex flex-col justify-center items-center bg-[#FFF6F3] px-4 h-[126px] w-[100%] md:w-[281px] md:h-[192px] rounded-lg justify-self-center">
+           <div class="flex flex-row justify-center items-center">
+             <svg class="w-[35px] h-[35px] md:w-[50px] md:h-[50px]" viewBox="0 0 50 50" fill="none"
+               xmlns="http://www.w3.org/2000/svg">
+               <g clip-path="url(#a)" stroke="#FF6D42" stroke-width="3.473" stroke-linecap="round" stroke-linejoin="round">
+                 <path
+                   d="M10.811 39.091c-1.775-1.775-.598-5.505-1.5-7.69-.939-2.255-4.377-4.089-4.377-6.5 0-2.413 3.438-4.246 4.376-6.502.903-2.182-.274-5.914 1.501-7.69 1.776-1.775 5.508-.598 7.69-1.5 2.266-.939 4.09-4.377 6.501-4.377 2.412 0 4.246 3.438 6.501 4.376 2.185.903 5.915-.274 7.69 1.501 1.776 1.776.598 5.506 1.502 7.69.937 2.266 4.376 4.09 4.376 6.501 0 2.412-3.439 4.246-4.377 6.501-.903 2.185.274 5.915-1.5 7.69-1.776 1.776-5.506.598-7.69 1.501-2.256.938-4.09 4.377-6.502 4.377s-4.245-3.439-6.5-4.377c-2.183-.903-5.915.275-7.69-1.5Z">
+                 </path>
+                 <path d="m17.281 26.444 4.632 4.631L32.718 20.27"></path>
+               </g>
+               <defs>
+                 <clipPath id="a">
+                   <path fill="#fff" d="M.3.2h49.4v49.4H.3z"></path>
+                 </clipPath>
+               </defs>
+             </svg>
+             <p class="font-bold text-3xl sm:text-4xl lg:text-5xl leading-9 text-primary ml-2">${user.Annual}</p>
+           </div>
+           <p class="font-medium text-base sm:text-lg leading-6 mt-3 md:mt-6 text-center">User Viewers Shop</p>
+         </div>
+         <div
+           class="flex flex-col justify-center items-center bg-[#FFF6F3] px-4 h-[126px] w-[100%] md:w-[281px] md:h-[192px] rounded-lg justify-self-center">
+           <div class="flex flex-row justify-center items-center">
+             <svg class="w-[35px] h-[35px] md:w-[50px] md:h-[50px]" viewBox="0 0 51 50" fill="none"
+               xmlns="http://www.w3.org/2000/svg">
+               <path d="M45.571 12.006 27.046 30.531l-7.719-7.718L5.434 36.706" stroke="#FF6D42" stroke-width="4.341"
+                 stroke-linecap="round" stroke-linejoin="round"></path>
+               <path d="M45.569 24.356v-12.35h-12.35" stroke="#FF6D42" stroke-width="4.341" stroke-linecap="round"
+                 stroke-linejoin="round"></path>
+             </svg>
+             <p class="font-bold text-3xl sm:text-4xl lg:text-5xl leading-9 text-primary ml-2">${user.Daily}</p>
+           </div>
+           <p class="font-medium text-base sm:text-lg leading-6 mt-3 md:mt-6 text-center">Daily Balance</p>
+         </div>
+         <div
+         class="flex flex-col justify-center items-center bg-[#FFF6F3] px-4 h-[126px] w-[100%] md:w-[281px] md:h-[192px] rounded-lg justify-self-center">
+         <div class="flex flex-row justify-center items-center">
+           <svg class="w-[35px] h-[35px] md:w-[50px] md:h-[50px]" viewBox="0 0 50 50" fill="none"
+             xmlns="http://www.w3.org/2000/svg">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+   <path stroke-linecap="round" stroke="#FF6D42" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+           </svg>
+           <p class="font-bold text-3xl sm:text-4xl lg:text-5xl leading-9 text-primary ml-2">${user.Monthly}</p>
+         </div>
+         <p class="font-medium text-base sm:text-lg leading-6 mt-3 md:mt-6 text-center">Monthly Balance</p>
+       </div>
+       <div
+         class="flex flex-col justify-center items-center bg-[#FFF6F3] px-4 h-[126px] w-[100%] md:w-[281px] md:h-[192px] rounded-lg justify-self-center">
+         <div class="flex flex-row justify-center items-center">
+           <svg class="w-[35px] h-[35px] md:w-[50px] md:h-[50px]" viewBox="0 0 51 50" fill="none"
+             xmlns="http://www.w3.org/2000/svg">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+   <path stroke-linecap="round" stroke="#FF6D42" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0" />
+           </svg>
+           <p class="font-bold text-3xl sm:text-4xl lg:text-5xl leading-9 text-primary ml-2">${user.View}</p>
+         </div>
+         <p class="font-medium text-base sm:text-lg leading-6 mt-3 md:mt-6 text-center">Annual Balance</p>
+       </div></div>
+                       `;
+                        result.appendChild(li);
+
+                        document.querySelector('#flex').addEventListener('click', () => {
+
+                            searchflex(date, `${user.userActive}`, `${user.userExpire}`, `${user.Daily}`, `${user.Monthly}`, `${user.Annual}`, `${user.View}`)
+                        })
+                        return true;
+                    });
+
+                });
+        }
+        function searchflex(userActive,	userExpire,	Daily,	Monthly,	Annual,	View) {
+            liff.shareTargetPicker(
+                [{
+                    "type": "flex",
+                    "altText": "แชร์ Report จาก " + liff.getDecodedIDToken().name,
+                    "contents": {
+                        "type": "bubble",
+                        "header": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "ระบบขาย Sticker LINE อัตโนมัติ",
+                                    "weight": "bold"
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "อัพเดทวันที่ " + date,
+                                    "size": "sm",
+                                    "wrap": true
+                                }
+                            ]
+                        },
+                        "body": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "contents": [
+                                {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "contents": [
+                                        {
+                                            "type": "image",
+                                            "url": "https://sdl-stickershop.line.naver.jp/stickershop/v1/product/20421919/iphone/main@2x.png"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "Earnings Sticker Report",
+                                    "weight": "bold",
+                                    "align": "center",
+                                    "style": "italic"
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "ลูกค้าที่ซื้อสติกเกอร์ทั้งหมด"
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "" + userActive + " คน",
+                                            "align": "end",
+                                            "weight": "bold",
+                                            "size": "xl"
+                                        }
+                                    ],
+                                    "backgroundColor": "#e1d7c1",
+                                    "paddingAll": "5px",
+                                    "cornerRadius": "10px",
+                                    "margin": "md"
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "ลูกค้าต่ออายุ"
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "" + userExpire + " คน",
+                                            "align": "end",
+                                            "weight": "bold",
+                                            "size": "xl"
+                                        }
+                                    ],
+                                    "backgroundColor": "#ea5b3366",
+                                    "paddingAll": "5px",
+                                    "cornerRadius": "10px",
+                                    "margin": "md"
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "จำนวนเข้าชมร้านค้า"
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "" + Daily + " ครั้ง",
+                                            "align": "end",
+                                            "weight": "bold",
+                                            "size": "xl"
+                                        }
+                                    ],
+                                    "backgroundColor": "#f4e4b1",
+                                    "paddingAll": "5px",
+                                    "cornerRadius": "10px",
+                                    "margin": "md"
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "ยอดขายประจำวัน"
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "" + Monthly + " บาท",
+                                            "align": "end",
+                                            "weight": "bold",
+                                            "size": "xl"
+                                        }
+                                    ],
+                                    "backgroundColor": "#15699b66",
+                                    "paddingAll": "5px",
+                                    "cornerRadius": "10px",
+                                    "margin": "md"
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "ยอดขายต่อเดือน"
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "" + Annual + " บาท",
+                                            "align": "end",
+                                            "weight": "bold",
+                                            "size": "xl"
+                                        }
+                                    ],
+                                    "backgroundColor": "#46db8755",
+                                    "paddingAll": "5px",
+                                    "cornerRadius": "10px",
+                                    "margin": "md"
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "ยอดขายทั้งปี"
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "" + View + " บาท",
+                                            "align": "end",
+                                            "weight": "bold",
+                                            "size": "xl"
+                                        }
+                                    ],
+                                    "backgroundColor": "#b8522c66",
+                                    "paddingAll": "5px",
+                                    "cornerRadius": "10px",
+                                    "margin": "md"
+                                }
+                            ],
+                            "paddingAll": "10px"
+                        }
+                    }
+                }]
+            )
+                .then(function (res) {
+                    if (res) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'ส่งเข้าแชทเรียบร้อย',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    } else {
+                        // sending message canceled
+                        console.log("TargetPicker was closed!");
+                    }
+                })
+                .catch(function (error) {
+                    // something went wrong before sending a message
+                    console.log("something wrong happen");
+                });
+
+        }
+        function refreshPage() {
+            location.reload(true); // รีเฟรชหน้าเว็บ
+
+        }
+    </script>
+</body>
+
+</html>
