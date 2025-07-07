@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมาชิก : แดชบอร์ด</title>
+    <style>
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        img.center-horizontal {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+    <script src="https://static.line-scdn.net/liff/edge/versions/2.3.0/sdk.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<img id="clickable-image" class="center-horizontal" src="https://lh3.googleusercontent.com/d/1c1hu1lbIzAAq8nXXR7tQ1P6Lgm2m2--Z?key=123" alt="Map" style="cursor: pointer;">
+
+<script>
+const liffId = "1661371622-q1Yo7yZR"; // แทนที่ด้วย LIFF ID ของคุณ
+
+async function initializeLiff(liffId) {
+    try {
+        await liff.init({ liffId });
+        if (!liff.isLoggedIn()) {
+            liff.login(); // ล็อกอินถ้ายังไม่ล็อกอิน
+        }
+    } catch (error) {
+        console.error('LIFF Initialization failed', error);
+    }
+}
+
+$(function() {
+    initializeLiff(liffId);
+
+    $('#clickable-image').on('click', function (event) {
+        var x = event.offsetX / this.offsetWidth;
+        var y = event.offsetY / this.offsetHeight;
+        var clickedArea = null;
+
+        var areas = [
+            {
+                name: "แจ้งเตือนงาน",
+                href: "สมาชิกแจ้งเตือนงาน.html",
+                coords: [22 / 960, 25 / 1520, 475 / 960, 118 / 1520]
+              //22,25,475,118
+            },
+            {
+                name: "สรุปค่าคอมมิชชั่น",
+                href: "สมาชิกสรุปค่าคอมมิชชั่น.html",
+                coords: [26 / 960, 141 / 1520, 474 / 960, 551 / 1520]
+              //26,141,474,551
+            },
+            {
+                name: "ช่วยตามหนี้",
+                href: "สมาชิกช่วยตามหนี้.html",
+                coords: [494 / 960, 25 / 1520, 934 / 960, 551 / 1520]
+              //494,25,934,551
+            },
+            {
+                name: "ออมมือถือ ออมทอง",
+                href: "สมาชิกออมมือถือออมทอง.html",
+                coords: [26 / 960, 573 / 1520, 472 / 960, 1109 / 1520]
+              //26,573,472,1109
+            },
+            {
+                name: "ผ่อนทุกอย่างด้วยไอโฟน",
+                href: "สมาชิกผ่อนทุกอย่างด้วยไอโฟน.html",
+                coords: [493 / 960, 574 / 1520, 937 / 960, 1111 / 1520]
+              //493,574,937,1111
+            },
+            {
+                name: "รับซื้อใบรับจำนำทอง",
+                href: "สมาชิกรับซื้อใบรับจำนำทอง.html",
+                coords: [25 / 960, 1129 / 1520, 935 / 960, 1502 / 1520]
+              //25,1129,935,1502
+            }
+        ];
+
+        areas.forEach(function(area) {
+            if (x >= area.coords[0] && x <= area.coords[2] && y >= area.coords[1] && y <= area.coords[3]) {
+                clickedArea = area;
+            }
+        });
+
+        if (clickedArea) {
+            window.open(clickedArea.href, "_self"); // ใช้ href แทน uri
+        }
+    });
+});
+
+</script>
+
+</body>
+</html>
