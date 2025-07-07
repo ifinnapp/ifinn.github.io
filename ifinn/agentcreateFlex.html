@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>App FINN</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
+    <link rel="stylesheet" href="https://bit.ly/3CZa0Sz" type="text/css" charset="utf-8" />
+    <style type="text/css">
+    .transparent-text {
+        opacity: 0; /* กำหนดความโปร่งใส */
+        color: white; /* สีขาว */
+    }
+    /* คุณสมบัติอื่นๆ ของ body ยังคงเหมือนเดิม */
+    body {
+        font-family: "line_seed_sans_th";
+        margin: 0;
+        overflow: hidden;
+        background-color: black;
+        position: relative;
+    }
+    body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+        background: url('https://obs.line-scdn.net/hKKMqdg-YCGVFZBtrEjIPHAwWQl1fOAE6HD4PC1VcHlBZbVFnRWldBFcNGlRaPARhTmo/mp4') no-repeat center center fixed;
+        background-size: cover;
+        background-attachment: fixed;
+    }
+</style>
+
+  
+  
+    <script>
+        function runApp() {
+            liff.init({ liffId: "1661371622-VP6ZdPoj" }, () => {
+                if (liff.isLoggedIn()) {
+                    liff.getProfile().then(profile => {
+                        document.getElementById("user-name").textContent = profile.displayName;
+                    });
+
+                    // จัดการกับพารามิเตอร์ที่ส่งมา
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const name = urlParams.get('name');
+                    const address = urlParams.get('address');
+                    const phone = urlParams.get('phone');
+                    const facebook = urlParams.get('facebook');
+                    const lineId = urlParams.get('lineId');
+                    const status = urlParams.get('status');
+                    const payday = urlParams.get('payday');
+                    const paydate = urlParams.get('paydate');
+                    const money = urlParams.get('money');
+                    const instance = urlParams.get('instance');
+                    const paid = urlParams.get('paid');
+                    const paidM = urlParams.get('paidM');
+                    const paidPM = urlParams.get('paidPM');
+
+                    // แสดงข้อมูล
+                    document.getElementById("name").textContent = name || 'ไม่มีข้อมูล';
+                    document.getElementById("address").textContent = address || 'ไม่มีข้อมูล';
+                    document.getElementById("phone").textContent = phone || 'ไม่มีข้อมูล';
+                    document.getElementById("facebook").textContent = facebook || 'ไม่มีข้อมูล';
+                    document.getElementById("lineId").textContent = lineId || 'ไม่มีข้อมูล';
+                    document.getElementById("status").textContent = status || 'ไม่มีข้อมูล';
+                    document.getElementById("payday").textContent = payday || 'ไม่มีข้อมูล';
+                    document.getElementById("paydate").textContent = paydate || 'ไม่มีข้อมูล';
+                    document.getElementById("money").textContent = money || 'ไม่มีข้อมูล';
+                    document.getElementById("instance").textContent = instance || 'ไม่มีข้อมูล';
+                    document.getElementById("paid").textContent = paid || 'ไม่มีข้อมูล';
+                    document.getElementById("paidM").textContent = paidM || 'ไม่มีข้อมูล';
+                    document.getElementById("paidPM").textContent = paidPM || 'ไม่มีข้อมูล';
+                    // ... แสดงข้อมูลอื่นๆ
+                  
+                  // เรียกใช้ฟังก์ชัน searchflex
+                    searchflex(name, address, phone, facebook, lineId, status, payday, paydate, money, instance, paid, paidM, paidPM);
+
+
+                } else {
+                    liff.login();
+                }
+            }, err => console.error(err));
+        }
+      
+function searchflex(name, address, phone, facebook, lineId, status, payday, paydate, money, instance, paid, paidM, paidPM){
+  // สร้าง URI สำหรับแชร์ Flex
+  var shareFlexUri = encodeURI(`line://app/1661371622-VP6ZdPoj?name=${name}&address=${address}&phone=${phone}&facebook=${facebook}&lineId=${lineId}&status=${status}&payday=${payday}&paydate=${paydate}&money=${money}&instance=${instance}&paid=${paid}&paidM=${paidM}&paidPM=${paidPM}`);
+
+  var x = encodeURI("https://line.me/R/oaMessage/@hqg1050l/?สถานะ : "+status+"\n.\nชื่อ : "+name+"\nเบอร์โทร : "+phone+"\nจ่ายทุกวันที่ : "+payday+"\nจำนวนเงิน : "+money+"\nชำระแล้ว : "+paid+"\n.\nแชร์เรียบร้อย จากคุณ "+liff.getDecodedIDToken().name)
+  var y = encodeURI("https://line.me/R/share?text=สถานะ : "+status+"\n.\nชื่อ : "+name+"\nเบอร์โทร : "+phone+"\nจ่ายทุกวันที่ : "+payday+"\nจำนวนเงิน : "+money+"\nชำระแล้ว : "+paid+"\n.\nแชร์เรียบร้อย จากคุณ "+liff.getDecodedIDToken().name)
+  
+  // สร้าง Flex Message
+  var flexMessage = {
+    "type": "flex",
+    "altText": "แชร์จาก " + liff.getDecodedIDToken().name,
+    "contents": {
+  "type": "bubble",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "รายละเอียดลูกค้า",
+        "weight": "bold",
+        "size": "xl",
+        "margin": "md",
+        "align": "center"
+      },
+      {
+        "type": "separator",
+        "margin": "md"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "xxl",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ชื่อ :",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0,
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + name,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ที่อยู่ :",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0,
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + address,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "เบอร์โทร :",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0,
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + phone,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "เฟสบุ๊ค :",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0,
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + facebook,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ไลน์ไอดี :",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0,
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + lineId,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "separator",
+            "margin": "md"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "margin": "xxl",
+            "contents": [
+              {
+                "type": "text",
+                "text": "สถานะ :",
+                "size": "sm",
+                "color": "#555555",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + status,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },{
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "จ่ายทุกวันที่ :",
+                "size": "sm",
+                "color": "#555555",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + payday,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "เริ่มจ่ายงวดแรก :",
+                "size": "sm",
+                "color": "#555555",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + paydate,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "จำนวนเงิน :",
+                "size": "sm",
+                "color": "#555555",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + money,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "จำนวนงวด :",
+                "size": "sm",
+                "color": "#555555",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + instance,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ชำระแล้ว :",
+                "size": "sm",
+                "color": "#555555",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + paid,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ยอดผ่อนที่ชำระแล้ว",
+                "align": "start",
+                "weight": "bold"
+              }
+            ]
+          }
+        ],
+        "offsetTop": "8px",
+        "paddingStart": "2%"
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "baseline",
+            "contents": [
+              {
+                "type": "text",
+                "text": "฿" + paidM,
+                "align": "center",
+                "color": "#0e6909",
+                "weight": "bold",
+                "size": "lg",
+                "offsetTop": "1px"
+              }
+            ],
+            "position": "relative"
+          },
+          {
+            "type": "box",
+            "layout": "baseline",
+            "contents": [],
+            "position": "relative"
+          }
+        ],
+        "position": "relative",
+        "offsetTop": "5px"
+      },
+      {
+        "type": "text",
+        "text": "" +  paidPM,
+        "align": "end",
+        "size": "sm",
+        "gravity": "center",
+        "margin": "lg",
+        "offsetTop": "-15px",
+        "weight": "bold",
+        "color": "#0e6909"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "filler"
+              }
+            ],
+            "width": "" +  paidPM,
+            "backgroundColor": "#23c91a",
+            "height": "8px",
+            "cornerRadius": "xxl"
+          }
+        ],
+        "backgroundColor": "#c6f5c4",
+        "height": "8px",
+        "margin": "sm",
+        "cornerRadius": "xxl",
+        "offsetTop": "-15px"
+      },
+      {
+        "type": "separator",
+        "margin": "none"
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "margin": "md",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "button",
+                "action": {
+                  "type": "uri",
+                  "label": "แชร์ Flex",
+                  "uri": shareFlexUri
+                },
+                "style": "primary",
+                "height": "sm"
+              }
+            ],
+            "paddingAll": "xs"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "button",
+                "action": {
+                  "type": "uri",
+                  "label": "แชร์ ข้อความ",
+                  "uri": y
+                },
+                "style": "primary",
+                "height": "sm"
+              }
+            ],
+            "paddingAll": "xs"
+          }
+        ]
+      }
+    ]
+  },
+  "styles": {
+    "footer": {
+      "separator": true
+    }
+  }
+}
+      }
+   // เรียกใช้ shareTargetPicker พร้อม Flex Message
+  liff.shareTargetPicker([flexMessage])
+    .then(function (res) {
+      if (res) {
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: 'ส่งเข้าแชทเรียบร้อย',
+          showConfirmButton: false,
+          timer: 1500
+        });
+        liff.closeWindow();
+      } else {
+        console.log("TargetPicker was closed!");
+        liff.closeWindow();
+      }
+    })
+    .catch(function (error) {
+      console.log("something wrong happen", error);
+    liff.closeWindow();
+    });
+}
+
+      
+      // ส่วนของการดึงข้อมูลจาก URI เมื่อ Flex ถูกแชร์
+if (window.location.href.includes('line://app')) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const name = urlParams.get('name');
+  const address = urlParams.get('address');
+  const phone = urlParams.get('phone');
+  const facebook = urlParams.get('facebook');
+  const lineId = urlParams.get('lineId');
+  const status = urlParams.get('status');
+  const payday = urlParams.get('payday');
+  const paydate = urlParams.get('paydate');
+  const money = urlParams.get('money');
+  const instance = urlParams.get('instance');
+  const paid = urlParams.get('paid');
+  const paidM = urlParams.get('paidM');
+  const paidPM = urlParams.get('paidPM');
+  // ส่วนของการดึงค่าต่างๆ จาก URL
+  // ...
+  searchflex(name, address, phone, facebook, lineId, status, payday, paydate, money, instance, paid, paidM, paidPM); // เรียกใช้ฟังก์ชัน searchflex ด้วยค่าที่ได้
+}
+    </script>
+</head>
+<body onload="runApp()">
+  
+<p class="transparent-text" style="margin-bottom: 320px;">.</p>
+    <p class="transparent-text">ชื่อผู้แชร์ : <span id="user-name"></span></p>
+    <h3 class="transparent-text">รายละเอียดลูกค้า</h3>
+    <p class="transparent-text">ชื่อ : <span id="name"></span></p>
+    <p class="transparent-text">ที่อยู่ : <span id="address"></span></p>
+    <p class="transparent-text">เบอร์โทร : <span id="phone"></span></p>
+    <p class="transparent-text">เฟสบุ๊ค : <span id="facebook"></span></p>
+    <p class="transparent-text">ไลน์ไอดี : <span id="lineId"></span></p>
+    <p class="transparent-text">สถานะ : <span id="status"></span></p>
+    <p class="transparent-text">จ่ายทุกวันที่ : <span id="payday"></span></p>
+    <p class="transparent-text">จ่ายครั้งแรก : <span id="paydate"></span></p>
+    <p class="transparent-text">จำนวนเงิน : <span id="money"></span></p>
+    <p class="transparent-text">จำนวนงวด : <span id="instance"></span></p>
+    <p class="transparent-text">ชำระแล้ว : <span id="paid"></span></p>
+    <p class="transparent-text">ยอดที่ผ่อนชำระแล้ว : <span id="paidM"></span></p>
+    <p class="transparent-text">เปอร์เซ็นต์ที่ผ่อนชำระแล้ว: <span id="paidPM"></span></p>
+    <!-- ... ส่วนแสดงข้อมูลอื่นๆ -->
+  
+</body>
+</html>
