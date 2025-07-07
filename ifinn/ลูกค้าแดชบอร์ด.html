@@ -1,0 +1,2067 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>แดชบอร์ด : ลูกค้า</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+    <link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style type="text/css">
+  /* กำหนดให้แถบบนสุดมีตำแหน่งคงที่และแสดงอยู่ด้านบนสุดของหน้าจอ */
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        z-index: 100;
+        transition: top 0.5s;
+    }
+  
+        body {
+            font-family: 'line_seed_sans_th';
+
+        }
+
+        .rounded-full {
+            border-radius: 50%;
+        }
+
+        .profile-item {
+            margin-bottom: 20px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            line-height: 1.2;
+        }
+
+
+        @media (max-width: 768px) {
+            .grid-cols-3 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+
+        @media (max-width: 640px) {
+            .grid-cols-3 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+        }
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.blinking {
+  animation: blink 1.5s linear infinite;
+}
+
+.status-normal { background-color: #b8e994; color: black; }
+.status-considering { background-color: #b8e994; color: black; }
+.status-out-of-area, .status-not-approved { background-color: red; color: white; }
+.status-awaiting-deposit { background-color: #aed9e0; color: black; }
+.status-awaiting-contract { background-color: #fff3cd; color: black; }
+.status-awaiting-shipment { background-color: #dcb6d5; color: black; }
+.status-awaiting-receipt { background-color: #f9d5a7; color: black; }
+.status-received { background-color: #2d6a4f; color: white; }
+.status-pending { background-color: #f8f9fa; color: black; }
+      
+.dashboard-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between; /* หรือ 'space-around' ตามความต้องการ */
+  padding: 0 4px; /* ปรับให้เข้ากับเลย์เอาต์ของคุณ */
+}
+
+.dashboard-card {
+  flex: 0 1 calc(50% - 8px); /* ปรับให้เหมาะสมกับช่องว่างระหว่างการ์ด */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px; /* ระยะห่างระหว่างการ์ด */
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  background-color: #ffffff;
+  overflow: hidden; /* ไม่ให้เอฟเฟควิบวับหลุดออกจากการ์ด */
+}
+      
+.gold, .silver, .bronze, .emerald, .ruby, .sapphire, .amethyst, .citrine, .topaz, .aquamarine {
+    position: relative;
+    overflow: hidden;
+}
+
+.gold::before, .silver::before, .bronze::before,.emerald::before, .ruby::before, .sapphire::before, .amethyst::before, .citrine::before, .topaz::before, .aquamarine::before,
+.gold::after, .silver::after, .bronze::after, .emerald::after, .ruby::after, .sapphire::after, .amethyst::after, .citrine::after, .topaz::after, .aquamarine::after {
+    content: "";
+    position: absolute;
+    top: -50%; right: -50%; bottom: -50%; left: -50%;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05));
+    transform: skewX(-15deg);
+    background-size: 200% 200%;
+}
+
+.gold::before, .silver::before, .bronze::before,.emerald::before, .ruby::before, .sapphire::before, .amethyst::before, .citrine::before, .topaz::before, .aquamarine::before {
+    animation: shine 3s infinite ease-in-out, moveDiagonal1 3s infinite linear;
+}
+
+.gold::after, .silver::after, .bronze::after, .emerald::after, .ruby::after, .sapphire::after, .amethyst::after, .citrine::after, .topaz::after, .aquamarine::after {
+    animation: shine 3s infinite ease-in-out, moveDiagonal2 3s infinite linear;
+}
+
+@keyframes shine {
+  from {
+    left: -100%;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+@keyframes moveDiagonal1 {
+    0%, 100% {
+        transform: translateX(-50%) rotate(45deg);
+    }
+    50% {
+        transform: translateX(150%) rotate(45deg);
+    }
+}
+
+@keyframes moveDiagonal2 {
+    0%, 100% {
+        transform: translateX(150%) rotate(45deg);
+    }
+    50% {
+        transform: translateX(-50%) rotate(45deg);
+    }
+}
+
+.gold {
+    background-image: linear-gradient(145deg, rgba(255, 215, 0, 0.6), rgba(255, 165, 0, 0.6));
+}
+
+.silver {
+    background-image: linear-gradient(145deg, rgba(192, 192, 192, 0.6), rgba(248, 248, 248, 0.6));
+}
+
+.bronze {
+    background-image: linear-gradient(145deg, rgba(205, 127, 50, 0.6), rgba(244, 164, 96, 0.6));
+}
+
+.emerald {
+    background-image: linear-gradient(145deg, rgba(80, 200, 120, 0.6), rgba(76, 187, 23, 0.6));
+}
+
+.ruby {
+    background-image: linear-gradient(145deg, rgba(224, 17, 95, 0.6), rgba(155, 17, 30, 0.3));
+}
+
+.sapphire {
+    background-image: linear-gradient(145deg, rgba(15, 82, 186, 0.6), rgba(0, 0, 205, 0.6));
+}
+
+.amethyst {
+    background-image: linear-gradient(145deg, rgba(153, 102, 204, 0.6), rgba(186, 85, 211, 0.6));
+}
+
+.citrine {
+    background-image: linear-gradient(145deg, rgba(228, 208, 10, 0.6), rgba(255, 215, 0, 0.6));
+}
+
+.topaz {
+    background-image: linear-gradient(145deg, rgba(255, 200, 124, 0.6), rgba(255, 170, 29, 0.6));
+}
+
+.aquamarine {
+    background-image: linear-gradient(145deg, rgba(127, 255, 212, 0.6), rgba(118, 238, 198, 0.6));
+}
+      
+#notificationPanel {
+    background-color: #ffffff; /* หรือสีตามต้องการ */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 70px; /* ปรับตำแหน่งให้เหมาะสมกับตำแหน่งไอคอน */
+    right: 20px; /* ปรับตำแหน่งให้เหมาะสมกับตำแหน่งไอคอน */
+    width: 300px; /* หรือขนาดตามต้องการ */
+    border-radius: 10px;
+    padding: 10px;
+    visibility: hidden;
+    z-index: 200;
+    opacity: 0;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+
+#settingPanel {
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 10px;
+    visibility: hidden;
+    z-index: 300;
+    opacity: 0;
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease;
+    transform: translateX(100%); /* แผงจะเริ่มจากด้านขวาเต็มขนาดหน้าจอ */
+}
+  
+#closeSettingPanel, #closemodal {
+  background-color: transparent; /* ไม่มีพื้นหลัง */
+  border: none; /* ไม่มีเส้นขอบ */
+  cursor: pointer; /* ทำให้เมาส์เป็นรูปมือเมื่อเลื่อนผ่าน */
+}
+
+#closeSettingPanel div, #closemodal div {
+  display: inline-flex; /* ใช้ inline-flex เพื่อให้ปุ่มอยู่ในแนวเดียวกับข้อความ */
+  align-items: center; /* จัดกลางแนวตั้ง */
+  justify-content: center; /* จัดกลางแนวนอน */
+  padding: 8px; /* ขนาดพื้นที่ภายในปุ่ม */
+  border-radius: 50%; /* ทำให้เป็นวงกลม */
+  background-color: #f3f4f6; /* สีพื้นหลัง */
+  color: #374151; /* สีไอคอน */
+}
+
+#authentication-modal {
+    position: fixed;
+    top: 0; right: 0; bottom: 0; left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    visibility: hidden; 
+    opacity: 0;
+    transition: visibility 0.5s, opacity 0.5s, transform 0.5s ease-in-out;
+    transform: translateX(0); 
+    
+}
+
+.modal-content {
+    width: 100%;
+    max-width: none;  /* ตั้งค่าความกว้างสูงสุดไม่จำกัด */
+    height: 100vh; /* ให้สูงเต็มหน้าจอ */
+    background-color: white;
+    border-radius: 0px !important; /* ตั้งค่าขอบเป็นเหลี่ยมและใช้ !important */
+    padding: 20px;
+    overflow: auto; /* หากมีเนื้อหามากจะสามารถเลื่อนได้ */
+    position: fixed; /* ให้อยู่ที่ตำแหน่งตายตัวของหน้าจอ */
+    top: 0; /* ตำแหน่งด้านบนสุด */
+    left: 0; /* ตำแหน่งซ้ายสุด */
+    z-index: 600; /* ให้อยู่เหนือส่วนอื่นๆ */
+    transition: transform 0.5s ease-in-out;
+}
+
+.swal2-container {
+    z-index: 700 !important; /* ตั้งค่าสูงกว่าส่วนอื่นๆ ในหน้าเว็บ */
+}
+  
+.setting-info {
+    border: 2px solid #f0f0f0; /* สีขอบ */
+    padding: 8px 12px;
+    border-radius: 10px; /* ขอบมน */
+    margin-bottom: 10px; /* ระยะห่างระหว่างข้อมูลแต่ละรายการ */
+    background-color: #fff; /* สีพื้นหลัง */
+}
+  
+.form-input {
+    width: 100%;
+    border: 2px solid #f0f0f0 !important; /* สีขอบ */
+    padding: 8px 12px;
+    border-radius: 10px !important; /* ขอบมน 10px */
+    transition: border-color 0.3s ease; /* การเปลี่ยนแปลงสีขอบ */
+    font-size: 18px !important;
+}
+
+.form-input:focus {
+    border-color: #10b981; /* สีขอบเมื่อโฟกัส */
+    outline: none; /* ลบเส้นขอบมาตรฐานของเบราว์เซอร์ */
+}
+
+
+/* ปุ่มสีเขียวสดใส */
+.submit-button {
+    width: 50%;
+    background-color: #10b981; /* สีพื้นหลัง */
+    color: white; /* สีข้อความ */
+    padding: 10px 15px;
+    border: none; /* ลบเส้นขอบ */
+    border-radius: 8px; /* รัศมีมุม */
+    cursor: pointer; /* เปลี่ยนเคอร์เซอร์เป็นมือชี้ */
+    transition: background-color 0.3s ease; /* การเปลี่ยนแปลงสีพื้นหลัง */
+}
+
+.submit-button:hover {
+    background-color: #059669; /* สีพื้นหลังเมื่อเมาส์อยู่เหนือ */
+}
+
+#detailPanel {
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 10px;
+    z-index: 300;
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease;
+    transform: translateX(100%); 
+}
+  
+
+/* ปุ่ม "คัดลอก LINE ID" */
+.swal2-confirm-button-custom {
+    background-color: #4CAF50 !important; /* สีเขียว */
+    color: white !important; /* สีข้อความ */
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+/* ปุ่ม "แชร์" */
+.swal2-cancel-button-custom {
+    background-color: #f44336 !important; /* สีแดง */
+    color: white !important; /* สีข้อความ */
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+ 
+    </style>
+</head>
+
+<body>
+<!-- Notification panel -->
+<div id="notificationPanel" class="absolute top-[60px] right-[20px] bg-white shadow-xl z-40" style="width: 300px; border-radius: 10px; visibility: hidden; opacity: 0; transition: opacity 0.5s, visibility 0.5s;">
+  <!-- ปุ่มปิดบนแผงแจ้งเตือน -->
+<button id="closeNotificationPanel" class="absolute top-0 right-0 mt-2 mr-2 text-gray-400 hover:text-gray-600">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+</button>
+
+    <div class="p-4">
+        <h2 class="font-semibold text-lg">การแจ้งเตือน</h2>
+        <div id="notificationsContent" class="mt-2">
+            <!-- Dynamically loaded notifications -->
+        </div>
+    </div>
+</div>
+  
+<!-- Setting panel -->
+<div id="settingPanel" class="bg-gray-100">
+  <div class="modal-content w-full max-w-md bg-white">
+  <!-- ส่วนหัวของเมนู -->
+  <div class="flex items-center p-4">
+    <button id="closeSettingPanel" class="text-gray-400 hover:text-gray-600 mr-2">
+      <div class="rounded-full bg-gray-200 p-2 flex items-center justify-center" style="width: 35px; height: 35px;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </div>
+    </button>
+
+    <h2 class="flex-grow font-semibold text-lg text-center">ตั้งค่า</h2>
+    <button data-modal-target="authentication-modal" data-modal-toggle="authentication-modal" class="text-gray-400 hover:text-gray-600 mr-2">
+        <div class="rounded-full bg-gray-200 p-2 flex items-center justify-center" style="width: 35px; height: 35px;">
+            <i class="fas fa-pencil-alt"></i>
+        </div>
+    </button>
+  </div>
+  
+  <!-- ส่วนรายละเอียดของผู้ใช้ -->
+  <div class="p-4">
+    <h3 style="color: #888; font-size: 16px; margin-bottom: 4px;">ดิสเพลย์</h3>
+      <div class="setting-info" style="font-size: 16px; color: #555;">
+        <div style="display: flex; align-items: center;">
+    <img id="profilePicture" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHRmNjYxdjk4MGxlODU3bHRjYmxmMDE5NXdiMmc5b21mbjBucDIybSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/D101ONNCxxmKrK84Hr/giphy.gif" alt="Profile Picture" style="width: 35px; height: 35px; border-radius: 50%; margin-right: 10px;">
+    <div style="font-size: 16px; color: #555;"> 
+        <div id="displayName"></div>
+        <div id="displayData"></div>
+    </div>
+</div>
+</div>
+    <div id="settingContent">
+        <!-- ข้อมูลจะถูกโหลดที่นี่ -->
+    </div>
+  </div>
+</div>
+</div>
+  
+<div class="bg-white pt-8 pb-4 header">
+    <div class="max-w-screen-xl mx-auto flex justify-between items-center px-4">
+        <!-- ไอคอนโปรไฟล์ ดึงรูปจาก Liff -->
+        <div id="profileIndex" class="flex items-center">
+          <img id="profilePictureImg" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHRmNjYxdjk4MGxlODU3bHRjYmxmMDE5NXdiMmc5b21mbjBucDIybSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/D101ONNCxxmKrK84Hr/giphy.gif" class="w-10 h-10 rounded-full" alt="Profile Picture">
+        </div>
+
+        <!-- แถบค้นหา -->
+        <div class="flex-grow mx-4">
+            <input type="text" id="filter" placeholder="ค้นหา..." class="w-full py-2 px-4 rounded-lg border-2 border-gray-200">
+        </div>
+
+        <!-- ไอคอนแจ้งเตือนและไอคอนตั้งค่า -->
+        <div class="flex items-center">
+            <button id="notificationButton" onclick="toggleNotificationPanel()">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0018 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.437L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>  
+            </button>
+            <button id="settingButton" onclick="toggleSlideMenu()" class="mx-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+              </svg> 
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white pt-28 pb-2 px-3">
+    <div id="topThree" class="dashboard-row">
+        <!-- การ์ดจะถูกเพิ่มที่นี่โดย JavaScript -->
+    </div>
+</div>
+
+  <!-- ส่วนของการแสดงรายชื่อผู้ลงทะเบียน และ Modal -->
+    <div class="flex h-auto items-center justify-center bg-white">
+        <div class="text-center w-full md:w-1/2 rounded-lg bg-white px-2 py-2 shadow-md m-4">
+            <div class="px-1 py-1">
+                <h3 class="font-bold text-2xl">สัญญาทั้งหมด</h3>
+            </div>
+            <hr><br>
+    
+            <ul id="userList" class="text-center grid grid-cols-3 gap-2 px-1">
+              
+              </ul>
+          
+          <!-- Modal Dialog ในส่วนนี้ -->
+    <div id="modal" class="hidden relative p-2">
+      <div class="flex justify-center items-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+        <p class="text-lg font-medium text-gray-900 ml-3">โปรดรอสักครู่<span class="dot">...</span></p>
+      </div>
+    </div>
+        </div>
+           
+    </div>
+
+  
+<!-- Detail Panel -->
+<div id="detailPanel" class="bg-gray-100">
+    <div class="modal-content w-full max-w-md bg-white">
+  
+  <div class="flex items-center p-4">
+    <button onclick="closeDetailPanel()" class="text-gray-400 hover:text-gray-600 mr-2">
+      <div class="rounded-full bg-gray-200 p-2 flex items-center justify-center" style="width: 35px; height: 35px;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </div>
+    </button>
+
+    <h2 id="detailHeader" class="flex-grow font-semibold text-lg text-center">รายละเอียด</h2>
+   </div>
+      
+      <div id="detailContent" class="p-4">
+                
+      </div>
+    </div>
+</div>
+  
+<!-- Main modal -->
+<div id="authentication-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-content w-full max-w-md bg-white" data-modal-hide="authentication-modal">
+
+<!-- Modal header -->
+<div class="flex items-center p-4">
+  <button id="closemodal" class="text-gray-400 hover:text-gray-600 mr-2">
+    <div class="rounded-full bg-gray-200 p-2 flex items-center justify-center" style="width: 35px; height: 35px;">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+    </div>
+  </button>
+  
+  <h3 class="text-xl font-semibold text-center text-gray-900 dark:text-white flex-grow">
+      อัพเดทข้อมูล
+  </h3>
+</div>
+
+<div class="p-4">
+<h3 style="color: #888; font-size: 16px; margin-bottom: 4px;">ดิสเพลย์</h3>
+<div class="setting-info" style="font-size: 16px; color: #555;">
+<div style="display: flex; align-items: center;">
+    <img id="profileEdit" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHRmNjYxdjk4MGxlODU3bHRjYmxmMDE5NXdiMmc5b21mbjBucDIybSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/D101ONNCxxmKrK84Hr/giphy.gif" alt="Profile Picture" style="width: 35px; height: 35px; border-radius: 50%; margin-right: 10px;">
+        <div style="font-size: 16px; color: #555;">  
+            <p id="displayNameEdit" style="color: #000; font-size: 18px;">Loading...</p>
+        </div>
+</div>
+</div>
+                        <!-- Modal body -->
+<!--                         <div class="p-4 md:p-5"> -->
+<!--                             <p class="text-sm text-gray-500 pb-2">อยากได้ iPhone แต่เงินไม่พอ คิดถึง...</p>
+                            <h1 class="text-2xl font-bold text-gray-600 pb-4">ไอฟินน์</h1> -->
+                          
+                            <form>
+                              
+<!--                                 <div class="text-left" style="margin-bottom: 8px;">
+                                    <label for="agent" style="color: #888; margin-bottom: 4px; display: inline-block;">รหัสตัวแทน (ถ้ามี)</label>
+                                    <input class="form-input" type="text" id="agent" name="agent" placeholder="รหัสตัวแทน" />
+                                </div> -->
+                              
+                                <div class="text-left" style="margin-bottom: 8px;">
+                                    <label for="name" style="color: #888; margin-bottom: 4px; display: inline-block;">ชื่อ-สกุล (ไม่ต้องใส่คำนำหน้า)</label>
+                                    <input class="form-input" type="text" id="name" name="name" placeholder="ชื่อ-สกุล (ไม่ต้องใส่คำนำหน้า)" required />
+                                </div>
+
+                                <div class="text-left" style="margin-bottom: 8px;">
+                                    <label for="nickname" style="color: #888; margin-bottom: 4px; display: inline-block;">ชื่อเล่น</label>
+                                    <input class="form-input" type="text" id="nickname" name="nickname" placeholder="ชื่อเล่น" required />
+                                </div>
+
+                                <div class="text-left" style="margin-bottom: 8px;">
+                                    <label for="phone" style="color: #888; margin-bottom: 4px; display: inline-block;">เบอร์โทรศัพท์</label>
+                                    <input class="form-input" type="tel" id="phone" name="phone" placeholder="เบอร์โทร : ไม่ต้องใส่ขีด" required />
+                                </div>
+                              
+                                <div class="text-left" style="margin-bottom: 8px;">
+                                    <label for="email2" style="color: #888; margin-bottom: 4px; display: inline-block;">อีเมล์</label>
+                                    <input class="form-input" type="email" id="email2" name="email2" placeholder="อีเมล์" />
+                                </div>
+
+                                <div class="text-left" style="margin-bottom: 8px;">
+                                    <label for="facebooklink" style="color: #888; margin-bottom: 4px; display: inline-block;">เฟสบุ๊คลิ้งค์</label>
+                                    <input class="form-input" type="text" id="facebooklink" name="facebooklink" placeholder="Facebook" required />
+                                </div>
+
+                                <div class="text-left" style="margin-bottom: 8px;">
+                                    <label for="lineid" style="color: #888; margin-bottom: 4px; display: inline-block;">ไลน์ไอดี</label>
+                                    <input class="form-input" type="text" id="lineid" name="lineid" placeholder="LINE ID" required />
+                                </div>
+
+                                <div class="text-left" style="margin-bottom: 8px;">
+                                    <label for="address" style="color: #888; margin-bottom: 4px; display: inline-block;">ที่อยู่</label>
+                                    <input class="form-input" type="text" id="address" name="address" placeholder="ที่อยู่ปัจจุบัน (โดยละเอียด)" required />
+                                </div>
+                              
+                                <div class="text-left" style="margin-bottom: 28px;">
+                                    <label for="birthday" style="color: #888; margin-bottom: 4px; display: inline-block;">วันเกิด</label>
+                                    <input class="form-input" type="date" id="birthday" name="birthday" placeholder="วันเกิด" required />
+                                </div>
+
+                                <div class="text-left" style="display: flex; justify-content: center; margin-bottom: 4px;">
+                                    <input class="submit-button" type="button" id="submit" value="อัพเดทข้อมูล" />
+                                </div>
+                            </form>
+                            <p class="text-center text-gray-600  pt-5">
+                                ติดต่อฝ่ายบริการ
+                                <a href="tel:0822802000" class="text-gray-400 font-bold">082-280-2000</a>
+                            </p>
+<!--                         </div> -->
+                    </div>
+                </div>
+  </div>
+  
+<div id="loading-overlay"
+     class="fixed inset-0 bg-gray-500 bg-opacity-75 z-[9999] flex items-center justify-center hidden">
+<!--      <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXduMnZlZHR3cmVhazNvdndvYnl3dDdtNndqbno4Y2lvdjY3ZnlqcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/p7enJwoOJcCr6xSV3K/giphy.gif" -->
+          <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdzJiNjNkeWR6eXlndjhpdDM5eTdydmVmN2wzMzd2bXI5M2RrNW43cyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/vfru2aeeqPA5H73fIB/giphy.gif"
+          alt="Loading..." class="w-1/4 h-auto">
+</div>
+
+  
+    <!-- Popup Advertisement -->
+<div class="fixed inset-0 flex items-center justify-center hidden" id="popupAdvertisement" style="background-color: rgba(0,0,0,0.3);">
+    <div class="bg-white p-4 sm:p-8 rounded-lg shadow-lg text-center" style="width: 90%; max-width: 640px;">
+            <h3 class="text-xl sm:text-2xl font-semibold mb-6 flex flex-col sm:flex-row items-center">
+                <div class="bg-green-200 p-2 rounded-full flex items-center mb-4 sm:mb-0 sm:mr-2">
+                  <svg class="text-green-800 inline-block w-5 h-5" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                  ฉลองเปิดสำนักงานใหม่
+                </div>
+                  ให้สิทธิ์จองเฉพาะคนในพื้นที่
+                
+            </h3>
+        <!-- ข้อมูลโซนพื้นที่ -->
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">กาฬสินธุ์</p>
+                <p class="ml-4"> - อ.คำม่วง, อ.สามชัย, อ.สมเด็จ</p>
+              </div>
+
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">ขอนแก่น</p>
+                <p class="ml-4"> - อ.เมือง, ม.ขอนแก่น</p>
+              </div>
+              
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">ปทุมธานี</p>
+                <p class="ml-4"> - อ.คลองหลวง, อ.ธัญบุรี, อ.ลำลูกกา, ม.เทคโนโลยีราชมงคลธัญบุรี</p>
+              </div>
+              
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">กรุงเทพฯ</p>
+                <p class="ml-4"> - โซนพระราม2, โซนพระราม3, โซนบางแค, โซนจรัญ</p>
+              </div>
+              
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">สุรินทร์</p>
+                <p class="ml-4"> - อ.ท่าตูม, อ.สังขะ, อ.ปราสาท</p>
+              </div>
+        
+        <!-- ปุ่มปิด Popup -->
+        <button class="mt-8 bg-green-900 text-white rounded-lg px-4 py-2 hover:bg-green-700 transition duration-300" id="closePopupBtn">รับทราบ</button>
+    </div>
+</div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  
+  <script>  
+function setupSettingIcon(profile) {
+    document.getElementById('settingButton').addEventListener('click', () => {
+        toggleSettingPanel(profile); // ตรวจสอบให้แน่ใจว่าส่ง userId ไปอย่างถูกต้อง
+    });
+  
+    document.getElementById('editDisplayName').addEventListener('click', () => {
+        toggleAuthenticationModal(profile); // ตรวจสอบให้แน่ใจว่าส่ง userId ไปอย่างถูกต้อง
+    });
+}
+
+async function fetchSetting(userId) {
+    const apiUrl = `https://script.google.com/macros/s/AKfycbxgvGYzG4j3lUJhWHnxyr__XXUZouXKVxMYRoRubLz8TjwTFwTUJqC_UaeJg4k_UBql/exec?q=${userId}`;
+    try {
+        const response = await fetch(apiUrl);
+        const settingData = await response.json();
+        displaySetting(settingData);
+      
+    const user = settingData[0];
+      
+    // อัพเดตรูปภาพ
+        document.getElementById('profileEdit').src = user.ProfileUrl;
+
+    // อัพเดตข้อมูลแสดงผล
+    document.getElementById('displayNameEdit').innerText = user.DisplayName;
+
+    // กรอกข้อมูลในฟอร์ม
+    //document.getElementById('agent').value = user.Agent;
+    document.getElementById('name').value = user.Name;
+    document.getElementById('nickname').value = user.Nickname;
+    document.getElementById('phone').value = user.Phone;
+    document.getElementById('email2').value = user.Email2;
+    document.getElementById('facebooklink').value = user.FacebookLink;
+    document.getElementById('lineid').value = user.LineID;
+    document.getElementById('address').value = user.Address;
+    document.getElementById('birthday').value = user.Birthday;  // ต้องแปลงรูปแบบวันที่ถ้าจำเป็น
+    } catch (error) {
+        console.error('Error fetching notification data:', error);
+    }
+}
+    
+function displaySetting(settingData) {
+    const settingContent = document.getElementById('settingContent');
+    const profilePicture = document.getElementById('profilePicture');
+    const displayName = document.getElementById('displayName');
+    settingContent.innerHTML = '';
+    displayName.innerHTML = '';
+    
+    if (settingData.length > 0) {
+        const setting = settingData[0]; // ใช้ข้อมูลแรกในอาร์เรย์
+        profilePicture.src = setting.ProfileUrl || "https://lh3.googleusercontent.com/d/1umbkR_fzr8eWN2TmPoUKIWFJD3f0HHcu?key=123"; // ตั้งค่า URL รูปภาพ
+      
+        const displayNameElement = document.createElement('div');
+        displayNameElement.innerHTML = `
+          
+            <p style="color: #000; font-size: 18px;">${setting.DisplayName || "ไม่มีข้อมูล"}</p>
+         
+`;
+
+        displayName.appendChild(displayNameElement);
+
+        const settingElement = document.createElement('div');
+        settingElement.innerHTML = `
+        <div style="font-size: 16px; color: #555;">
+          
+            <h3 style="color: #888; margin-bottom: 4px;">ชื่อ-สกุล (ไม่ต้องใส่คำนำหน้า)</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${setting.Name || "ไม่มีข้อมูล"}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">ชื่อเล่น</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${setting.Nickname || "ไม่มีข้อมูล"}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">เบอร์โทรศัพท์</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${setting.Phone || "ไม่มีข้อมูล"}</p>
+          </div>
+        
+          <h3 style="color: #888; margin-bottom: 4px;">อีเมล์</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${setting.Email2 || "ไม่มีข้อมูล"}</p>
+          </div>
+          
+            <h3 style="color: #888; margin-bottom: 4px;">เฟสบุ๊คลิ้งค์</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${setting.FacebookLink || "ไม่มีข้อมูล"}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">ไลน์ไอดี</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${setting.LineID || "ไม่มีข้อมูล"}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">ที่อยู่</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${setting.Address || "ไม่มีข้อมูล"}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">วันเกิด</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${setting.Birthday || "ไม่มีข้อมูล"}</p>
+          </div>
+        </div>
+`;
+
+        settingContent.appendChild(settingElement);
+    } else {
+        settingContent.innerHTML = '<p>ไม่พบข้อมูล</p>';
+    }
+}
+
+function toggleSettingPanel(profile) {
+   const userId = profile.userId;
+   const panel = document.getElementById('settingPanel');
+   const button = document.getElementById('settingButton');
+   if (panel.style.visibility === 'hidden' || !panel.style.visibility) {
+       // เปิดแผง
+       panel.style.visibility = 'visible';
+       panel.style.opacity = 1;
+       panel.style.transform = 'translateX(0)'; // เลื่อนแผงเข้าสู่ตำแหน่งปกติ
+       button.classList.add('text-blue-500');
+       fetchSetting(userId);
+   } else {
+       // ปิดแผง
+       panel.style.visibility = 'hidden';
+       panel.style.opacity = 0;
+       panel.style.transform = 'translateX(100%)'; // เลื่อนแผงกลับไปทางด้านขวา
+       button.classList.remove('text-blue-500');
+   }
+}
+
+function resetSettingIconColor() {
+    const settingButton = document.getElementById('settingButton');
+    settingButton.classList.remove('text-blue-500'); // ลบสีปัจจุบัน
+    settingButton.classList.add('text-gray-500'); // เพิ่มสีเดิม
+}
+
+</script>
+
+    <script>
+function toggleAuthenticationModal() {
+    var modal = document.getElementById('authentication-modal');
+    if (modal.style.visibility === 'hidden' || !modal.style.visibility) {
+        modal.style.visibility = 'visible';
+        modal.style.opacity = 1;
+        modal.style.transform = 'translateX(0)'; // สไลด์เข้าสู่หน้าจอจากขวาไปซ้าย
+    } else {
+        closeModal();
+    }
+}
+
+function closeModal() {
+    var modal = document.getElementById('authentication-modal');
+    modal.style.visibility = 'hidden';
+    modal.style.opacity = 0;
+    modal.style.transform = 'translateX(100%)'; // สไลด์ออกจากหน้าจอจากซ้ายไปขวา
+}
+
+// ตั้ง Event Listener สำหรับปุ่มที่ปิด Modal
+document.getElementById('closemodal').addEventListener('click', closeModal);
+
+
+// ตั้ง Event Listener สำหรับปุ่มที่เปิด Modal
+document.querySelector('[data-modal-toggle="authentication-modal"]').addEventListener('click', toggleAuthenticationModal);
+
+</script>
+
+<script>
+function openDetailPanel(title, data) {
+    const panel = document.getElementById('detailPanel');
+    const content = document.getElementById('detailContent');
+    const header = document.getElementById('detailHeader');  // รับ element ที่จะแสดงหัวข้อ
+    header.textContent = title;  // ตั้งค่าหัวข้อตาม title ที่ได้รับ
+    panel.style.visibility = "visible";
+    panel.style.transform = "translateX(0)";  // Slide in
+    panel.classList.remove('hidden');
+
+    const details = data[0];  // Replace `data` with the actual data variable name
+    let htmlContent = ``;
+    switch (title) {
+        case 'ยอดขายทั้งหมด':
+            htmlContent += `
+        <div style="font-size: 16px; color: #555;">
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาหลัก</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.SalesCM}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาลพบุรี</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.SalesLB}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาร้อยเอ็ด</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.SalesRE}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาสมเด็จ</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.SalesSD}</p>
+          </div>
+        </div>`;
+            break;
+        
+        case 'ยอดเก็บหนี้แล้ว':
+            htmlContent += `
+        <div style="font-size: 16px; color: #555;">
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาหลัก</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.DebtAmountCM}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาลพบุรี</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.DebtAmountLB}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาร้อยเอ็ด</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.DebtAmountRE}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาสมเด็จ</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.DebtAmountSD}</p>
+          </div>
+        </div>`;
+            break;
+            
+        case 'ค่าคอมฯสะสม':
+            htmlContent += `
+        <div style="font-size: 16px; color: #555;">
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาหลัก</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.AccumComCM}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาลพบุรี</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.AccumComLB}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาร้อยเอ็ด</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.AccumComRE}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาสมเด็จ</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.AccumComSD}</p>
+          </div>
+        </div>`;
+            break;
+        
+        case 'ค่าคอมฯเดือนนี้':
+            htmlContent += `
+        <div style="font-size: 16px; color: #555;">
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาหลัก</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.MonthComCM}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาลพบุรี</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.MonthComLB}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาร้อยเอ็ด</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.MonthComRE}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาสมเด็จ</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.MonthComSD}</p>
+          </div>
+        </div>`;
+            break;
+        
+        case 'รายได้ที่รอเก็บ':
+            htmlContent += `
+        <div style="font-size: 16px; color: #555;">
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาหลัก</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.RemainingCM}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาลพบุรี</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.RemainingLB}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาร้อยเอ็ด</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.RemainingRE}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาสมเด็จ</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.RemainingSD}</p>
+          </div>
+        </div>`;
+            break;
+        
+        case 'สัญญาทั้งหมด':
+            htmlContent += `
+        <div style="font-size: 16px; color: #555;">
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาหลัก</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.AllPromisesCM}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาลพบุรี</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.AllPromisesLB}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาร้อยเอ็ด</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.AllPromisesRE}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาสมเด็จ</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.AllPromisesSD}</p>
+          </div>
+        </div>`;
+            break;
+        
+        case 'สัญญาที่ปิดแล้ว':
+            htmlContent += `
+        <div style="font-size: 16px; color: #555;">
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาหลัก</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.ClosedCM}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาลพบุรี</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.ClosedLB}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาร้อยเอ็ด</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.ClosedRE}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาสมเด็จ</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.ClosedSD}</p>
+          </div>
+        </div>`;
+            break;
+        
+        case 'เปอร์เซ็นหนี้เสีย':
+            htmlContent += `
+        <div style="font-size: 16px; color: #555;">
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาหลัก</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.BDPercentageCM}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาลพบุรี</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.BDPercentageLB}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาร้อยเอ็ด</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.BDPercentageRE}</p>
+          </div>
+        
+            <h3 style="color: #888; margin-bottom: 4px;">สาขาสมเด็จ</h3>
+          <div class="setting-info" style="font-size: 16px; color: #555;">
+            <p style="color: #000; font-size: 18px;">${details.BDPercentageSD}</p>
+          </div>
+        </div>`;
+            break;
+    }
+    content.innerHTML = htmlContent;
+}
+
+
+function closeDetailPanel() {
+    const panel = document.getElementById('detailPanel');
+    panel.style.transform = "translateX(100%)";  // Slide out
+}
+
+// ตั้ง Event Listener สำหรับปุ่มที่ปิด Modal
+document.getElementById('closeDetailPanel').addEventListener('click', closeDetailPanel);
+
+</script>
+  
+    <script>
+      
+const userList = document.getElementById('userList');
+const filter = document.getElementById('filter');
+const listItems = [];
+      
+        window.onload = function () {
+            const defaultLiffId = "1661371622-24QnLB1O";
+            initializeLiff(defaultLiffId);
+        };
+      
+let dataCache = []; // เก็บข้อมูลที่ดึงมาจาก API
+      
+      function debounce(func, wait, immediate) {
+        let timeout;
+        return function() {
+          const context = this, args = arguments;
+          const later = function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+          };
+          const callNow = immediate && !timeout;
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+          if (callNow) func.apply(context, args);
+        };
+      }
+      
+      // สร้างฟังก์ชัน filterData และเรียกใช้งานใน debounceFilterData
+      function filterData(searchTerm) {
+        const filteredData = dataCache.filter(user => 
+          user.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.Status.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        displayUserData(filteredData);
+      }
+
+      const debounceFilterData = debounce(filterData, 500);
+
+    document.getElementById('filter').addEventListener('input', function(e) {
+        debounceFilterData(e.target.value);
+    });
+      
+    document.getElementById('closeNotificationPanel').addEventListener('click', function() {
+        const notificationPanel = document.getElementById('notificationPanel');
+        notificationPanel.style.visibility = 'hidden';
+        notificationPanel.style.opacity = 0;
+      // ซ่อนแผงแจ้งเตือน
+    const panel = document.getElementById('notificationPanel');
+    panel.style.visibility = 'hidden';
+    panel.style.opacity = 0;
+    
+    // รีเซ็ตสีไอคอนแจ้งเตือน
+    resetNotificationIconColor();
+      
+    });
+      
+    document.getElementById('closeSettingPanel').addEventListener('click', function() {
+    const settingPanel = document.getElementById('settingPanel');
+
+    // สั่งให้แผงเริ่มการเคลื่อนไหวสไลด์ออกและค่อยๆ จางหาย
+    settingPanel.style.opacity = 0.5;
+    settingPanel.style.transform = 'translateX(100%)'; // สไลด์ออกจากหน้าจอ
+
+    // รอจนกว่า animation จะเสร็จสิ้น จึงซ่อนแผง
+    setTimeout(() => {
+        settingPanel.style.visibility = 'hidden';
+    }, 500); // ระยะเวลาต้องตรงกับเวลาใน CSS
+
+    // รีเซ็ตสีไอคอนแจ้งเตือน
+    resetSettingIconColor();
+});
+
+      
+        document.addEventListener("DOMContentLoaded", function () {
+          let lastScrollTop = 0;
+    window.addEventListener("scroll", function() {
+        let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+        if (currentScroll > lastScrollTop) {
+            // สไลด์ลง
+            document.querySelector(".header").style.top = "-100px"; // ต้องปรับค่านี้ให้เหมาะสมกับความสูงของ header ของคุณ
+        } else {
+            // สไลด์ขึ้น
+            document.querySelector(".header").style.top = "0";
+        }
+        lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // Remember the last scroll position
+    }, false);
+          
+          // เมื่อหน้าเว็บโหลดเสร็จ แสดง Popup
+//         setTimeout(function() {
+//             document.getElementById('popupAdvertisement').classList.remove('hidden');
+//         }, 1000); // แสดงหลังจาก 1 วินาที
+
+//         // ฟังก์ชั่นปิด Popup
+//         document.getElementById('closePopupBtn').addEventListener('click', function() {
+//             document.getElementById('popupAdvertisement').classList.add('hidden');
+//         });
+          
+            const userList = document.getElementById('userList');
+            
+            fetchAndDisplayUserData(userId);
+            setInterval(fetchAndDisplayUserData(userId), 5000);
+          
+        });
+
+      
+async function initializeLiff(defaultLiffId) {
+  try {
+    await liff.init({ liffId: defaultLiffId, withLoginOnExternalBrowser: true });
+    if (!liff.isLoggedIn()) {
+      liff.login();
+    } else {
+      const profile = await liff.getProfile();
+      const userId = profile.userId;
+      setUpUser(profile);
+      fetchAndDisplayUserData(profile.userId); // โหลดข้อมูลสัญญาทั้งหมดที่นี่
+    }
+  } catch (error) {
+    console.error('Initialize LIFF failed', error);
+  }
+}
+
+      
+function setUpUser(profile) {
+    const pictureUrl = profile.pictureUrl;
+    const userId = profile.userId;
+    document.getElementById('profilePictureImg').src = pictureUrl;
+    document.getElementById('submit').addEventListener('click', () => handleResult(profile));
+
+    // ปรับให้ส่ง userId ไปยังฟังก์ชันที่ต้องการ
+    fetchAgentData(userId);
+    setInterval(() => fetchAgentData(userId), 5000); // อัพเดตข้อมูลทุก ๆ 5 วินาที
+    fetchAndDisplayUserData(userId);
+    setupNotificationIcon(profile); // แก้ไขที่นี่ ส่ง userId ไปให้ฟังก์ชัน
+    setupSettingIcon(profile); // แก้ไขที่นี่ ส่ง userId ไปให้ฟังก์ชัน
+    editSettingIcon(profile); // แก้ไขที่นี่ ส่ง userId ไปให้ฟังก์ชัน
+}
+
+
+async function handleResult(profile) {
+    // การรับค่าจากฟอร์ม
+    // var agent = document.getElementById("agent").value || "ไม่มีตัวแทน";
+    var name = document.getElementById("name").value;
+    var nickname = document.getElementById("nickname").value;
+    var birthday = document.getElementById("birthday").value;
+    var email2 = document.getElementById("email2").value;
+    var phone = document.getElementById("phone").value;
+    var facebooklink = document.getElementById("facebooklink").value;
+    var lineid = document.getElementById("lineid").value;
+    var address = document.getElementById("address").value;
+            
+            // เช็คว่าถ้า agent ไม่ได้ถูกกรอก ให้เป็น "ไม่มีตัวแทน"
+            // if (agent.trim() === '') {
+            //       agent = "ไม่มีตัวแทน";
+            // }
+     
+            if (name.trim() === '' || nickname.trim() === '' || birthday.trim() === '' || phone.trim() === '' || email2.trim() === '' || facebooklink.trim() === '' || lineid.trim() === '' || address.trim() === '') {
+
+                Swal.fire('Error', 'โปรดกรอกข้อมูลให้ครบทุกช่อง', 'error');
+                return;
+            }
+
+
+            if (!validatePhoneNumber(phone)) {
+                Swal.fire('Error', 'รูปแบบเบอร์โทรไม่ถูกต้อง', 'error');
+                return;
+            }
+
+            // liff.getProfile()
+            //     .then(profile => {
+            //         const displayName = profile.displayName;
+            //         const userId = profile.userId;
+            //         const pictureUrl = profile.pictureUrl;
+            //         const email = profile.email;
+                    sendToGoogleSheet(profile.userId , profile.displayName, profile.pictureUrl, profile.email, email2, name, nickname, birthday, phone, facebooklink, lineid, address);
+                // })
+                // .catch(err => {
+                //     console.log("Error", err);
+                // });
+        }
+
+
+//         function validateEmail(email) {
+
+//             var re = /\S+@\S+\.\S+/;
+//             return re.test(email);
+//         }
+
+
+        function validatePhoneNumber(tel) {
+            var re = /^[0-9]{10}$/;
+            return re.test(tel);
+        }
+
+        async function sendToGoogleSheet(userId , displayName, pictureUrl, email, email2, name, nickname, birthday, phone, facebooklink, lineid, address) {
+            $('#loading-overlay').removeClass('hidden');
+            $.post('https://script.google.com/macros/s/AKfycbz-frvBILLmCJpkIK-oHKOB_ejTmOgdGPlE8Bh216xqs9GlX4J41rfgnbGHb8FpOv-8/exec', {
+                userId: userId,
+                displayName: displayName,
+                pictureUrl: pictureUrl,
+                email: email,
+                name: name,
+                nickname: nickname,
+                birthday: birthday,
+                phone: phone,
+                email2: email2,
+                facebooklink: facebooklink,
+                lineid: lineid,
+                address: address
+            })
+                .done(function (response) {
+                    $('#loading-overlay').addClass('hidden');
+                    if (response.statusCode === 200) {
+                        const flexMessage = JSON.parse(response.body);
+                        liff.sendMessages([flexMessage])
+                            .then(function (res) {
+                                if (res) {
+                                    Swal.fire('ดำเนินการสำเร็จ', 'อัพเดทข้อมูลเรียบร้อยแล้ว', 'success')
+                                        .then(() => {
+                                            document.getElementById('email2').value = '';
+                                            document.getElementById('name').value = '';
+                                            document.getElementById('nickname').value = '';
+                                            document.getElementById('birthday').value = '';
+                                            document.getElementById('phone').value = '';
+                                            document.getElementById('address').value = '';
+                                           // ปิดหน้าต่างแก้ไขทันที
+                                            closeModal();
+                                          // หน่วงเวลา 1 วินาทีก่อนจำลองการกดปุ่มปิดหน้าต่างตั้งค่า
+                                            setTimeout(() => {
+                                              document.getElementById('closeSettingPanel').click();
+                                            }, 1000); // หน่วงเวลา 1000 มิลลิวินาที (1 วินาที)
+                                        });
+                                } else {
+                                    //console.log("TargetPicker was closed!");
+                                }
+                            })
+                            .catch(function (error) {
+                                //console.log("Something wrong happened");
+                            });
+                    }
+                })
+                .fail(function (error) {
+                    Swal.fire('Error', 'มีข้อผิดพลาดในการบันทึกข้อมูล', 'error');
+                    $('#loading-overlay').addClass('hidden');
+                    liff.closeWindow();
+                });
+        }
+      
+function getStatusText(status) {
+  if (status.startsWith('ล่าช้า')) {
+    return `ล่าช้า ${status.slice(6)}`; // ตัดคำว่า "ล่าช้า" และรวมข้อความที่ตามหลังมัน
+  } else if (status.endsWith('ถึงวันนัด')) {
+    return status; // แสดงสถานะเต็มรูปแบบที่มี "ถึงวันนัด"
+  } else {
+    // สำหรับสถานะอื่นๆ ที่ไม่ตรงเงื่อนไขพิเศษ
+    switch (status) {
+      case 'ยังไม่ลงข้อมูล':
+      case 'ปกติ':
+      case 'ปิด':
+      case 'ลบเครื่อง':
+        return status;
+      default:
+        return 'รอลงข้อมูล'; // สำหรับสถานะที่ไม่ถูกระบุอย่างชัดเจน
+    }
+  }
+}
+      
+function getStatusClass(status) {
+  if (status.startsWith('ล่าช้า')) {
+    return 'status-awaiting-shipment blinking'; // เพิ่ม class สำหรับสถานะ "ล่าช้า"
+  } else if (status.endsWith('ถึงวันนัด')) {
+    return 'status-awaiting-receipt blinking'; // เพิ่ม class สำหรับสถานะ "ถึงกำหนด"
+  } else {
+    switch (status) {
+      case 'ยังไม่ลงข้อมูล':
+        return 'status-considering blinking';
+      case 'ลบเครื่อง':
+        return 'status-out-of-area';
+      case 'ปกติ':
+        return 'status-normal'; // ใช้คลาสใหม่สำหรับสถานะ "ปกติ"
+      case 'ปิด':
+        return 'status-received';
+      default:
+        return 'status-pending'; // สำหรับสถานะอื่นๆ
+    }
+  }
+}
+      
+async function fetchAgentData(userId) {
+    //Script : JSON สรุปสัญญาลูกค้า แดชบอร์ด
+    const apiUrl = `https://script.google.com/macros/s/AKfycbz7uHHTFhfrGaUYeV5YhDlBvP9GrczweY2UiWGa0ZGdfId_LV9l6OOx-ApV4n35Tq1_/exec?q=${userId}`;
+    
+    // // ตรวจสอบว่ามีข้อมูลใน Local Storage หรือไม่
+    // const cachedAgentData = localStorage.getItem('iFinnAgentData');
+    // if (cachedAgentData) {
+    //     const data = JSON.parse(cachedAgentData);
+    //     displayDashboardData(data); // แสดงข้อมูลจาก cache ก่อน
+    // }
+
+    try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        //localStorage.setItem('iFinnAgentData', JSON.stringify(data)); // อัพเดต Local Storage ด้วยข้อมูลใหม่
+        displayDashboardData(data); // แสดงข้อมูลใหม่
+    } catch (error) {
+        //console.error('Error fetching iFinnAgent data:', error);
+        
+    }
+}
+      
+ 
+function displayDashboardData(data) {
+    const dashboardContainer = document.getElementById('topThree');
+    dashboardContainer.innerHTML = ''; // ล้างคอนเทนเนอร์ก่อนเพิ่มข้อมูลใหม่
+
+    // ตัวอย่างข้อมูลสำหรับแต่ละการ์ด รวมถึงไอคอนและสีสำหรับไอคอน
+    const cardsData = [
+    { title: "สถานะ", value: data[0].Status, colorClass: "gold", icon: "<i class='fas fa-info-circle'></i>", iconColor: "#ccad04" },
+    { title: "วงเงินทั้งหมด", value: data[0].AllSpent, colorClass: "silver", icon: "<i class='fas fa-money-bill-wave'></i>", iconColor: "#C0C0C0" },
+    { title: "วงเงินที่ใช้ไป", value: data[0].MoneySpent, colorClass: "aquamarine", icon: "<i class='fas fa-chart-line'></i>", iconColor: "#27f2ae" },
+    { title: "วงเงินคงเหลือ", value: data[0].RemainingCredit, colorClass: "emerald", icon: "<i class='fas fa-piggy-bank'></i>", iconColor: "#50C878" },
+    { title: "วันครบกำหนดชำระ", value: data[0].DueDate, colorClass: "sapphire", icon: "<i class='fas fa-calendar-alt'></i>", iconColor: "#0F52BA" },
+    { title: "ชำระขั้นต่ำ", value: data[0].MinimumPayment, colorClass: "amethyst", icon: "<i class='fas fa-dollar-sign'></i>", iconColor: "#9966CC" },
+    { title: "จำนวนงวด", value: data[0].AlreadyCollectedPeriod, colorClass: "bronze", icon: "<i class='fas fa-hourglass'></i>", iconColor: "#CD7F32" },
+    { title: "สัญญาทั้งหมด", value: data[0].AllPromises, colorClass: "ruby", icon: "<i class='fas fa-file-signature'></i>", iconColor: "#9B111E" }
+];
+
+    // สร้างและแสดงการ์ดสำหรับแต่ละข้อมูล
+    cardsData.forEach(card => {
+        const cardElement = document.createElement('div');
+        cardElement.className = `dashboard-card ${card.colorClass}`;
+        cardElement.style.display = 'flex';
+        cardElement.style.flexDirection = 'column';
+        cardElement.style.alignItems = 'center';
+        cardElement.style.justifyContent = 'center';
+        cardElement.dataset.title = card.title;  // เพิ่ม dataset เพื่อใช้ในการจัดการคลิก
+
+        const titleContainer = document.createElement('div');
+        titleContainer.style.display = 'flex';
+        titleContainer.style.alignItems = 'center';
+        titleContainer.style.justifyContent = 'center';
+        titleContainer.style.width = '100%';
+
+        const iconElement = document.createElement('div');
+        iconElement.innerHTML = card.icon;
+        iconElement.style.color = card.iconColor;
+        iconElement.style.fontSize = '20px';
+        iconElement.style.marginRight = '10px';
+
+        const titleElement = document.createElement('div');
+        titleElement.className = "text-gray-500";
+        titleElement.textContent = card.title;
+        //titleElement.style.fontWeight = 'bold';
+        titleElement.style.fontSize = '16px';
+
+        titleContainer.appendChild(iconElement);
+        titleContainer.appendChild(titleElement);
+
+        const valueElement = document.createElement('div');
+        valueElement.textContent = card.value;
+        valueElement.style.fontWeight = 'bold';
+        valueElement.style.fontSize = '22px';
+
+        cardElement.appendChild(titleContainer);
+        cardElement.appendChild(valueElement);
+        dashboardContainer.appendChild(cardElement);
+      
+        // ตั้งค่า event listener สำหรับการคลิก
+        cardElement.addEventListener('click', () => {
+            openDetailPanel(card.title, data);  // ส่ง title และ data ไปยังฟังก์ชันที่เปิดพาเนลรายละเอียด
+        });
+    });
+}
+
+async function fetchAndDisplayUserData(userId) {
+  showModal();
+  const apiUrl = `https://script.google.com/macros/s/AKfycbxyI_5MbDzXNw_E8ILZN-d2lE2QSSfxUVatFqmBsTDpdTY0U6FRCzE5kI8zW6_i0nc6/exec?q=${userId}`;
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    dataCache = data; // บันทึกข้อมูลไว้ใน cache
+    displayUserData(data); // แสดงข้อมูล
+    hideModal();
+  } catch (error) {
+    console.error('Error fetching contract data:', error);
+    hideModal();
+  }
+}
+      
+function displayUserData(data) {
+    const userList = document.getElementById('userList');
+    userList.innerHTML = '';
+
+  if (data.length === 0) {
+    const listItem = document.createElement('li');
+    listItem.textContent = 'ไม่พบข้อมูล';
+    userList.appendChild(listItem);
+    return;
+  }
+  
+  // Reverse the data array to show the oldest contract first
+  data.reverse();
+
+    data.forEach((user, index) => {
+  //const filteredData = data.filter(d => {
+        const listItem = document.createElement('li');
+                            listItem.className = 'flex flex-col items-center profile-item';
+
+                            const userImg = document.createElement('img');
+                            userImg.src = user.ProfileUrl || "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzN5NDEweTFzd2w0ZXB5MGU5a2U1ODhqbnBvZnczbjRhOWU0Y3hsayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/78C8PFeItATMXKTx77/giphy.gif";
+                            userImg.alt = 'User Image';
+                            userImg.className = 'rounded-full w-16 h-16 object-cover mb-1';
+
+                            const userName = document.createElement('h5');
+                            userName.className = 'user-name mb-1';
+                            userName.innerHTML = `<b class="truncate"><div class="mt-2"><span class="px-3 py-1 rounded-full text-xs font-semibold truncate ${getStatusClass(user.Status)}">${getStatusText(user.Status)}</span></div>`;
+
+                            const agentUser = document.createElement('span');
+                            agentUser.className = 'text-base font-bold text-gray-500';
+                            //agentUser.textContent = `${user.Agent}`;
+                            agentUser.textContent = `สัญญา ${index + 1}`; // แสดงลำดับ
+      
+                            //listItem.appendChild(userImg);
+                            listItem.appendChild(agentUser);
+                            listItem.appendChild(userImg);
+                            //listItem.appendChild(document.createElement('br'));
+                            listItem.appendChild(userName);
+                            userList.appendChild(listItem);
+
+
+                listItem.addEventListener('click', () => {
+                          
+                                    openSwal(user.ProfileUrl, user.Agent, user.Name, user.Address, user.Phone, user.FaceBook, user.LineID, user.Status, user.PayDay, user.PayFirst, user.PayP, user.Period, user.AlreadyCollectedPeriod ,user.AlreadyCollected, user.PayPercentage, user.Address2, user.Address3); // ส่งข้อความเมื่อคลิกที่โปรไฟล์
+
+                        });
+    });
+}
+      
+async function getValidImageUrl(imgUrl) {
+  try {
+    await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = resolve;
+      img.onerror = reject;
+      img.src = imgUrl;
+    });
+    return imgUrl; // ภาพโหลดสำเร็จ
+  } catch (error) {
+    return "https://lh3.googleusercontent.com/d/1umbkR_fzr8eWN2TmPoUKIWFJD3f0HHcu?key=123"; // ภาพสำรอง
+  }
+}
+      
+async function openSwal(img, agent, name, address, phone, facebook, lineId, status, payday, paydate, money, instance, paid, paidM, paidPM, address2, address3) {
+  
+  const imageToDisplay = await getValidImageUrl(img);
+  
+  // ใช้ Swal.fire เพื่อแสดง Modal
+  Swal.fire({
+    html: `
+      <div style="border-radius: 20px; overflow: hidden; margin-bottom: 20px;">
+        <img src="${imageToDisplay}" style="display: block; width: 100%; border-radius: 10px;">
+      </div>
+      <div style="font-size: 16px; color: #444; text-align: left;">
+        <p><b>รหัสผู้แนะนำ:</b> <span style="float: right;">${agent}</span></p>
+        <p><b>ชื่อ:</b> <span style="float: right;">${name}</span></p>
+        <p><b>จังหวัด:</b> <span style="float: right;">${address2}</span></p>
+        <p><b>รหัสไปรษณีย์:</b> <span style="float: right;">${address3}</span></p>
+        <p><b>เบอร์โทร:</b> <span style="float: right;">${phone}</span></p>
+        <p><b>LINE ID:</b> <span style="float: right;">${lineId}</span></p>
+        <p><b>สถานะ:</b> <span style="float: right;">${status}</span></p>
+      </div>
+    `,
+    width: '65%',
+    showCloseButton: true,
+    showCancelButton: true,
+    confirmButtonText: 'คัดลอก LINE ID',
+    cancelButtonText: 'แชร์',
+    preConfirm: () => {
+      // คัดลอก LINE ID
+      return navigator.clipboard.writeText(lineId)
+        .then(() => {
+          Swal.fire('สำเร็จ!', 'คัดลอก LINE ID เรียบร้อย', 'success');
+        })
+        .catch(() => {
+          Swal.fire('ผิดพลาด!', 'ไม่สามารถคัดลอก LINE ID ได้', 'error');
+        });
+    },
+    customClass: {
+      htmlContainer: 'swal2-custom-html',
+      confirmButton: 'swal2-confirm-button-custom',
+      cancelButton: 'swal2-cancel-button-custom'
+    }
+  }).then((result) => {
+    if (result.dismiss === Swal.DismissReason.cancel) {
+      shareFlexMessage(img, agent, name, address, phone, facebook, lineId, status, payday, paydate, money, instance, paid, paidM, paidPM, address2, address3);
+    }
+  });
+}
+      
+async function shareFlexMessage(img, agent, name, address, phone, facebook, lineId, status, payday, paydate, money, instance, paid, paidM, paidPM, address2, address3){
+ 
+  const imageToDisplay = await getValidImageUrl(img);
+  // ตรวจสอบค่าว่างและกำหนดค่าเริ่มต้นเป็น "ไม่มีข้อมูล" หากตัวแปรมีค่าว่าง
+  name = name || "ไม่มีข้อมูล";
+  agent = agent || "ไม่มีข้อมูล";
+  address = address || "ไม่มีข้อมูล";
+  phone = phone || "ไม่มีข้อมูล";
+  facebook = facebook || "ไม่มีข้อมูล";
+  lineId = lineId || "ไม่มีข้อมูล";
+  status = status || "ไม่มีข้อมูล";
+  payday = payday || "ไม่มีข้อมูล";
+  paydate = paydate || "ไม่มีข้อมูล";
+  money = money || "ไม่มีข้อมูล";
+  instance = instance || "ไม่มีข้อมูล";
+  paid = paid || "ไม่มีข้อมูล";
+  paidM = paidM || "ไม่มีข้อมูล";
+  paidPM = paidPM || "ไม่มีข้อมูล";
+          
+    const flexMessage = {
+    "type": "flex",
+    "altText": "แชร์จาก " + liff.getDecodedIDToken().name,
+    "contents": 
+  {
+  "type": "bubble",
+  //   "hero": {
+  //   "type": "image",
+  //   "url":  "" + imageToDisplay,
+  //   "size": "full",
+  //   "aspectRatio": "20:10",
+  //   "aspectMode": "cover",
+  // },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "image",
+                "url": "" + imageToDisplay,
+                "aspectMode": "cover",
+                "size": "full"
+              }
+            ],
+            "width": "80px",
+            "height": "80px",
+            "cornerRadius": "18px"
+          }
+        ],
+        "justifyContent": "center",
+        "paddingAll": "xs"
+      },
+      {
+        "type": "text",
+        "text": "รายละเอียดลูกค้า",
+        "weight": "bold",
+        "size": "xl",
+        "margin": "md",
+        "align": "center"
+      },
+      {
+        "type": "separator",
+        "margin": "md"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "xxl",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ชื่อ :",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0,
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + name,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ที่อยู่ :",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0,
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + address,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "เบอร์โทร :",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0,
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + phone,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "เฟสบุ๊ค :",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0,
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + facebook,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ไลน์ไอดี :",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0,
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + lineId,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "separator",
+            "margin": "md"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "margin": "xxl",
+            "contents": [
+              {
+                "type": "text",
+                "text": "สถานะ :",
+                "size": "sm",
+                "color": "#555555",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + status,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },{
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "จ่ายทุกวันที่ :",
+                "size": "sm",
+                "color": "#555555",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + payday,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "เริ่มจ่ายงวดแรก :",
+                "size": "sm",
+                "color": "#555555",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + paydate,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "จำนวนเงิน :",
+                "size": "sm",
+                "color": "#555555",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + money,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "จำนวนงวด :",
+                "size": "sm",
+                "color": "#555555",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + instance,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ชำระแล้ว :",
+                "size": "sm",
+                "color": "#555555",
+                "weight": "bold"
+              },
+              {
+                "type": "text",
+                "text": "" + paid,
+                "size": "sm",
+                "color": "#111111",
+                "align": "end"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ยอดที่ผ่อนชำระแล้ว",
+                "align": "start",
+                "weight": "bold"
+              }
+            ]
+          }
+        ],
+        "offsetTop": "8px",
+        "paddingStart": "2%"
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "baseline",
+            "contents": [
+              {
+                "type": "text",
+                "text": "฿" + paidM,
+                "align": "center",
+                "color": "#0e6909",
+                "weight": "bold",
+                "size": "lg",
+                "offsetTop": "1px"
+              }
+            ],
+            "position": "relative"
+          },
+          {
+            "type": "box",
+            "layout": "baseline",
+            "contents": [],
+            "position": "relative"
+          }
+        ],
+        "position": "relative",
+        "offsetTop": "5px"
+      },
+      {
+        "type": "text",
+        "text": "" +  paidPM,
+        "align": "end",
+        "size": "sm",
+        "gravity": "center",
+        "margin": "lg",
+        "offsetTop": "-15px",
+        "weight": "bold",
+        "color": "#0e6909"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "filler"
+              }
+            ],
+            "width": "" +  paidPM,
+            "backgroundColor": "#23c91a",
+            "height": "8px",
+            "cornerRadius": "xxl"
+          }
+        ],
+        "backgroundColor": "#c6f5c4",
+        "height": "8px",
+        "margin": "sm",
+        "cornerRadius": "xxl",
+        "offsetTop": "-15px"
+      },
+      {
+        "type": "separator",
+        "margin": "none"
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "margin": "md",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "button",
+                "action": {
+                  "type": "clipboard",
+                  "label": "คัดลอก LINE ID",
+                  "clipboardText": "" + lineId
+                },
+                "style": "primary",
+                "height": "sm"
+              }
+            ],
+            "paddingAll": "xs"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "button",
+                "action": {
+                  "type": "uri",
+                  "label": "โทร",
+                  "uri": "tel:" + phone
+                },
+                "style": "primary",
+                "height": "sm"
+              }
+            ],
+            "paddingAll": "xs"
+          }
+        ]
+      }
+    ]
+  },
+  "styles": {
+    "footer": {
+      "separator": true
+    }
+  }
+}
+      };
+
+    // ตรวจสอบว่าฟังก์ชัน shareTargetPicker สามารถใช้งานได้
+    if (liff.isApiAvailable('shareTargetPicker')) {
+        liff.shareTargetPicker([flexMessage])
+        .then(() => {
+            // ตรวจสอบว่าผู้ใช้เลือกหรือไม่
+            if (liff.getOS() === 'android' && liff.getVersion() < '2.1.13') {
+                // สำหรับ Android เวอร์ชันเก่า, ไม่สามารถตรวจสอบได้ว่าผู้ใช้ได้ทำการแชร์จริงหรือไม่
+                Swal.fire('เสร็จสิ้น', 'กรุณาตรวจสอบการสนทนาของคุณ', 'success');
+            } else {
+                // สำหรับ iOS หรือ Android เวอร์ชันใหม่, จะได้รับการตอบกลับหากผู้ใช้ทำการแชร์
+                Swal.fire('สำเร็จ!', 'ข้อมูลถูกแชร์ไปยังการสนทนาที่เลือก', 'success');
+            }
+        })
+        .catch((err) => {
+            console.error('Error sharing:', err);
+            Swal.fire('ผิดพลาด', 'ไม่สามารถแชร์ข้อมูลได้', 'error');
+        });
+    } else {
+        Swal.fire('ไม่สามารถใช้งาน', 'ฟีเจอร์แชร์ไม่สามารถใช้งานได้ในเวอร์ชันนี้ของ LINE', 'warning');
+    }
+}
+   
+function setupNotificationIcon(profile) {
+    document.getElementById('notificationButton').addEventListener('click', () => {
+        toggleNotificationPanel(profile); // ตรวจสอบให้แน่ใจว่าส่ง userId ไปอย่างถูกต้อง
+    });
+}
+
+async function fetchNotifications(userId) {
+    const apiUrl = `https://script.google.com/macros/s/AKfycbyX982VzyAjwlE5smsRTaHFKm15s7ctMo8LzzwnScR9mvO0CJuV8C3T0Uhx2wUn3sju/exec?q=${userId}`;
+    try {
+        const response = await fetch(apiUrl);
+        const notifications = await response.json();
+        displayNotifications(notifications);
+    } catch (error) {
+        console.error('Error fetching notification data:', error);
+    }
+}
+
+function displayNotifications(notifications) {
+    const notificationsContent = document.getElementById('notificationsContent');
+    notificationsContent.innerHTML = ''; // Clear previous notifications
+
+    notifications.forEach(notification => {
+        const notificationElement = document.createElement('div');
+        notificationElement.classList.add('p-4', 'border-b', 'border-gray-200'); // Tailwind CSS classes
+        notificationElement.innerHTML = `
+            <p class="font-semibold">${notification.Title}</p>
+            <p>${notification.Message}</p>
+        `;
+        notificationsContent.appendChild(notificationElement);
+    });
+}
+
+function toggleNotificationPanel(profile) {
+   const userId = profile.userId;
+    const panel = document.getElementById('notificationPanel');
+    const button = document.getElementById('notificationButton');
+    if (panel.style.visibility === 'hidden' || !panel.style.visibility) {
+        panel.style.visibility = 'visible';
+        panel.style.opacity = 1;
+        button.classList.add('text-blue-500'); // เปลี่ยนสีไอคอนเมื่อแผงเปิด
+        fetchNotifications(userId);
+    } else {
+        panel.style.visibility = 'hidden';
+        panel.style.opacity = 0;
+        button.classList.remove('text-blue-500'); // รีเซ็ตสีไอคอนเป็นสีเดิมเมื่อแผงปิด
+    }
+}
+      
+function resetNotificationIconColor() {
+    const notificationButton = document.getElementById('notificationButton');
+    notificationButton.classList.remove('text-blue-500'); // ลบสีปัจจุบัน
+    notificationButton.classList.add('text-gray-500'); // เพิ่มสีเดิม
+}
+
+
+      // ฟังก์ชันเพื่อแสดง Modal
+      function showModal() {
+        document.getElementById('modal').classList.remove('hidden');
+      }
+
+      // ฟังก์ชันเพื่อซ่อน Modal
+      function hideModal() {
+        document.getElementById('modal').classList.add('hidden');
+      }
+      
+    </script>
+</body>
+
+</html>
