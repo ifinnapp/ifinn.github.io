@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ไอฟินน์ : iFinn</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.0.0/flowbite.min.css"  rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.0.0/flowbite.min.js"></script>
+ 
+  <link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8" /> <style type="text/css"> body { font-family: 'line_seed_sans_th'; } </style>
+
+ <style>
+  .height-component {
+  height: 80%;
+}
+
+.shadow {
+  box-shadow: rgba(59, 58, 58, 0.1) 0px 10px 20px;
+}
+
+#total-items {
+  font-size: 20px;
+  width:28px;
+  height:28px;
+}
+
+  </style>
+
+
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+
+<body>
+  <!-- Load -->
+  <div id="loader" class="w-screen h-screen bg-white absolute left-0 top-0 flex justify-center items-center">
+    <img src="https://video-public.canva.com/VAEYampbh8Q/v/5f1f8dc0c6.gif" alt="loader">
+  </div>
+
+  <div class="flex justify-center items-center">
+
+    <div id="login-section" class="mt-20 w-full h-full md:w-4/12 md:h-4/12 p-6 bg-white rounded-lg">
+      <h2 class="text-3xl text-purple-500 font-bold">BOTSTICKERLTH</h2>
+      <p class="my-4 text-gray-700">กรุณาเข้าสู่ระบบก่อน ก่อนที่คุณจะสั่งในแอปพลิเคชัน</p>
+      <button class="px-6 py-2 bg-purple-500 text-white rounded-xl hover:bg-purple-400" id="login">LOGIN</button>
+    </div>
+
+
+    <div id="wrapper" class="hidden w-full h-full md:w-6/12 md:h-6/12 p-2 bg-white rounded-lg">
+
+
+      <div id="profile-section" class="flex justify-between">
+
+        <div class="flex items-center space-x-4">
+            <div id="profile-image"></div>
+            <div class="font-medium dark:text-white">
+                <div id="profile-title">Profile Me</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400" id="date">เข้าร่วม</div>
+            </div>
+        </div>
+
+        
+        
+        <div class="flex space-x-1">
+         
+
+          <div class="flex space-x-4">
+            <button id="btn-openWindow"
+              class="px-2 py-1 bg-green-300 text-gray-500 rounded-full flex space-x-1 text-sm items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                <path fill-rule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clip-rule="evenodd" />
+              </svg>
+
+
+
+             
+            </button>
+            <button id="btn-logout"
+              class="px-2 py-1 bg-red-300 text-red-500 rounded-full flex space-x-1 text-sm items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+              </svg>
+
+              <p>Logout</p>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- content -->
+
+<br/>
+      <div id="default-carousel" class="relative w-full" data-carousel="slide">
+          <!-- Carousel wrapper -->
+          <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
+               <!-- Item 1 -->
+              <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                  <img src="https://flowbite.com/docs/images/carousel/carousel-1.svg" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+              </div>
+              <!-- Item 2 -->
+              <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                  <img src="https://flowbite.com/docs/images/carousel/carousel-2.svg" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+              </div>
+              <!-- Item 3 -->
+              <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                  <img src="https://flowbite.com/docs/images/carousel/carousel-3.svg" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+              </div>
+              <!-- Item 4 -->
+              <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                  <img src="https://flowbite.com/docs/images/carousel/carousel-4.svg" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+              </div>
+              <!-- Item 5 -->
+              <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                  <img src="https://flowbite.com/docs/images/carousel/carousel-5.svg" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+              </div>
+          </div>
+          <!-- Slider indicators -->
+          <div class="absolute z-30 flex space-x-3 -translate-x-1/2 bottom-5 left-1/2">
+              <button type="button" class="w-3 h-3 rounded-full" aria-current="true" aria-label="Slide 1" data-carousel-slide-to="0"></button>
+              <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 2" data-carousel-slide-to="1"></button>
+              <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 3" data-carousel-slide-to="2"></button>
+              <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 4" data-carousel-slide-to="3"></button>
+              <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 5" data-carousel-slide-to="4"></button>
+          </div>
+          <!-- Slider controls -->
+          <button type="button" class="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
+              <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                  <svg class="w-4 h-4 text-white dark:text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                  </svg>
+                  <span class="sr-only">Previous</span>
+              </span>
+          </button>
+          <button type="button" class="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
+              <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                  <svg class="w-4 h-4 text-white dark:text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                  </svg>
+                  <span class="sr-only">Next</span>
+              </span>
+          </button>
+      </div>
+
+
+      
+      <div class="my-6">
+        <p class="p-2 text-sm bg-yellow-200 text-gray-800 rounded-lg">
+          สวัสดี!! คุณ
+          <span id="profile-name"></span> ครับ ยินดีต้อนรับสู่ 
+          <span class="font-semibold text-yellow-800">
+          BOTSTICKERLTH
+          </span>
+          กรุณาเลือก Sticker , Theme , emoji & melody ที่คุณชอบ 😋
+        </p>
+      </div>
+
+
+
+      
+      
+      <div>
+
+      
+        <div id="home" class="hidden height-component flex flex-col overflow-y-auto py-3 mb-8"></div>
+
+        
+        <div id="cart" class="hidden height-component">
+
+          
+          <div id="cart-header"></div>
+
+         
+          <div id="cart-items" class="mb-12"></div>
+
+          
+          <div id="cart-footer">
+            <hr>
+            
+            <div class="flex justify-between items-center my-2">
+              <h4 class="text-lg font-semibold">ยอดรวม</h4>
+             <b> <h4 id="total-price" class="mb-4 text-4xl text-green-600 dark:text-green-500"></h4></b>
+            </div>
+            <hr>
+            <div class="mt-4 flex justify-end">
+              
+              <button class="mb-20 px-4 py-2 bg-green-500 text-white rounded-lg" id="order-now">สั่งซื้อเลย</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    
+      <div class="fixed bottom-0 left-0 bg-green-500 w-full flex justify-evenly space-x-4 py-2">
+        <button id="btn-home" class="p-2">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+            <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
+            <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
+          </svg>
+
+
+        </button>
+        <button id="btn-cart" class="p-2 relative">
+         
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+            <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z" clip-rule="evenodd" />
+          </svg>
+
+         
+          <span class="sr-only">Notifications</span>
+          <div class="absolute inline-flex items-center justify-center w-8 h-8 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -right-2 dark:border-gray-900" id="total-items">0</div>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+  <script>
+
+const loader = document.querySelector('#loader');
+const homeComponent = document.querySelector('#home');
+const cartComponent = document.querySelector('#cart');
+const totalPrice = document.querySelector('#total-price');
+const totalItems = document.querySelector('#total-items');
+
+const cartHeader = document.querySelector('#cart-header');
+const cartItems = document.querySelector('#cart-items');
+const cartFooter = document.querySelector('#cart-footer');
+
+const btnHome = document.querySelector('#btn-home');
+const btnCart = document.querySelector('#btn-cart');
+
+const openWindowBtn = document.querySelector('#btn-openWindow');
+const logoutBtn = document.querySelector('#btn-logout');
+
+const btnOrderNow = document.querySelector('#order-now');
+    
+    const options = {weekday:'long', year:'numeric', month:'long', day:'numeric'}
+    const a = new Date();
+      const date = a.toLocaleDateString(undefined, options);
+document.querySelector('#date').textContent = date;
+const userData = {
+  name: '',
+  picture: '',
+};
+
+
+let route = localStorage.getItem('ROUTE') || 'home';
+localStorage.setItem('ROUTE', route);
+
+window.onload = () => {
+  routeMode();
+  const liffId = '1661371622-gyeVE5Ka';
+  init(liffId);
+};
+
+const routeMode = () => {
+  if (route === 'home') {
+    homeComponentActive();
+  } else {
+    cartComponentActive();
+    loadCartData();
+  }
+};
+
+
+const init = async (liffId) => {
+  try {
+    const initialize = await liff.init({
+      liffId,
+    });
+    await initializeApp();
+  } catch (error) {
+    Swal.fire({
+      position: 'center',
+      icon: 'error',
+      title: 'Error',
+      text: error,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  }
+};
+
+
+const loginSection = document.querySelector('#login-section');
+const loginBtn = document.querySelector('#login');
+
+loginBtn.addEventListener('click', () => {
+  return liff.login();
+});
+
+logoutBtn.addEventListener('click', () => {
+  if (liff.isLoggedIn()) {
+    liff.logout();
+    loginSection.classList.remove('hidden');
+    wrapper.classList.add('hidden');
+    if(localStorage.getItem('CART')) localStorage.removeItem('CART')
+  }
+});
+
+
+openWindowBtn.addEventListener('click', () => {
+  return liff.openWindow({
+    url: 'https://line.me/R/nv/profile',
+    external: false,
+  });
+});
+
+
+const wrapper = document.querySelector('#wrapper');
+
+const initializeApp = () => {
+  if (liff.isInClient()) {
+    logoutBtn.classList.add('hidden');
+    openWindowBtn.classList.remove('hidden');
+  } else {
+    openWindowBtn.classList.add('hidden');
+    logoutBtn.classList.remove('hidden');
+
+
+    btnOrderNow.classList.remove('bg-green-300');
+    btnOrderNow.classList.remove('px-4');
+    btnOrderNow.classList.add('bg-red-300');
+    btnOrderNow.classList.add('px-2');
+    btnOrderNow.setAttribute('disabled', true);
+    btnOrderNow.textContent = 'ไม่สามารถสั่งซื้อบนเบราว์เซอร์ภายนอกได้';
+  }
+
+  if (liff.isLoggedIn()) {
+    loginSection.classList.add('hidden');
+    wrapper.classList.remove('hidden');
+
+
+    profileData();
+    loadListMenu();
+
+
+    loader.classList.add('hidden');
+  } else {
+    loginSection.classList.add('block');
+    wrapper.classList.add('hidden');
+
+
+    loader.classList.add('hidden');
+  }
+};
+
+
+const profileName = document.querySelector('#profile-name');
+const profileTitle = document.querySelector('#profile-title');
+const profileImage = document.querySelector('#profile-image');
+
+
+const picture = document.createElement('img');
+
+const profileData = async () => {
+  try {
+    const profile = await liff.getProfile();
+    const name = await profile.displayName;
+   
+
+    picture.setAttribute('src', profile.pictureUrl);
+    picture.setAttribute('alt', 'Photo Profile');
+    picture.setAttribute('width', '40px');
+    picture.setAttribute('height', '40px');
+    picture.classList.add('rounded-full');
+
+    profileName.textContent = name;
+    profileName.style.fontWeight = 'bold';
+
+    profileTitle.textContent = name;
+    profileTitle.style.fontWeight = 'bold';
+
+    
+
+    profileImage.append(picture);
+
+
+    userData.name = name;
+    userData.picture = profile.pictureUrl;
+    userData.userId = profile.userId
+  } catch (error) {
+    Swal.fire({
+      position: 'center',
+      icon: 'error',
+      title: 'Error',
+      text: error,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  }
+};
+
+
+const listMenu = [
+  {
+    id: 1,
+    name: 'เจ้าหมูอ้วงน่ารัก! (สีพาสเทล)',
+    price: 30,
+    image_url:
+      'https://sdl-stickershop.line.naver.jp/stickershop/v1/product/15314846/iphone/main@2x.png',
+  },
+  {
+    id: 2,
+    name: 'เจ้าฉลามน้อยน่ารัก 2  "สร้างรอยยิ้ม"',
+    price: 30,
+    image_url:
+      'https://sdl-stickershop.line.naver.jp/stickershop/v1/product/15411410/iphone/main@2x.png',
+  },
+  {
+    id: 3,
+    name: 'คนรักเมีย2 (สำราญแมน)',
+    price: 55,
+    image_url:
+      'https://sdl-stickershop.line.naver.jp/stickershop/v1/product/23843/iphone/main@2x.png',
+  },
+  {
+    id: 4,
+    name: 'N9: กระต่ายเชียร์ ดุ๊กดิ๊ก x3',
+    price: 55,
+    image_url:
+      'https://sdl-stickershop.line.naver.jp/stickershop/v1/product/23847/iphone/main@2x.png',
+  },
+  {
+    id: 5,
+    name: 'หัวไข่ต้ม เบอร์0',
+    price: 55,
+    image_url:
+      'https://sdl-stickershop.line.naver.jp/stickershop/v1/product/15841379/iphone/main@2x.png',
+  },
+  {
+    id: 6,
+    name: 'จีจี้ทำงานที่บ้านคำโต',
+    price: 30,
+    image_url:
+      'https://sdl-stickershop.line.naver.jp/stickershop/v1/product/15284736/iphone/main@2x.png',
+  },
+];
+
+const loadListMenu = () => {
+  let listData = '';
+
+  listMenu.map((menu) => {
+    listData += `
+    <div class="flex justify-between items-center shadow bg-white rounded-lg mb-4 px-4 py-2">
+      <div class="flex justify-center items-center space-x-4">
+        <img class="w-16 h-16 object-cover rounded-lg" src="${
+          menu.image_url
+        }" alt="${menu.name}">
+        <div class="my-2">
+          <h4 class="text-lg">${menu.name}</h4>
+          <h4 class="text-sm">${toBaht(menu.price)} บาท</h4>
+        </div>
+      </div>
+      <div >
+        <button class="w-8 h-8 text-red-500 bg-red-200 m-2 flex items-center justify-center rounded-lg" onClick="addToCart(${
+          menu.id
+        })">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
+        </button>
+      </div>
+    </div>
+    `;
+  });
+
+  homeComponent.innerHTML = listData;
+};
+
+
+let cart = [];
+
+
+
+const addToCart = (id) => {
+  let cartStorage = localStorage.getItem('CART') || false;
+
+  const itemId = listMenu.find((item) => item.id === id);
+
+  if (!cartStorage) {
+    itemId.qty = 1;
+    itemId.subtotal = itemId.price * itemId.qty;
+
+    cart.push(itemId);
+    localStorage.setItem('CART', [JSON.stringify(cart)]);
+  } else {
+    const cartData = JSON.parse(cartStorage);
+    const checkItemExist = cartData.find((item) => item.id === id);
+
+    if (checkItemExist) {
+      const indexItemId = cartData.findIndex((item) => item.id === id);
+
+      const itemId = cartData[indexItemId];
+      itemId.qty = itemId.qty + 1;
+      itemId.subtotal = itemId.price * itemId.qty;
+
+      cart = cartData;
+      localStorage.setItem('CART', [JSON.stringify(cart)]);
+    } else {
+      itemId.qty = 1;
+      itemId.subtotal = itemId.price * itemId.qty;
+
+      cart.push(itemId);
+      localStorage.setItem('CART', [JSON.stringify(cart)]);
+    }
+  }
+
+  loadCartData();
+
+  Swal.fire({
+    position: "top-end",
+    icon: "success",
+    title: "เพิ่มรายการเรียบร้อย",
+    showConfirmButton: false,
+    timer: 1500
+  });
+};
+
+
+const addQty = (id) => {
+  const indexItemId = cart.findIndex((item) => item.id === id);
+  const itemId = cart.find((item) => item.id === id);
+  itemId.qty += 1;
+  itemId.subtotal = itemId.qty * itemId.price;
+
+  cart[indexItemId] = itemId;
+
+  localStorage.setItem('CART', [JSON.stringify(cart)]);
+  loadCartData();
+};
+
+
+const minQty = (id) => {
+  const indexItemId = cart.findIndex((item) => item.id === id);
+  const itemId = cart.find((item) => item.id === id);
+
+  if (itemId.qty === 1) {
+    const newCart = cart.filter((item) => item.id !== id);
+    cart = newCart;
+  } else {
+    itemId.qty -= 1;
+    itemId.subtotal = itemId.qty * itemId.price;
+    cart[indexItemId] = itemId;
+  }
+
+  localStorage.setItem('CART', [JSON.stringify(cart)]);
+  loadCartData();
+};
+
+
+const loadCartData = () => {
+  let cartData = localStorage.getItem('CART') || false;
+  let data = '';
+  if (!cartData) {
+    data = [];
+  } else {
+    data = JSON.parse(cartData);
+    cart = data;
+  }
+
+  let headerData = '';
+  let itemsData = '';
+
+  if (data.length !== 0) {
+    headerData += `
+      <div class="mb-4">
+        <div class="text-xl font-semibold text-purple-400 mb-2 flex space-x-2">
+         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+  <path d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
+</svg>
+
+          <h2>ตะกร้าของคุณ</h2>
+        </div>
+        <hr>
+      </div>
+    `;
+
+    data.map((item, i) => {
+      itemsData += `
+      <div class="flex justify-between items-end mb-6 shadow px-4 py-2 rounded-lg">
+
+   
+
+        <div class="flex space-x-6">
+          <div class="flex flex-col items-start space-y-2">
+            <div>
+            <img class="w-16 h-16 object-cover rounded-lg" src="${
+              item.image_url
+            }" alt="picture">
+              <h4 class="text-lg">${item.name}</h4>
+              <p class="text-sm text-gray-600">${toBaht(item.price)} บาท</p>
+            </div>
+
+            
+            <div class="flex justify-center text-center space-x-4 items-center">
+              <button class="p-1 bg-red-200 text-red-500 rounded-full" onClick="minQty(${
+                item.id
+              })">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                    clip-rule="evenodd">
+                  </path>
+                </svg>
+              </button>
+              <h4 class="font-semibold text-md text-purple-500">${item.qty}</h4>
+              <button class="p-1 bg-green-200 text-green-500 rounded-full" onClick="addQty(${
+                item.id
+              })">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd"
+                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                    clip-rule="evenodd">
+                  </path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="text-right font-semibold text-xl text-purple-700">${toBaht(
+          item.subtotal,
+        )} บาท</div>
+      </div>
+      `;
+    });
+
+    cartFooter.classList.remove('hidden');
+  } else {
+    headerData += `
+      <h4 class="font-light text-lg text-red-400 text-center opacity-75">ไม่มีสินค้าในตะกร้า</h4>
+    `;
+
+    cartFooter.classList.add('hidden');
+  }
+
+  cartHeader.innerHTML = headerData;
+  cartItems.innerHTML = itemsData;
+
+  loadTotalItems();
+};
+
+
+const loadTotalItems = () => {
+  let cartData = localStorage.getItem('CART') || false;
+  let data = '';
+  if (!cartData) {
+    data = [];
+    totalItems.textContent = 0;
+  } else {
+    data = JSON.parse(cartData);
+
+    let itemTotal = data.reduce(
+      (prevData, nextData) => prevData + nextData.qty,
+      0,
+    );
+    let totalPriceData = data.reduce(
+      (prevData, nextData) => prevData + nextData.subtotal,
+      0,
+    );
+
+    totalItems.textContent = itemTotal;
+    totalPrice.textContent = `${toBaht(totalPriceData)} บาท`;
+  }
+};
+
+
+btnOrderNow.addEventListener('click', async () => {
+  try {
+    let itemData = '';
+    cart.forEach((item, index) => {
+      itemData += `${index + 1}. ${item.name} \n  จำนวน : ${item.qty}    เป็นเงิน : ${toBaht(item.subtotal)} บาท\n`;
+    });
+
+    let totals = cart.reduce(
+      (prevData, nextData) => prevData + nextData.subtotal,
+      0,
+    );
+
+     const sendMessage = await Swal.fire({
+      title: "คุณต้องการสั่งซื้อ?",
+      text: "หากมั่นใจแล้ว ดำเนินการเลย!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Send Now"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        liff.sendMessages([
+              {
+                type: 'text',
+                text: `รายละเอียดการสั่งซื้อ ${userData.name} \n${userData.userId} : \n\n${itemData}รวมเป็นเงินทั้งสิ้น : ${toBaht(totals)} บาท😊`,
+              },{
+          "type": "flex",
+          "altText": "ยอดรวม",
+          "contents": {
+          "type": "bubble",
+          "body": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                  {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "image",
+                        "url": `${userData.picture}`,
+                        "aspectMode": "cover",
+                        "size": "full"
+                      }
+                    ],
+                    "cornerRadius": "100px",
+                    "width": "72px",
+                    "height": "72px"
+                  },
+                  {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "contents": [
+                          {
+                            "type": "span",
+                            "text": `${userData.name}`,
+                            "weight": "bold",
+                            "color": "#dbdb00"
+                          },
+                          {
+                            "type": "span",
+                            "text": "     "
+                          },
+                          {
+                            "type": "span",
+                            "text": "ขอบคุณที่สั่งซื้อกับ BOTSTICKERLTH by iton5 นี่คือรายละเอียดการสั่งซื้อ",
+                            "color": "#f0f0f0"
+                          }
+                        ],
+                        "size": "sm",
+                        "wrap": true
+                      }
+                    ]
+                  }
+                ],
+                "spacing": "xl",
+                "paddingAll": "20px",
+                "backgroundColor": "#006100"
+              },
+              {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": `${itemData}`,
+                    "weight": "bold",
+                    "wrap": true
+                  },
+                  {
+                    "type": "text",
+                    "text": `รวมเป็นเงินทั้งสิ้น : ${toBaht(totals)} บาท`,
+                    "weight": "bold",
+                    "wrap": true,
+                    "margin": "md"
+                  }
+                ],
+                "paddingAll": "7px"
+              }
+            ],
+            "paddingAll": "0px"
+          },
+          "footer": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "คำสั่งซื้อจะได้รับการดำเนินการเร็ว ๆ นี้และโปรดรอสักครู่😊",
+                "wrap": true,
+                "size": "sm"
+              },
+              {
+                "type": "button",
+                "action": {
+                  "type": "uri",
+                  "label": "คลิกเลขบัญชี",
+                  "uri": "https://iton5-4db3c.web.app/accountforbank.html"
+                },
+                "style": "primary",
+                "margin": "md"
+              }
+            ],
+            "backgroundColor": "#ece0cf"
+          }
+        }
+
+        }
+            ]).then(function(){
+            Swal.fire({
+              position: 'center',
+              icon: 'success',
+              title: 'ดำเนินการ',
+              text: 'สั่งสำเร็จ',
+              showConfirmButton: true,
+              timer: 5000,
+            })
+              // liff.closeWindow();
+            });
+      }
+    });
+   
+
+
+    cart = [];
+    localStorage.removeItem('CART');
+
+
+
+    loadCartData();
+
+  } catch (error) {
+    Swal.fire({
+      position: 'center',
+      icon: 'error',
+      title: 'Error',
+      text: error,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  }
+});
+
+btnHome.addEventListener('click', () => {
+  homeComponentActive();
+});
+
+
+btnCart.addEventListener('click', () => {
+  cartComponentActive();
+});
+
+
+const homeComponentActive = () => {
+  route = 'home';
+  localStorage.setItem('ROUTE', route);
+
+
+  homeComponent.classList.remove('hidden');
+  btnHome.classList.add('text-red-500');
+  btnHome.classList.add('rounded-full');
+  btnHome.classList.add('bg-yellow-200');
+
+  totalItems.classList.add('bg-red-200');
+  totalItems.classList.add('text-red-500');
+
+
+  cartComponent.classList.add('hidden');
+  btnCart.className = '';
+  btnCart.classList.add('text-black');
+  btnCart.classList.add('p-2');
+  btnCart.classList.add('relative');
+
+  loadCartData();
+};
+
+
+const cartComponentActive = () => {
+  route = 'cart';
+  localStorage.setItem('ROUTE', route);
+
+  // class home section
+  homeComponent.classList.add('hidden');
+  btnHome.className = '';
+  btnHome.classList.add('text-black');
+  btnHome.classList.add('p-2');
+
+  totalItems.classList.remove('hidden');
+  totalItems.classList.remove('bg-red-200');
+  totalItems.classList.remove('text-red-500');
+
+  // class cart section
+  cartComponent.classList.remove('hidden');
+  btnCart.classList.add('text-black');
+  btnCart.classList.add('text-red-500');
+  btnCart.classList.add('rounded-full');
+  btnCart.classList.add('bg-yellow-200');
+  btnCart.classList.add('relative');
+
+  loadCartData();
+};
+
+
+const toBaht = (val) => {
+  return val.toString().replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, '$1.');
+};
+  </script>
+
+</body>
+
+</html>
