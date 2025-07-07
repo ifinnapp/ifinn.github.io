@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>พัสดุของฉัน - หอพัก iton5</title>
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8" />
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-color: #FF9AA2;
+            --secondary-color: #FFDAC1;
+            --accent-color: #B5EAD7;
+            --dark-color: #6B5876;
+            --light-color: #FFF7F8;
+        }
+        
+        body {
+            font-family: 'line_seed_sans_th';
+            background-color: var(--light-color);
+            overflow-x: hidden;
+        }
+        
+        .chibi-bg {
+            background-color: var(--primary-color);
+            background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .chibi-btn {
+            background-color: var(--accent-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chibi-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+            background-color: #A3D9C5;
+        }
+        
+        .chibi-card {
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .chibi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .chibi-input {
+            border-radius: 12px;
+            border: 2px solid var(--secondary-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .chibi-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 154, 162, 0.3);
+            outline: none;
+        }
+        
+        .chibi-badge {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .chibi-badge-received {
+            background-color: #C7CEEA;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(181, 234, 215, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--accent-color);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .package-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+        
+        .package-icon-pending::before {
+            content: "📦";
+        }
+        
+        .package-icon-received::before {
+            content: "✅";
+        }
+        
+        .bounce-in {
+            animation: bounceIn 0.8s;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .chibi-avatar {
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-overlay {
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .modal-content {
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            border-radius: 0;
+        }
+        
+        .package-image {
+            border-radius: 12px;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .package-image:hover {
+            transform: scale(1.03);
+        }
+        
+        
+        .chibi-character {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            z-index: 50;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .chibi-character:hover {
+            transform: translateY(-5px) rotate(5deg);
+        }
+        
+        .chibi-speech {
+            position: absolute;
+            bottom: 90px;
+            right: 30px;
+            background-color: white;
+            border-radius: 20px;
+            padding: 10px 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 200px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .chibi-character:hover .chibi-speech {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .chibi-speech:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 20px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex flex-col">
+      
+        <header class="chibi-bg p-4 shadow-md">
+            <div class="container mx-auto flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="text-3xl mr-2">📦</div>
+                    <h1 class="text-2xl font-semibold text-white">พัสดุของฉัน</h1>
+                </div>
+                <div id="userInfo" class="flex items-center">
+                    <div class="mr-3 text-right hidden md:block">
+                        <div id="userName" class="font-medium text-white">กำลังโหลด...</div>
+                        <div id="userRoom" class="text-sm text-white opacity-80">ห้อง: -</div>
+                    </div>
+                    <div id="userPic" class="w-10 h-10 chibi-avatar bg-gray-200"></div>
+                </div>
+            </div>
+        </header>
+
+       
+        <main class="flex-grow container mx-auto p-4">
+          
+            <div id="roomVerificationSection" class="bg-white chibi-card p-6 mb-6 slide-in">
+                <h2 class="text-xl font-medium text-gray-700 mb-4 flex items-center">
+                    <span class="text-2xl mr-2">🏠</span> ยืนยันห้องพักของคุณ
+                </h2>
+                <p class="text-gray-600 mb-4">เพื่อความปลอดภัย กรุณายืนยันเลขห้องพักของคุณ</p>
+                
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-grow">
+                        <label for="roomNumber" class="block text-sm font-medium text-gray-600 mb-1">เลขห้องของคุณ</label>
+                        <input type="text" id="roomNumber" name="roomNumber" placeholder="เช่น 101, A203" required
+                            class="w-full px-4 py-3 chibi-input">
+                    </div>
+                    <div class="flex items-end">
+                        <button id="verifyRoomBtn" class="chibi-btn px-6 py-3 rounded-xl text-gray-700 font-medium flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            ยืนยันห้องพัก
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="roomVerificationMessage" class="mt-4 text-sm hidden"></div>
+            </div>
+            
+          
+            <div id="packagesSection" class="hidden">
+               
+                <div class="bg-white chibi-card p-6 mb-6 slide-in">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-medium text-gray-700 flex items-center">
+                            <span class="text-2xl mr-2">📬</span> พัสดุที่รอรับ
+                        </h2>
+                        <div class="flex space-x-2">
+                            <button id="refreshBtn" class="chibi-btn p-2 rounded-xl flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="pendingPackagesContainer" class="space-y-4">
+                        <div id="pendingPackagesLoading" class="text-center py-8">
+                            <div class="loading-spinner mx-auto mb-3"></div>
+                            <p class="text-gray-500">กำลังโหลดข้อมูลพัสดุ...</p>
+                        </div>
+                        <div id="pendingPackages" class="hidden space-y-4"></div>
+                        <div id="noPendingPackages" class="hidden text-center py-8">
+                            <div class="text-5xl mb-3">📭</div>
+                            <p class="text-gray-500">ไม่มีพัสดุที่รอรับในขณะนี้</p>
+                        </div>
+                    </div>
+                </div>
+                
+              
+                <div class="bg-white chibi-card p-6 slide-in">
+                    <h2 class="text-xl font-medium text-gray-700 mb-4 flex items-center">
+                        <span class="text-2xl mr-2">📋</span> ประวัติการรับพัสดุ
+                    </h2>
+                    
+                    <div id="historyPackagesContainer" class="space-y-3">
+                        <div id="historyPackagesLoading" class="text-center py-8">
+                            <div class="loading-spinner mx-auto mb-3"></div>
+                            <p class="text-gray-500">กำลังโหลดประวัติ...</p>
+                        </div>
+                        <div id="historyPackages" class="hidden space-y-3"></div>
+                        <div id="noHistoryPackages" class="hidden text-center py-8">
+                            <div class="text-5xl mb-3">📝</div>
+                            <p class="text-gray-500">ยังไม่มีประวัติการรับพัสดุ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+      
+        <footer class="chibi-bg p-4 text-center text-white text-sm">
+            <p>หอพัก iton5</p>
+          
+        </footer>
+     
+    </div>
+
+    
+    <div id="packageModal" class="fixed inset-0 bg-black bg-opacity-50 modal-overlay flex items-center justify-center z-50 hidden">
+        <div class="modal-content bg-white p-6 rounded-2xl max-w-md w-full mx-4">
+            <div class="flex justify-between items-start mb-4">
+                <h3 class="text-lg font-medium text-gray-900 flex items-center">
+                    <span class="text-xl mr-2">📦</span> รายละเอียดพัสดุ
+                </h3>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-gray-500">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="packageDetails" class="space-y-4">
+                <div class="flex justify-center mb-4">
+                    <img id="packageImage" src="" alt="รูปพัสดุ" class="h-48 object-cover package-image">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                    <div class="text-gray-600">เลขห้อง:</div>
+                    <div id="modalRoomNumber" class="font-medium"></div>
+                    
+                    <div class="text-gray-600">ผู้รับ:</div>
+                    <div id="modalRecipientName" class="font-medium"></div>
+                    
+                    <div class="text-gray-600">ประเภทพัสดุ:</div>
+                    <div id="modalPackageType" class="font-medium"></div>
+                    
+                    <div class="text-gray-600">บริษัทขนส่ง:</div>
+                    <div id="modalCourierName" class="font-medium"></div>
+                    
+                    <div class="text-gray-600">วันที่รับเข้าระบบ:</div>
+                    <div id="modalReceivedAt" class="font-medium"></div>
+                    
+                    <div class="text-gray-600">หมายเหตุ:</div>
+                    <div id="modalNotes" class="font-medium"></div>
+                </div>
+                
+                <div id="receivePackageSection" class="pt-4 border-t">
+                    <p class="text-sm text-gray-600 mb-2">กรุณายืนยันการรับพัสดุ</p>
+                    <button id="confirmReceiveBtn" class="w-full chibi-btn py-3 rounded-xl text-gray-700 font-medium flex items-center justify-center" data-package-id="">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        ยืนยันการรับพัสดุ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 modal-overlay flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-2xl shadow-lg flex flex-col items-center">
+            <div class="loading-spinner mb-4"></div>
+            <p id="loadingMessage" class="text-gray-700">กำลังโหลดข้อมูล...</p>
+        </div>
+    </div>
+
+    
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 modal-overlay flex items-center justify-center z-50 hidden">
+        <div class="modal-content bg-white p-6 rounded-2xl max-w-sm w-full">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                    <svg class="h-10 w-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">ยืนยันการรับพัสดุสำเร็จ</h3>
+                <p class="text-gray-600 mb-4">ขอบคุณที่ใช้บริการ</p>
+                <button id="closeSuccessBtn" class="w-full chibi-btn py-3 rounded-xl text-gray-700 font-medium">
+                    ตกลง
+                </button>
+            </div>
+        </div>
+    </div>
+    
+   
+    <div id="errorModal" class="fixed inset-0 bg-black bg-opacity-50 modal-overlay flex items-center justify-center z-50 hidden">
+        <div class="modal-content bg-white p-6 rounded-2xl max-w-sm w-full">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+                    <svg class="h-10 w-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">เกิดข้อผิดพลาด</h3>
+                <p id="errorMessage" class="text-gray-600 mb-4">ไม่สามารถดำเนินการได้</p>
+                <button id="closeErrorBtn" class="w-full chibi-btn py-3 rounded-xl text-gray-700 font-medium">
+                    ตกลง
+                </button>
+            </div>
+        </div>
+    </div>
+
+   
+    <div class="chibi-character">
+        <div class="chibi-speech" id="displayname">สวัสดีค่ะ! ?</div>
+        <img width="100" height="100" src="https://img.icons8.com/bubbles/100/brown-hair-lady-with-bow-and-glasses.png" alt="brown-hair-lady-with-bow-and-glasses"/>
+    </div>
+
+    <script>
+        
+        let lineUserId = '';
+        let lineDisplayName = '';
+        let lineProfilePic = '';
+        let currentRoomNumber = '';
+        let verifiedRoom = false;
+        let allPackages = [];
+        
+      
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyVKGw_9_pyDa2HOcYSLFKOkRXGsHopqC5Rt0QSgpRgxwZkj2jfRRf_C8uO88aGnZzr/exec';
+        
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeLiff();
+            setupEventListeners();
+            setupChibiCharacter();
+        });
+        
+        async function initializeLiff() {
+            try {
+                await liff.init({ liffId: '1661371622-q1Yo7yZR', withLoginOnExternalBrowser: true });
+                
+                if (liff.isLoggedIn()) {
+                    const profile = await liff.getProfile();
+                    lineUserId = profile.userId;
+                    lineDisplayName = profile.displayName;
+                    lineProfilePic = profile.pictureUrl;
+                    
+                   
+                   document.getElementById("displayname").textContent = `สวัสดีค่ะคุณ ${profile.displayName}`; document.getElementById('userName').textContent = lineDisplayName;
+                    if (lineProfilePic) {
+                        document.getElementById('userPic').style.backgroundImage = `url(${lineProfilePic})`;
+                        document.getElementById('userPic').style.backgroundSize = 'cover';
+                    }
+                    
+                   
+                    const savedRoomNumber = localStorage.getItem('dormRoomNumber');
+                    if (savedRoomNumber) {
+                        document.getElementById('roomNumber').value = savedRoomNumber;
+                        document.getElementById('userRoom').textContent = `ห้อง: ${savedRoomNumber}`;
+                        
+                      
+                        verifyRoomOwnership(savedRoomNumber , lineUserId);
+                    }
+                } else {
+                    liff.login({ redirectUri: location.href });
+                }
+            } catch (error) {
+                console.error('LIFF initialization failed', error);
+                showError('เกิดข้อผิดพลาดในการเชื่อมต่อกับ LINE. กรุณาลองใหม่อีกครั้ง');
+            }
+        }
+        
+        function setupEventListeners() {
+           
+            document.getElementById('verifyRoomBtn').addEventListener('click', () => {
+                const roomNumber = document.getElementById('roomNumber').value.trim();
+                if (roomNumber) {
+                    verifyRoomOwnership(roomNumber, liff.getDecodedIDToken().sub);
+                } else {
+                    showRoomVerificationMessage('กรุณาระบุเลขห้อง', 'error');
+                }
+            });
+            
+           
+            document.getElementById('roomNumber').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const roomNumber = e.target.value.trim();
+                    if (roomNumber) {
+                        verifyRoomOwnership(roomNumber , liff.getDecodedIDToken().sub);
+                    } else {
+                        showRoomVerificationMessage('กรุณาระบุเลขห้อง', 'error');
+                    }
+                }
+            });
+            
+           
+            document.getElementById('refreshBtn').addEventListener('click', () => {
+                if (verifiedRoom && currentRoomNumber) {
+                    searchPackages(currentRoomNumber ,lineUserId);
+                } else {
+                    showError('กรุณายืนยันห้องพักก่อนรีเฟรช');
+                }
+            });
+            
+            
+            document.getElementById('closeModalBtn').addEventListener('click', () => {
+                document.getElementById('packageModal').classList.remove('modal-show');
+                setTimeout(() => {
+                    document.getElementById('packageModal').classList.add('hidden');
+                }, 300);
+            });
+            
+            
+            document.getElementById('confirmReceiveBtn').addEventListener('click', async (e) => {
+                const packageId = e.target.getAttribute('data-package-id');
+                if (packageId) {
+                    await confirmReceivePackage(packageId);
+                }
+            });
+            
+            
+            document.getElementById('closeSuccessBtn').addEventListener('click', () => {
+                document.getElementById('successModal').classList.remove('modal-show');
+                setTimeout(() => {
+                    document.getElementById('successModal').classList.add('hidden');
+                    if (verifiedRoom && currentRoomNumber) {
+                        searchPackages(currentRoomNumber,lineUserId);
+                    }
+                }, 300);
+            });
+            
+           
+            document.getElementById('closeErrorBtn').addEventListener('click', () => {
+                document.getElementById('errorModal').classList.remove('modal-show');
+                setTimeout(() => {
+                    document.getElementById('errorModal').classList.add('hidden');
+                }, 300);
+            });
+        }
+        
+      function setupChibiCharacter() {
+    const chibiCharacter = document.querySelector('.chibi-character');
+    const speechBubble = document.querySelector('.chibi-speech');
+
+    const messages = [
+        "มีอะไรให้ช่วยไหมคะ?",
+        "อย่าลืมยืนยันห้องพักของคุณนะคะ",
+        "มีพัสดุมาใหม่หรือเปล่านะ? ลองกดรีเฟรชดูสิคะ",
+        "หากมีปัญหา สามารถติดต่อเจ้าหน้าที่ได้ที่ล็อบบี้ค่ะ",
+        "อย่าลืมรับพัสดุภายใน 7 วันนะคะ"
+    ];
+
+    let currentIndex = 0;
+    let intervalId = null;
+
+    chibiCharacter.addEventListener('click', () => {
+       
+        if (intervalId !== null) return;
+
+        intervalId = setInterval(() => {
+            if (currentIndex < messages.length) {
+                speechBubble.textContent = messages[currentIndex];
+                speechBubble.style.opacity = "1";
+
+                chibiCharacter.classList.add('animate__animated', 'animate__bounce');
+                setTimeout(() => {
+                    chibiCharacter.classList.remove('animate__animated', 'animate__bounce');
+                }, 1000);
+
+                currentIndex++;
+            } else {
+                
+                clearInterval(intervalId);
+                intervalId = null;
+                currentIndex = 0;
+
+                setTimeout(() => {
+                    speechBubble.style.opacity = "0";
+                    speechBubble.textContent = "";
+                }, 1000);
+            }
+        }, 5000); 
+    });
+}
+
+
+        
+        async function verifyRoomOwnership(roomNumber , userId) {
+            showLoading('กำลังตรวจสอบห้องพัก...');
+            
+            try {
+               
+                const response = await fetch(`${API_URL}?action=getPackagesByRoom&roomNumber=${encodeURIComponent(roomNumber)}&userId=${userId}`);
+                const data = await response.json();
+                
+                hideLoading();
+                
+                if (data.success) {
+                    
+                    if (data.packages && data.packages.length > 0) {
+                        
+                        currentRoomNumber = roomNumber;
+                        verifiedRoom = true;
+                        
+                       
+                        localStorage.setItem('dormRoomNumber', roomNumber);
+                        
+                       
+                        document.getElementById('userRoom').textContent = `ห้อง: ${roomNumber}`;
+                        showRoomVerificationMessage(`ยืนยันห้องพัก ${roomNumber} สำเร็จ`, 'success');
+                        
+                        
+                        setTimeout(() => {
+                            document.getElementById('packagesSection').classList.remove('hidden');
+                            document.getElementById('packagesSection').classList.add('fade-in');
+                            
+                           
+                            searchPackages(roomNumber ,userId);
+                        }, 1000);
+                    } else {
+                        
+                        showRoomVerificationMessage(`ไม่พบข้อมูลพัสดุสำหรับห้อง ${roomNumber} หากมีข้อสงสัยติดต่อเจ้าหน้าที่ Lobby`, 'warning');
+                        verifiedRoom = false;
+                    }
+                } else {
+                    showRoomVerificationMessage('❗ ' + (data.error || 'ไม่สามารถตรวจสอบได้'), 'error');
+                    verifiedRoom = false;
+                }
+            } catch (error) {
+                hideLoading();
+                console.error('Error verifying room:', error);
+                showRoomVerificationMessage('เกิดข้อผิดพลาดในการตรวจสอบห้องพัก กรุณาลองใหม่อีกครั้ง', 'error');
+                verifiedRoom = false;
+            }
+        }
+        
+        function showRoomVerificationMessage(message, type) {
+            const messageElement = document.getElementById('roomVerificationMessage');
+            messageElement.textContent = message;
+            messageElement.classList.remove('hidden', 'text-green-600', 'text-red-600', 'text-yellow-600');
+            
+            switch (type) {
+                case 'success':
+                    messageElement.classList.add('text-green-600');
+                    break;
+                case 'error':
+                    messageElement.classList.add('text-red-600');
+                    break;
+                case 'warning':
+                    messageElement.classList.add('text-yellow-600');
+                    break;
+            }
+            
+            messageElement.classList.remove('hidden');
+            messageElement.classList.add('bounce-in');
+            
+            setTimeout(() => {
+                messageElement.classList.remove('bounce-in');
+            }, 1000);
+        }
+        
+        async function searchPackages(roomNumber , userId) {
+            
+            document.getElementById('pendingPackages').classList.add('hidden');
+            document.getElementById('noPendingPackages').classList.add('hidden');
+            document.getElementById('pendingPackagesLoading').classList.remove('hidden');
+            
+            document.getElementById('historyPackages').classList.add('hidden');
+            document.getElementById('noHistoryPackages').classList.add('hidden');
+            document.getElementById('historyPackagesLoading').classList.remove('hidden');
+            
+            try {
+                const response = await fetch(`${API_URL}?action=getPackagesByRoom&roomNumber=${encodeURIComponent(roomNumber)}&userId=${userId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allPackages = data.packages || [];
+                    displayPackages(allPackages);
+                } else {
+                    showError('เกิดข้อผิดพลาด: ' + (data.error || 'ไม่สามารถค้นหาพัสดุได้'));
+                }
+            } catch (error) {
+                console.error('Error searching packages:', error);
+                showError('เกิดข้อผิดพลาดในการค้นหาพัสดุ กรุณาลองใหม่อีกครั้ง');
+            } finally {
+               
+                document.getElementById('pendingPackagesLoading').classList.add('hidden');
+                document.getElementById('historyPackagesLoading').classList.add('hidden');
+            }
+        }
+        
+        function displayPackages(packages) {
+            const pendingPackages = packages.filter(pkg => pkg.status === 'รอรับ');
+            const receivedPackages = packages.filter(pkg => pkg.status === 'รับแล้ว');
+            
+            
+            const pendingContainer = document.getElementById('pendingPackages');
+            if (pendingPackages.length > 0) {
+                pendingContainer.innerHTML = '';
+                pendingPackages.forEach((pkg, index) => {
+                    const date = new Date(pkg.receivedAt);
+                    const formattedDate = `${date.toLocaleDateString('th-TH')} ${date.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'})} น.`;
+                    
+                    const packageCard = document.createElement('div');
+                    packageCard.className = 'chibi-card bg-white p-4 hover:bg-gray-50 transition-colors cursor-pointer slide-in';
+                    packageCard.style.animationDelay = `${index * 0.1}s`;
+                    packageCard.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div class="flex">
+                                <div class="package-icon package-icon-pending mr-3 text-2xl"></div>
+                                <div>
+                                    <p class="font-medium">${pkg.packageType} (${pkg.courierName})</p>
+                                    <p class="text-sm text-gray-600">ผู้รับ: ${pkg.recipientName}</p>
+                                    <p class="text-xs text-gray-500 mt-1">บันทึกเมื่อ: ${formattedDate}</p>
+                                </div>
+                            </div>
+                            <span class="chibi-badge">${pkg.status}</span>
+                        </div>
+                    `;
+                    
+                    packageCard.addEventListener('click', () => showPackageDetails(pkg));
+                    pendingContainer.appendChild(packageCard);
+                });
+                pendingContainer.classList.remove('hidden');
+                document.getElementById('noPendingPackages').classList.add('hidden');
+            } else {
+                pendingContainer.classList.add('hidden');
+                document.getElementById('noPendingPackages').classList.remove('hidden');
+            }
+            
+           
+            const historyContainer = document.getElementById('historyPackages');
+            if (receivedPackages.length > 0) {
+                historyContainer.innerHTML = '';
+                receivedPackages.forEach((pkg, index) => {
+                    const receivedDate = pkg.receivedByDate ? new Date(pkg.receivedByDate) : null;
+                    const formattedReceivedDate = receivedDate ? 
+                        `${receivedDate.toLocaleDateString('th-TH')} ${receivedDate.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'})} น.` : 
+                        'ไม่ระบุ';
+                    
+                    const historyCard = document.createElement('div');
+                    historyCard.className = 'chibi-card bg-white p-4 hover:bg-gray-50 transition-colors cursor-pointer slide-in';
+                    historyCard.style.animationDelay = `${index * 0.1}s`;
+                    historyCard.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div class="flex">
+                                <div class="package-icon package-icon-received mr-3 text-2xl"></div>
+                                <div>
+                                    <p class="font-medium">${pkg.packageType} (${pkg.courierName})</p>
+                                    <p class="text-sm text-gray-600">ผู้รับ: ${pkg.recipientName}</p>
+                                    <p class="text-xs text-gray-500 mt-1">รับเมื่อ: ${formattedReceivedDate}</p>
+                                    <p class="text-xs text-gray-500">ผู้รับพัสดุ: ${pkg.receivedByPerson || 'ไม่ระบุ'}</p>
+                                </div>
+                            </div>
+                            <span class="chibi-badge chibi-badge-received">${pkg.status}</span>
+                        </div>
+                    `;
+                    
+                    historyCard.addEventListener('click', () => showPackageDetails(pkg));
+                    historyContainer.appendChild(historyCard);
+                });
+                historyContainer.classList.remove('hidden');
+                document.getElementById('noHistoryPackages').classList.add('hidden');
+            } else {
+                historyContainer.classList.add('hidden');
+                document.getElementById('noHistoryPackages').classList.remove('hidden');
+            }
+        }
+        
+        function showPackageDetails(pkg) {
+            const modal = document.getElementById('packageModal');
+            const receiveSection = document.getElementById('receivePackageSection');
+            
+            
+            document.getElementById('modalRoomNumber').textContent = pkg.roomNumber;
+            document.getElementById('modalRecipientName').textContent = pkg.recipientName;
+            document.getElementById('modalPackageType').textContent = pkg.packageType;
+            document.getElementById('modalCourierName').textContent = pkg.courierName;
+            
+            const date = new Date(pkg.receivedAt);
+            document.getElementById('modalReceivedAt').textContent = `${date.toLocaleDateString('th-TH')} ${date.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'})} น.`;
+            
+            document.getElementById('modalNotes').textContent = pkg.notes || '-';
+            
+            
+            if (pkg.imageUrl) {
+                document.getElementById('packageImage').src = pkg.imageUrl;
+                document.getElementById('packageImage').classList.remove('hidden');
+            } else {
+                document.getElementById('packageImage').classList.add('hidden');
+            }
+            
+            
+            if (pkg.status === 'รอรับ') {
+                receiveSection.classList.remove('hidden');
+                document.getElementById('confirmReceiveBtn').setAttribute('data-package-id', pkg.id);
+            } else {
+                receiveSection.classList.add('hidden');
+            }
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.add('modal-show');
+            }, 10);
+        }
+        
+        async function confirmReceivePackage(packageId) {
+            showLoading('กำลังบันทึกการรับพัสดุ...');
+            
+            try {
+                
+                
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: JSON.stringify({
+                        action: 'receivePackage',
+                        packageId: packageId,
+                        receivedByPerson: lineDisplayName,
+                        receivedById: lineUserId,
+                        receivedByDate: new Date().toISOString()
+                    })
+                });
+                
+                const result = await response.json();
+                
+                hideLoading();
+                
+                if (result.success) {
+                  const flexMessage = JSON.parse(result.body);
+            
+             document.getElementById('packageModal').classList.remove('modal-show');
+                    setTimeout(() => {
+                        document.getElementById('packageModal').classList.add('hidden');
+                        document.getElementById('successModal').classList.remove('hidden');
+                        setTimeout(() => {
+                            document.getElementById('successModal').classList.add('modal-show');
+                            createConfetti();
+                        }, 10);
+                    }, 300);
+                  sendText([flexMessage]);
+                } else {
+                    showError('เกิดข้อผิดพลาด: ' + (result.error || 'ไม่สามารถบันทึกการรับพัสดุได้'));
+                }
+            } catch (error) {
+                hideLoading();
+                console.error('Error confirming package receipt:', error);
+                showError('เกิดข้อผิดพลาดในการบันทึกการรับพัสดุ กรุณาลองใหม่อีกครั้ง');
+            }
+        }
+        
+        function createConfetti() {
+            const confettiContainer = document.createElement('div');
+            confettiContainer.style.position = 'fixed';
+            confettiContainer.style.top = '0';
+            confettiContainer.style.left = '0';
+            confettiContainer.style.width = '100%';
+            confettiContainer.style.height = '100%';
+            confettiContainer.style.pointerEvents = 'none';
+            confettiContainer.style.zIndex = '9999';
+            document.body.appendChild(confettiContainer);
+            
+            const colors = ['#FF9AA2', '#FFDAC1', '#B5EAD7', '#C7CEEA', '#E2F0CB'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = -20 + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.position = 'absolute';
+                confetti.style.zIndex = '9999';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                confettiContainer.appendChild(confetti);
+                
+                const animationDuration = Math.random() * 3 + 2;
+                const animationDelay = Math.random() * 2;
+                
+                confetti.animate([
+                    { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translate(${Math.random() * 200 - 100}px, ${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                ], {
+                    duration: animationDuration * 1000,
+                    delay: animationDelay * 1000,
+                    easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+                });
+            }
+            
+            setTimeout(() => {
+                confettiContainer.remove();
+            }, 5000);
+        }
+        
+        function showLoading(message) {
+            document.getElementById('loadingMessage').textContent = message;
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+        
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorModal').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('errorModal').classList.add('modal-show');
+            }, 10);
+        }
+ function sendText(text) {
+            if (!liff.isInClient()) {
+                shareTargetPicker(text);
+            } else {
+                sendflex(text);
+            }
+        }
+        function sendflex(text) {
+            liff.sendMessages(text).then(function () {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'ส่งเข้าแชทเรียบร้อย',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+
+
+            })
+        }
+        function shareTargetPicker(text) {
+            liff.shareTargetPicker(text).then(function (res) {
+                if (res) {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'ส่งเข้าแชทเรียบร้อย',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+
+                } else {
+
+                    console.log("TargetPicker was closed!");
+                }
+            }).catch(function (error) {
+                window.alert("Failed to send message " + error);
+            });
+        }
+    </script>
+</body>
+</html>
