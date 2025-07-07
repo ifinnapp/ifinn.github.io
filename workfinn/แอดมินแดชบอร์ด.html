@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แอดมิน : แดชบอร์ด</title>
+    <style>
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        img.center-horizontal {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+    <script src="https://static.line-scdn.net/liff/edge/versions/2.3.0/sdk.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<img id="clickable-image" class="center-horizontal" src="https://lh3.googleusercontent.com/d/1rrfAbCcc-LnIFkHGR4aceZHzrHmAKNJD?key=123" alt="Map" style="cursor: pointer;">
+
+<script>
+const liffId = "1661371622-4zmvokyQ"; // แทนที่ด้วย LIFF ID ของคุณ
+
+async function initializeLiff(liffId) {
+    try {
+        await liff.init({ liffId });
+        if (!liff.isLoggedIn()) {
+            liff.login(); // ล็อกอินถ้ายังไม่ล็อกอิน
+        }
+    } catch (error) {
+        console.error('LIFF Initialization failed', error);
+    }
+}
+
+$(function() {
+    initializeLiff(liffId);
+
+    $('#clickable-image').on('click', function (event) {
+        var x = event.offsetX / this.offsetWidth;
+        var y = event.offsetY / this.offsetHeight;
+        var clickedArea = null;
+
+        var areas = [
+            {
+                name: "ลงชื่อ เข้า-ออก งาน",
+                href: "แอดมินเข้าออกงาน.html",
+                coords: [22 / 648, 32 / 648, 207 / 648, 247 / 648]
+            },
+            {
+                name: "ลงชื่อทำโอที",
+                href: "แอดมินลงชื่อทำโอที.html",
+                coords: [233 / 648, 32 / 648, 413 / 648, 249 / 648]
+            },
+            {
+                name: "รายงานการทำงาน",
+                href: "แอดมินเคลียร์ยอดเงิน.html",
+                coords: [430 / 648, 34 / 648, 612 / 648, 249 / 648]
+            },
+            {
+                name: "OKR ประจำวัน",
+                href: "แอดมินokr.html",
+                coords: [12 / 648, 279 / 648, 323 / 648, 554 / 648]
+            },
+            {
+                name: "ลูกค้าทั้งหมด",
+                href: "แอดมินลูกค้าทั้งหมด.html",
+                coords: [335 / 648, 276 / 648, 630 / 648, 631 / 648]
+            },
+            {
+                name: "แจ้งเตือนงาน",
+                href: "แอดมินแจ้งเตือนงาน.html",
+                coords: [11 / 648,566 / 648,324 / 648,634 / 648]
+            }
+        ];
+
+        areas.forEach(function(area) {
+            if (x >= area.coords[0] && x <= area.coords[2] && y >= area.coords[1] && y <= area.coords[3]) {
+                clickedArea = area;
+            }
+        });
+
+        if (clickedArea) {
+            window.open(clickedArea.href, "_self"); // ใช้ href แทน uri
+        }
+    });
+});
+
+</script>
+
+</body>
+</html>
