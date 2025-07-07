@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<title>Sticker LINE by iton5</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css"  rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+
+<link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8" />
+    <style type="text/css">
+        body {
+            font-family: 'line_seed_sans_th';
+        }
+    </style>
+
+</head>
+
+<body>
+ 
+<section class="bg-center bg-no-repeat bg-[url('https://flowbite.s3.amazonaws.com/docs/jumbotron/conference.jpg')] bg-gray-700 bg-blend-multiply">
+  <div class="px-4 mx-auto max-w-screen-xl text-center py-24 lg:py-56">
+      <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-white md:text-5xl lg:text-6xl">ดึงข้อมูลมาแสดงทั้งหมดจาก Google sheet</h1>
+      <p class="mb-8 text-lg font-normal text-gray-300 lg:text-xl sm:px-16 lg:px-48">เทคนิคทำ JSON แบบไม่ต้องเขียนโค๊ด</p>
+      <div class="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
+          <a href="https://docs.google.com/spreadsheets/d/1InUFLKuIre_hKFg-a4ReJD0EgNVaAjJRO07u_bYmMBM/preview" class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+             ดูข้อมูลต้นทางจาก Google Sheet
+              <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+              </svg>
+          </a>
+         
+      </div>
+  </div>
+</section>
+<br>
+  <div id="myProject2">
+  </div>
+<div id="myProject">
+
+</div>
+
+
+
+
+
+
+ 
+  
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          var params = (new URL(document.location)).searchParams;
+          var key = params.get('id')
+          if(key){
+            getData(key);
+             getData2(key);
+          }
+            
+        });
+    </script>
+    
+  <script>
+
+const getData = (key) => {
+  fetch('https://script.google.com/macros/s/AKfycbzHWXzNf917fGTnJMa5jmIaiT_UHHFMmji6dSc_y5NJZsbsQr_KWrk9MpqR7-KYI9w3/exec?q=' + key)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      data.forEach((d, additems) => {
+        let dataHTML = '';
+        additems++;
+
+        dataHTML += `
+        <div class="max-w-sm mx-auto bg-white p-5 rounded shadow-lg">
+
+        <div class="bg-yellow-200 text-yellow-700 p-2 rounded mb-5 text-xs">
+    <h5 class="text-lg font-semibold mb-2">${d.column2}</h5>
+  </div>
+ 
+  <p class="text-gray-500 text-xs mb-4">Code: ${d.column6}</p>
+  <img src="${d.column3}" class="w-full rounded mb-4" alt="Sample Image">
+  <p class="text-gray-600 mb-4">
+      จำหน่ายธีมไลน์
+  </p>
+  <div class="grid grid-cols-2 gap-4 mb-5">
+      <div>
+          <p class="text-gray-600 font-semibold">Date</p>
+          <p>${d.column2}</p>
+      </div>
+     
+  </div>
+  <div class="flex justify-between">
+    <a href="${d["Link sticker"]}"><button class="bg-green-500 text-white px-4 py-2 rounded">รายละเอียด</button></a>
+  </div>
+ </div></br>
+          `;
+
+        document.getElementById('myProject').innerHTML += dataHTML;
+      });
+    });
+  
+
+};
+
+    const getData2 = (key) => {
+  fetch('https://script.google.com/macros/s/AKfycbzHWXzNf917fGTnJMa5jmIaiT_UHHFMmji6dSc_y5NJZsbsQr_KWrk9MpqR7-KYI9w3/exec?qty=' + key)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      data.forEach((d, additems) => {
+        let dataHTML = '';
+        additems++;
+
+        dataHTML += `
+        <div class="max-w-sm mx-auto bg-white p-5 rounded shadow-lg">
+
+        <div class="bg-yellow-200 text-yellow-700 p-2 rounded mb-5 text-xs">
+    <h5 class="text-lg font-semibold mb-2">${d.column2}</h5>
+  </div>
+ 
+  
+ 
+  <p class="text-gray-600 mb-4">
+      จำหน่ายธีมไลน์
+  </p>
+  <div class="grid grid-cols-2 gap-4 mb-5">
+      <div>
+          <p class="text-gray-600 font-semibold">Date</p>
+         
+      </div>
+     
+  </div>
+  
+ </div></br>
+          `;
+
+        document.getElementById('myProject2').innerHTML += dataHTML;
+      });
+    });
+}
+
+</script>
+</body>
+</html>
