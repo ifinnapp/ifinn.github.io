@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <title>AGENT LOGIN</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css"  rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"  rel="stylesheet" />
+<link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8" />
+    <style type="text/css">
+ 
+body {
+	
+	font-family: 'line_seed_sans_th';
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	margin: 0;
+}
+
+      @media screen and (max-width: 480px) {
+
+        .social-panel-container.visible {
+          transform: translateX(0px);
+        }
+
+        .floating-btn {
+          right: 10px;
+        }
+      }
+  
+/* สำหรับการเคลื่อนไหวของ ... */
+.dot {
+  animation: dot 1.5s linear infinite;
+}
+
+@keyframes dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* สำหรับการเคลื่อนไหวของไอคอนโหลด */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+      
+    </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="max-h-screen">
+    <section class="border-red-500 bg-gray-50 min-h-screen flex items-center justify-center">
+      <div class="bg-gray-100 p-5 flex rounded-2xl shadow-lg max-w-3xl">
+        <div class="md:w-1/2 px-5">
+
+          <ul role="list" class="max-w-sm divide-y divide-gray-200 dark:divide-gray-700">
+              <li class="py-3 sm:py-4">
+                  <div class="flex items-center space-x-3">
+                      <div class="flex-shrink-0">
+                          <img id="profileurl" class="w-8 h-8 rounded-full" src="https://media.giphy.com/media/eNwGfck2Awo3d2gB32/giphy.gif" alt="image">
+                      </div>
+                      <div class="flex-1 min-w-0">
+                          <p class="text-2xl font-bold text-[#002D74]">
+                             เข้าสู่ระบบ
+                          </p>
+                          
+                      </div>
+                      <span class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
+                          <span class="w-2 h-2 mr-1 bg-green-500 rounded-full"></span>
+                          Online
+                      </span>
+                  </div>
+              </li>
+              
+          </ul>
+
+          <p class="text-sm mt-4 text-[#002D74]">ถ้าคุณ <mark class="px-2 text-white bg-blue-600 rounded dark:bg-blue-500" id="displaynamefield"> </mark> มีบัญชีอยู่แล้ว โปรดทำการเข้าสู่ระบบ</p>
+          <div  class="flex flex-col gap-4 items-center">
+            <input type="tel" class="p-2 m-5 mb-1 rounded-xl border" name="pin" id="pin" placeholder="กรอก PIN" pattern="[0-9]{6}" required />
+
+<!--             <div class="relative">
+              <input type="text" class="w-full p-2 rounded-xl border" name="password" id="idcard" placeholder="Enter input" />
+            </div> -->
+            <button class="bg-[#002074] rounded-xl py-2 text-white max-w-full px-10  hover:scale-105 duration-300" id="flex">เข้าสู่ระบบ</button>
+          </div>
+
+          <div class="mt-7 grid grid-cols-3 items-center text-gray-500">
+            <hr class="border-gray-500" />
+            <p class="text-center text-sm">หรือ</p>
+            <hr class="border-gray-500" />
+          </div>
+
+       
+
+        
+
+          <div class="text-sm flex justify-between items-center mt-3">
+            <p>ถ้าคุณยังไม่มีบัญชีโปรดทำการ..</p>
+            <button class="py-2 px-5 ml-3 bg-white border rounded-xl hover:scale-110 duration-300 border-blue-400" id="registerButton">ลงทะเบียน</button>
+          </div>
+        </div>
+
+        <div class="w-1/2 md:block hidden ">
+          <img  src="https://i.pinimg.com/564x/0e/a3/fc/0ea3fc151f847a9c7a05d2cf0a05d6fc.jpg" class="rounded-2xl" alt="page img">
+        </div>
+
+      </div>
+    </section>
+    
+<!-- Modal Dialog -->
+<div id="modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+  <div class="border shadow-lg rounded-md bg-white p-4">
+    <div class="flex justify-center items-center">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+      <p class="text-lg font-medium text-gray-900 ml-3">โปรดรอสักครู่<span class="dot">...</span></p>
+    </div>
+  </div>
+</div>
+
+
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+      
+       window.onload = function() {
+         $.getScript("https://ifinn.glitch.me/agentlogingetscript.js", function() {
+           initializeLiff("1661371622-B9MyegYr");
+
+           document.querySelector('#flex').addEventListener('click', function(e) {
+              var pin = document.querySelector('#pin').value;
+              var userId = liff.getDecodedIDToken().sub;
+                getData(pin, userId);
+                });
+             });
+           }
+
+       function getData(pin , userId) {
+         showModal(); 
+         fetch('https://script.google.com/macros/s/AKfycbyv7AHDLQssK9J8JP8HIe3gKO5X_6ON7DwZrrJSTXHQfQ0Vf_DKz3kFsBUqC46N4sGCxw/exec?qty=' + userId)
+           .then(response => response.json())
+           .then(data => {
+             var matchingUsers = data.filter(user => user.column7 === liff.getDecodedIDToken().sub && user.column8 === pin);
+              hideModal();
+             if (matchingUsers.length > 0) {
+               window.location = "https://ifinn.glitch.me/agentdashboard.html?id=" + liff.getDecodedIDToken().sub ;
+             } else {
+               Swal.fire({
+                 icon: 'error',
+                 title: 'Oops...',
+                 text: 'Pin ของคุณไม่ถูกต้อง'
+                })
+               //  .then((result) => { var msg = [{
+               //   "type": "flex",
+               //   "altText": "ติดปัญหาจาก "+liff.getDecodedIDToken().name,
+               //   "contents": {
+               //       "type": "bubble",
+               //       "size": "hecto",
+               //       "body": {
+               //         "type": "box",
+               //         "layout": "vertical",
+               //         "contents": [
+               //           {
+               //             "type": "image",
+               //             "url": "https://sv1.picz.in.th/images/2023/10/31/ddr3gyD.png",
+               //             "aspectMode": "cover",
+               //             "size": "full",
+               //             "animated": true
+               //           },
+               //           {
+               //             "type": "box",
+               //             "layout": "vertical",
+               //             "contents": [
+               //               {
+               //                 "type": "text",
+               //                 "text": "ติดต่อเจ้าหน้าที่ Support",
+               //                 "wrap": true,
+               //                 "color": "#ffffff",
+               //                 "size": "lg",
+               //                 "weight": "bold"
+               //               }
+               //             ],
+               //             "position": "absolute",
+               //             "offsetTop": "20px",
+               //             "offsetStart": "20px"
+               //           }
+               //         ],
+               //         "paddingAll": "0px",
+               //         "backgroundColor": "#004879"
+               //       }
+               //     }
+               //                              }]
+               //                    sendText(msg)})
+             
+             }
+           });
+       }
+      
+      // โค้ดใหม่สำหรับจัดการการคลิกปุ่ม "ลงทะเบียน"
+  document.addEventListener('DOMContentLoaded', (event) => {
+    document.getElementById('registerButton').addEventListener('click', function() {
+      window.location.href = 'https://ifinn.glitch.me/agentregis.html';
+    });
+  });
+
+    </script>
+    
+    <script>
+// ฟังก์ชันเพื่อแสดง Modal
+function showModal() {
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+// ฟังก์ชันเพื่อซ่อน Modal
+function hideModal() {
+  document.getElementById('modal').classList.add('hidden');
+}
+
+// เรียกใช้ฟังก์ชันเมื่อต้องการแสดงหรือซ่อน Modal
+//showModal(); // เพื่อแสดง
+// hideModal(); // เพื่อซ่อน
+</script>
+  
+  
+  
+</body>
+
+</html>
