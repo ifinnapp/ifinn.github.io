@@ -1,0 +1,400 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gramline</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8" />
+  <style type="text/css">
+    body {
+      font-family: 'line_seed_sans_th';
+
+    }
+
+    :root {
+      --primary-one: #24292e;
+      --primary-two: #181c20;
+      --primary-three: #f1f1f1;
+      --secondary: #6c757d;
+      --accent: #49f868;
+      --text: #c9c9c9;
+      --white: #ffffff;
+      --black: #000000;
+    }
+
+    * {
+      transition: all 0.3s ease !important;
+    }
+
+    body::-webkit-scrollbar {
+      width: 0 !important;
+    }
+
+    .main_wrapper {
+      width: 100vw;
+      height: 100vh;
+      background: var(--primary-two);
+      overflow: hidden;
+      padding: 25px;
+    }
+
+    .wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+
+      box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    header {
+      background: var(--primary-two);
+    }
+
+    .nav-links .nav-link {
+      color: var(--white);
+    }
+
+    .home,
+    .news,
+    .gform,
+    .vdo {
+      flex: 1;
+      max-height: calc(100vh - 155px);
+      overflow-y: auto;
+    }
+
+    .home::-webkit-scrollbar,
+    .news::-webkit-scrollbar,
+    .gform::-webkit-scrollbar,
+    .vdo::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .home::-webkit-scrollbar-track,
+    .news::-webkit-scrollbar-track,
+    .gform::-webkit-scrollbar-track,
+    .vdo::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .home::-webkit-scrollbar-thumb,
+    .news::-webkit-scrollbar-thumb,
+    .gform::-webkit-scrollbar-thumb,
+    .vdo::-webkit-scrollbar-thumb {
+      background: var(--primary-two);
+      border-radius: 5px;
+    }
+
+    .main>div {
+      display: none;
+      transition: display 1s ease-in-out !important;
+    }
+
+    .active-link {
+      background-color: var(--primary-one);
+      color: var(--accent) !important;
+    }
+
+    .p-text {
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .socials-svg {
+      width: 25px;
+      height: 25px;
+      fill: var(--text);
+    }
+
+    .socials-svg:hover {
+      fill: var(--accent);
+    }
+
+    .cv-btn:hover {
+      background-color: var(--accent) !important;
+    }
+
+    /* Media Queries */
+    @media screen and (max-width: 576px) {
+      .main_wrapper {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main_wrapper">
+    <div class="wrapper">
+      <section class="flex items-start justify-start pt-4" style="margin-left:20px;">
+        <p class="dot draggable" style="width: 10px;height: 10px;border-radius: 50%;background: #e26172;"></p>
+        <p class="dot mx-2 draggable" style="width: 10px;height: 10px;border-radius: 50%;background: #dab35a;"></p>
+        <p class="dot draggable" style="width: 10px;height:10px;border-radius: 50%;background: #33ac48;"></p>
+      </section>
+
+      <section class="m-4 all-content-wrapper">
+        <!-- Header Section -->
+        <header class="w-full md:w-8/12 mx-auto text-center rounded-full p-2">
+          <div class="nav-links flex items-center justify-around">
+            <a href="#" class="nav-link py-3 px-2 md:px-0 text-sm md:text-base font-medium rounded-full w-full">Home</a>
+            <a href="#" class="nav-link py-3 px-2 md:px-0 text-sm md:text-base font-medium rounded-full w-full">NEWS</a>
+            <a href="#"
+              class="nav-link py-3 px-2 md:px-0 text-sm md:text-base font-medium rounded-full w-full">GForm</a>
+            <a href="#" class="nav-link py-3 px-2 md:px-0 text-sm md:text-base font-medium rounded-full w-full">VDO</a>
+
+          </div>
+        </header>
+
+        <main class="main">
+          <div class="home px-2 md:px-8 py-6">
+            <div class="grid grid-cols-1 gap-5">
+              <img class="max-w-full w-16 md:w-24 rounded-full"
+                src="https://sprofile.line-scdn.net/0hKC1zlcPCFGwcAwBNsghqE2xTFwY_ck1-MGUOXSlRSQ8hYwZoN2VYAi0LTwh1YAAzMjJeWHkKSA4QEGMKAlXoWBszSlslNlMzNGxZig"
+                alt="Profile Image">
+              <div class="flex flex-col gap-1">
+                <h1 class="text-2xl sm:text-4xl md:+96text-5xl text-white font-semibold">สวัสดี, ฉันคือ ! 🎁 iton5 😆
+                </h1>
+                <h2 class="text-2xl sm:text-4xl md:+96text-5xl text-white font-semibold">LINE API Expert Thailand</h2>
+              </div>
+              <p class="p-text w-full lg:w-7/12">I graduated from Bachelor of Business Computer. I am currently working
+                for a leading insurance company. I am responsible for developing LINE Chat Bot for the department to
+                reduce the problems and make a shortcut in workflow.
+
+                I see the advantages of LINE API and I would like to help people to use it as a solution tool.
+
+                Besides, I have also worked as a freelance to teach how to use LINE OA for many leading companies,
+                including more than 62 SME businesses for two years. I use html, javascript, css to create websites and
+                adapt LIFF in operating LINE OA Manager to make the clients' business flow smoothly. So my clients start
+                using LINE messaging API application for their businesses more often.
+
+                Back then, I have started my intetest in LINE sticker so I sell LINE stickers to my clients and learn
+                more features of LINE application since 2011. After that I mainly focus on learning LINE OA and API by
+                myself since 2019. My first intention is that I would like to share my knowledge of LINE APIs to others,
+                so I create contents about LINE APIs via my Youtube channel - iton5 youtube . So I become a Youtuber
+                since 2019 until now.</p>
+              <div class="flex items-center justify-start gap-4">
+
+
+                <div class="line-it-button" data-lang="en" data-type="friend" data-env="REAL" data-count="true"
+                  data-home="true" data-lineId="@botstickerlth" style="display: none;"></div>
+                <div class="line-it-button" data-lang="en" data-type="share-a" data-env="REAL"
+                  data-url="https://www.facebook.com/thomson.ton/" data-color="default" data-size="small"
+                  data-count="true" data-ver="3" style="display: none;"></div>
+                <div class="line-it-button" data-lang="en" data-type="like" data-env="REAL"
+                  data-url="https://m.youtube.com/channel/UC1mR9lNlJjqV-P67LkkJO4Q?sub_confirmation=1"
+                  style="display: none;"></div>
+
+
+              </div>
+
+
+            </div>
+
+          </div>
+          <!-- ส่วนของหน้า 2 -->
+          <div class="news px-2 md:px-8 py-6">
+            <div class="flex flex-col gap-1">
+              <h1 class="text-2xl sm:text-4xl md:+96text-5xl text-white font-semibold">NEWS</h1>
+              <div
+                class="mx-auto rounded-lg bg-white space-y-2.5 sm:my-10 w-full sm:w-5/12 lg:w-10/12 shadow-[0px_5px_15px_3px_rgba(0,0,0,0.6)]">
+                <h1 class="text-stone-600 text-lg pt-2 px-3"> ข่าวบันเทิง<br />ขอบคุณ Kapook ข่าวดารา บันเทิง </h1>
+                <div class="flex items-center justify-between px-3">
+                  <p class="text-blue-500 font-medium"> 5 ข่าว </p>
+                  <i id='showHide'
+                    class="fa-solid fa-chevron-up text-slate-600 cursor-pointer hover:text-slate-800 hover:scale-125"></i>
+                </div>
+
+                <hr class="border-t-1 border-slate-300 mx-3" />
+
+                <div id='mix' class="space-y-1"></div>
+              </div>
+
+            </div>
+
+          </div>
+          <!-- ส่วนของหน้า 3 -->
+          <div class="gform px-2 md:px-8 py-6">
+            <div class="flex flex-col gap-1">
+              <h1 class="text-2xl sm:text-4xl md:+96text-5xl text-white font-semibold">Google Form</h1>
+
+              <iframe id="formframe"
+                src="https://docs.google.com/forms/d/e/1FAIpQLSdD6ikLsQN1zeKgeAHeNzxyJcJfav7cA2ONx8qmRUGs9CYDVw/viewform"
+                frameborder="0"
+                style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;height:100%;width:100%;position:absolute;top:120px;left:0px;right:0px;bottom:0px"
+                height="100%" width="100%"></iframe>
+
+            </div>
+
+          </div>
+          <!-- ส่วนของหน้า 4 -->
+          <div class="vdo px-2 md:px-8 py-6">
+            <div class="flex flex-col gap-1">
+              <h1 class="text-2xl sm:text-4xl md:+96text-5xl text-white font-semibold">VDO</h1>
+
+
+              <video class="h-80" controls>
+                <source
+                  src="https://obs.line-scdn.net/hW3GuJzpfFB0hYAcTGDYTZAZYHzIFZ04DFBweOgpQUm0CYBoPLWkgMyRTKiQHYz9IPTUncgxuPSw2WTtJEw8aITR5JWgEdzgILSE3Jg9pV2Q"
+                  type="video/mp4">
+
+              </video>
+
+
+            </div>
+          </div>
+        </main>
+      </section>
+    </div>
+  </div>
+
+
+  <script src="https://www.line-website.com/social-plugins/js/thirdparty/loader.min.js" async="async"
+    defer="defer"></script>
+  <script>
+
+    const navLinks = document.querySelectorAll(".nav-link");
+    const sections = document.querySelectorAll("main > div");
+
+
+    const hideSections = () => {
+      sections.forEach((section) => {
+        section.style.display = "none";
+      });
+    };
+
+
+    const handleNavLinks = (e) => {
+      e.preventDefault();
+
+
+      navLinks.forEach((link) => {
+        link.classList.remove("active-link");
+      });
+
+
+      e.target.classList.add("active-link");
+
+
+      hideSections();
+
+
+      const index = Array.from(navLinks).indexOf(e.target);
+      sections[index].style.display = "block";
+    };
+
+
+    navLinks.forEach((link) => {
+      link.addEventListener("click", handleNavLinks);
+    });
+
+    navLinks[0].classList.add("active-link");
+    sections[0].style.display = "block";
+
+
+
+
+  </script>
+  <script>
+    const mix = document.getElementById("mix");
+
+    const data = [
+      {
+        id: 1,
+        title: "แซมมี่ เคาวเวลล์ ขึ้นแท่นนักกีฬาสาวสุดแซ่บ",
+        desc: "เล่นเวกเซิร์ฟบ่อยจนได้ลงแข่งที่ไต้หวัน แซมมี่ โชว์สกิลการโต้คลื่นระดับเทพ",
+        img: "https://s359.kapook.com/r/1200/630/pagebuilder/60d6ad20-0462-4085-bbe7-27b5cff7c4b1.jpg",
+        url: "http://women.kapook.com/view272866.html",
+
+      },
+      {
+        id: 2,
+        title:
+          "มายด์ ณภศศิ ใส่เดรสชมพูตะโกน แต่สิ่งนี้ตะโกนยิ่งกว่า มายด์ ณภศศิ เซ็กซี่",
+        desc: "รูปเซตนี้แซ่บแสบคอ ขอน้ำผึ้งมะนาวด่วน",
+        img: "https://s359.kapook.com/r/1200/630/pagebuilder/32dc80ff-fe16-4ccb-a151-755cd24433c3.jpg",
+        url: "http://women.kapook.com/view272881.html",
+
+      },
+      {
+        id: 3,
+        title:
+          " แจ็คกี้ ชาเคอลีน สร้างตำนานบทใหม่ เปลี่ยนชุดทุกเบรกในรายการ The Wall Song",
+        desc: "ร้องข้ามกำแพง แจ็คกี้ ชาเคอลีน โดนแซว ไม่คิดจะเก็บไว้รายการอื่นบ้างเหรอ",
+        img: "https://s359.kapook.com/r/1200/630/pagebuilder/59675bbe-7bd9-4aec-b2fb-a35fafe62cb2.jpg",
+        url: "http://women.kapook.com/view272861.html",
+
+      },
+      {
+        id: 4,
+        title: "ซุบซิบดารา อดีตนักร้องบอยแบนด์ชื่อดัง ติดพนัน ขั้นหนัก กู้นอกระบบ 27 แห่ง",
+        desc: "อดีตนักร้องบอยแบนด์ติดพนัน หนีหนี้ให้อดีตภรรยาจ่าย ไล่ยืมแฟนคลับให้วุ่นหมวกกันน็อกมาตามถึงบ้าน สงสารลูกเล็ก 2 คน",
+        img: "https://s359.kapook.com/r/1200/630/pagebuilder/22919dfc-b689-4293-b722-0280a7eac19b.jpg",
+        url: "http://women.kapook.com/view272878.html",
+
+      },
+      {
+        id: 5,
+        title: "ช่อง 3 เปิดตัว เก๋ไก๋ สไลเดอร์ เซ็นสัญญาขึ้นแท่นนางเอกใหม่ เก๋ไก๋",
+        desc: "ละครเรื่องแรกในชีวิตประกบพระเอกสุดฮอต ",
+        img: "https://s359.kapook.com/r/1200/630/pagebuilder/70eb4c7e-21e4-42fc-960e-aa2625b8c1c3.jpg",
+        url: "http://women.kapook.com/view272870.html",
+
+      },
+
+    ];
+
+    for (let content of data) {
+      mix.insertAdjacentHTML(
+        "beforeend",
+        `<div class="
+     grid grid-rows-[6rem] grid-cols-5 gap-x-2 sm:gap-x-4 text-sm sm:text-lg hover:cursor-pointer group p-3 overflow-hidden transition-all
+    hover:bg-gradient-to-r
+    hover:from-blue-400
+    hover:to-blue-500
+    hover:rounded-xl
+    hover:scale-105
+    ">
+  <div class='col-span-2 row-auto rounded-sm relative bg-no-repeat'>
+    <img src=${content.img} class="object-cover w-full h-full" />
+   
+  </div>
+
+  <div class='col-start-3 row-auto  col-end-6' onclick="window.open('${content.url}')">
+    <h3 class="capitalize text-sm font-medium group-hover:text-white">
+      ${content.title}
+    </h3>
+    <p class="text-blue-500 group-hover:text-blue-200 font-bold text-xs">
+      ${content.desc}
+    </p>
+   
+                  
+                
+  </div>
+
+</div>`
+      );
+    }
+
+
+    const showHide = document.getElementById('showHide');
+    showHide.addEventListener('click', function () {
+      mix.classList.toggle('hidden');
+      const condition = mix.classList.contains('hidden');
+      if (condition) {
+        showHide.classList.remove('fa-chevron-up');
+        showHide.classList.add('fa-chevron-down');
+      } else {
+        showHide.classList.remove('fa-chevron-down');
+        showHide.classList.add('fa-chevron-up');
+      }
+    })
+  </script>
+</body>
+
+</html>
