@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบรับชำระเงิน [ร้อยเอ็ด]</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        body {
+            background-color: #f3f4f6;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .form-container {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Payment Types Styling */
+        .payment-type-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-type-btn {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .payment-type-btn img {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            object-fit: cover;
+        }
+
+        .payment-type-btn span {
+            font-size: 0.875rem;
+            color: #374151;
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .payment-type-btn:hover {
+            background-color: #f9fafb;
+        }
+
+        .payment-type-btn.active {
+            border-color: #10b981;
+            background-color: #d1fae5;
+        }
+
+        /* Bank Account Styling */
+        .bank-account {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.75rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .bank-account:hover {
+            background-color: #f9fafb;
+        }
+
+        .bank-account.selected {
+            border-color: #10b981;
+            background-color: #d1fae5;
+        }
+
+        .bank-account img {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            margin-right: 1rem;
+            object-fit: cover;
+        }
+
+        .bank-info {
+            flex: 1;
+        }
+
+        .bank-name {
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .bank-number {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        /* Form Input Styling */
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #1f2937;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-input[type="file"] {
+            padding: 0.5rem;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 0.875rem;
+            background-color: #10b981;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #059669;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+        #statusMessage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            color: #10b981;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        #progressPercentage {
+            font-size: 2rem;
+            margin-top: 1rem;
+            color: #10b981;
+        }
+        .progress-ring {
+            width: 100px;
+            height: 100px;
+            margin: 1rem auto;
+        }
+        .progress-ring__circle {
+            transition: 0.35s stroke-dashoffset;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            stroke: #10b981;
+            stroke-width: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>รายละเอียดการชำระเงิน</h1>
+        </div>
+        
+        <div class="form-container">
+            <form id="paymentForm">
+                <!-- ประเภทการชำระ -->
+                <div class="form-group">
+                    <label class="form-label">ประเภทการชำระ</label>
+                    <div class="payment-type-grid" id="paymentTypeButtons"></div>
+                    <input type="hidden" id="selectedPaymentType" name="paymentType">
+                </div>
+
+                <!-- บัญชีรับโอน -->
+                <div class="form-group">
+                    <label class="form-label">บัญชีรับโอน</label>
+                  <div id="bankAccounts">
+<!--                         <div class="bank-account" data-bank="scb">
+                            <img src="https://lh3.googleusercontent.com/d/1X9zSCATLhN9H75hkL7E52VXAGHdI7wh4" alt="SCB">
+                            <div class="bank-info">
+                                <div class="bank-name">นิธิชัย โสวรรณดิษพร</div>
+                                <div class="bank-number">364-279322-9</div>
+                            </div>
+                        </div> -->
+                      <div class="bank-account" data-bank="kbank">
+                            <img src="https://lh3.googleusercontent.com/d/1BkSPDWn1LY3lzJmbqbZ4KBVpZnfRoB11" alt="kbank">
+                            <div class="bank-info">
+                                <div class="bank-name">กีรติ กิตติภูมิ</div>
+                                <div class="bank-number">2061237278</div>
+                            </div>
+                        </div>
+<!--                       <div class="bank-account" data-bank="bay">
+                            <img src="https://lh3.googleusercontent.com/d/12S_YT_CDCgpzEhTGcyT4Sv-fx0eSX4Nu" alt="BAY">
+                            <div class="bank-info">
+                                <div class="bank-name">กฤษศิณี บุตรศรี</div>
+                                <div class="bank-number">773-1-14328-0</div>
+                            </div>
+                        </div> -->
+<!--                       <div class="bank-account" data-bank="ktb">
+                            <img src="https://lh3.googleusercontent.com/d/13Il9o7HWOjCJV70eYRiRPzYoBEV_VzrR" alt="KTB">
+                            <div class="bank-info">
+                                <div class="bank-name">ศิรินภา กุดวงค์แก้ว</div>
+                                <div class="bank-number">6622339902</div>
+                            </div>
+                        </div> -->
+<!--                         <div class="bank-account" data-bank="bbl">
+                            <img src="https://lh3.googleusercontent.com/d/1iBChfC_nADji1HydDMemyec80h05Ph5s" alt="BBL">
+                            <div class="bank-info">
+                                <div class="bank-name">พิชิต ศรีใหม</div>
+                                <div class="bank-number">980-0-030711</div>
+                            </div>
+                        </div> -->
+<!--                         <div class="bank-account" data-bank="gsb">
+                            <img src="https://lh3.googleusercontent.com/d/1ctWpWxTRztcKjkao9Y_U1snSGvDmeAJj" alt="GSB">
+                            <div class="bank-info">
+                                <div class="bank-name">รับขาย-ฝาก หน้าเมือง</div>
+                                <div class="bank-number">020461504134</div>
+                            </div>
+                        </div> -->
+<!--                         <div class="bank-account" data-bank="ttb">
+                            <img src="https://lh3.googleusercontent.com/d/1824z-LqIWB4p_ugEDYkWg-CtLVmfXULT" alt="TTB">
+                            <div class="bank-info">
+                                <div class="bank-name">อรพินท์ สาเจริญ</div>
+                                <div class="bank-number">6297126721</div>
+                            </div>
+                        </div> -->
+                    </div>
+                    <input type="hidden" id="selectedBank" name="bankAccount">
+                </div>
+
+                <!-- จำนวนเงิน -->
+                <div class="form-group">
+                    <label class="form-label">จำนวนเงิน</label>
+                    <input type="number" name="serviceFee" class="form-input" placeholder="ใส่เฉพาะตัวเลข" required>
+                </div>
+
+                <!-- วันเวลาที่โอน -->
+                <div class="form-group">
+                    <label class="form-label">วัน/เวลาที่โอน (ดูจากสลิป)</label>
+                    <input type="datetime-local" name="paymentTime" class="form-input" required>
+                </div>
+
+                <!-- ชื่อลูกค้า -->
+                <div class="form-group">
+                    <label class="form-label">ชื่อลูกค้า</label>
+                    <input type="text" name="customerName" class="form-input" placeholder="ชื่อ-สกุล (ไม่ต้องใส่คำนำหน้า)" required>
+                </div>
+
+                <!-- หลักฐานการชำระเงิน -->
+                <div class="form-group">
+                    <label class="form-label">หลักฐานการชำระเงิน</label>
+                    <input type="file" name="evidence" class="form-input" accept="image/*" required>
+                </div>
+
+                <button type="submit" class="submit-btn">เพิ่มข้อมูลการชำระเงิน</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="overlay">
+        <div id="statusMessage">
+            <div id="statusText"></div>
+            <svg class="progress-ring" width="100" height="100">
+                <circle class="progress-ring__circle" stroke="#4CAF50" stroke-width="6" fill="transparent" r="44" cx="50" cy="50"/>
+            </svg>
+            <div id="progressPercentage">0%</div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            LIFF_ID: '1661371622-0pZDWJqj',
+            SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzBEPu0CpIEnpvAyLWbrQf_b6dbOJI38ypu4dHzgQDX6BiJPBFPnuKrX2kRyuXbPDPeNg/exec',
+            PAYMENT_TYPES: [
+                { 
+                    id: 'downPayment',
+                    name: 'วางดาวน์',
+                    icon: 'https://lh3.googleusercontent.com/d/1a6UwaGSFY5bbWEoBWXbhlmUCIQbekYUL'
+                },
+                {
+                    id: 'installment',
+                    name: 'ค่างวด',
+                    icon: 'https://lh3.googleusercontent.com/d/1QMuGtmVGsoTuxj51v_WSgkoBWOpGbmCT'
+                },
+                {
+                    id: 'fine',
+                    name: 'ค่าปรับ',
+                    icon: 'https://lh3.googleusercontent.com/d/1ntV8bNUytAuaf_rbzWu7_xzYQrS_t3oy'
+                },
+                {
+                    id: 'defermentFee',
+                    name: 'ค่าเลื่อน',
+                    icon: 'https://lh3.googleusercontent.com/d/16E9SmgQV1HZp5bysApjg7PgZKvaOof40'
+                },
+                {
+                    id: 'appLoadingFee',
+                    name: 'ค่าโหลดแอพ',
+                    icon: 'https://lh3.googleusercontent.com/d/1imkvE-ffZw1HfAI5JVUVHZFioNa1St7o'
+                },
+                {
+                    id: 'installmentFine',
+                    name: 'ค่างวด+ค่าปรับ',
+                    icon: 'https://lh3.googleusercontent.com/d/1HB0QMLk2OE3YxRFRI5nP1Vt8cMXym0pL'
+                },
+                {
+                    id: 'contractChange',
+                    name: 'ค่าเปลี่ยนสัญญา',
+                    icon: 'https://lh3.googleusercontent.com/d/19oVyYAWwxS_JluxBCAQBc9keMqgub0sl'
+                },
+                {
+                    id: 'closeAccount',
+                    name: 'ปิดยอด ปลดล็อค',
+                    icon: 'https://lh3.googleusercontent.com/d/175E2Gcf83EHLBIxwRRQ2FWZ0F4e8t9FA'
+                }
+            ],
+            BANK_ACCOUNTS: {
+                // 'scb': {
+                //     name: 'นิธิชัย โสวรรณดิษพร',
+                //     account: '364-279322-9',
+                //     bank: 'ไทยพาณิชย์',
+                //     icon: 'https://lh3.googleusercontent.com/d/1X9zSCATLhN9H75hkL7E52VXAGHdI7wh4'
+                // }
+              //,
+                'kbank': {
+                    name: 'กีรติ กิตติภูมิ',
+                    account: '2061237278',
+                    bank: 'กสิกรไทย',
+                    icon: 'https://lh3.googleusercontent.com/d/1BkSPDWn1LY3lzJmbqbZ4KBVpZnfRoB11'
+                }
+              //,
+                // 'ktb': {
+                //     name: 'ศิรินภา กุดวงค์แก้ว',
+                //     account: '6622339902',
+                //     bank: 'กรุงไทย',
+                //     icon: 'https://lh3.googleusercontent.com/d/13Il9o7HWOjCJV70eYRiRPzYoBEV_VzrR'
+                // }
+              //,
+                // 'bbl': {
+                //     name: 'พิชิต ศรีใหม่',
+                //     account: '980-0-030711',
+                //     bank: 'กรุงเทพ',
+                //     icon: 'https://lh3.googleusercontent.com/d/1iBChfC_nADji1HydDMemyec80h05Ph5s'
+                // },
+                // 'bay': {
+                //     name: 'กฤษศิณี  บุตรศรี',
+                //     account: '773-1-14328-0',
+                //     bank: 'กรุงศรีอยุธยา',
+                //     icon: 'https://lh3.googleusercontent.com/d/12S_YT_CDCgpzEhTGcyT4Sv-fx0eSX4Nu'
+                // }
+              // ,
+                // 'gsb': {
+                //     name: 'รับขาย-ฝาก หน้าเมือง',
+                //     account: '020461504134',
+                //     bank: 'ออมสิน',
+                //     icon: 'https://lh3.googleusercontent.com/d/1ctWpWxTRztcKjkao9Y_U1snSGvDmeAJj'
+                // }
+              // ,
+                // 'ttb': {
+                //     name: 'อรพินท์ สาเจริญ',
+                //     account: '6297126721',
+                //     bank: 'ทหารไทยธนชาต',
+                //     icon: 'https://lh3.googleusercontent.com/d/1824z-LqIWB4p_ugEDYkWg-CtLVmfXULT'
+                // }
+            }
+        };
+
+        // Progress Ring Setup
+        const circle = document.querySelector('.progress-ring__circle');
+        const radius = circle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = circumference;
+
+        // Initialize LIFF
+        async function initializeLiff() {
+            try {
+                await liff.init({ liffId: CONFIG.LIFF_ID });
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                }
+            } catch (error) {
+                console.error('LIFF Initialization failed', error);
+            }
+        }
+
+        // Payment Type Management
+        function initializePaymentTypes() {
+            const container = document.getElementById('paymentTypeButtons');
+            container.innerHTML = ''; // Clear existing buttons
+            
+            CONFIG.PAYMENT_TYPES.forEach(type => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'payment-type-btn';
+                button.dataset.paymentType = type.id;
+                button.innerHTML = `
+                    <img src="${type.icon}" alt="${type.name}">
+                    <span>${type.name}</span>
+                `;
+                button.onclick = () => selectPaymentType(type.id);
+                container.appendChild(button);
+            });
+        }
+
+        function selectPaymentType(typeId) {
+            document.querySelectorAll('.payment-type-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.paymentType === typeId);
+            });
+            document.getElementById('selectedPaymentType').value = typeId;
+        }
+
+        // Bank Account Management
+        function initializeBankAccounts() {
+            document.querySelectorAll('.bank-account').forEach(bank => {
+                bank.addEventListener('click', () => {
+                    document.querySelectorAll('.bank-account').forEach(b => b.classList.remove('selected'));
+                    bank.classList.add('selected');
+                    document.getElementById('selectedBank').value = bank.dataset.bank;
+                });
+            });
+        }
+
+        // Progress and Status Management
+        function setProgress(percent) {
+            const offset = circumference - percent / 100 * circumference;
+            circle.style.strokeDashoffset = offset;
+            document.getElementById('progressPercentage').textContent = `${percent}%`;
+        }
+
+        function showStatus(message, progress = 0) {
+            const overlay = document.getElementById('overlay');
+            const statusElement = document.getElementById('statusText');
+            statusElement.textContent = message;
+            setProgress(progress);
+            overlay.style.display = 'block';
+        }
+
+        function hideStatus() {
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // Form Handling
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            if (!validateForm(formData)) return;
+
+            try {
+                showStatus('กำลังเตรียมข้อมูล...', 20);
+                const submissionData = await prepareSubmissionData(formData);
+
+                showStatus('กำลังอัพโหลดข้อมูล...', 40);
+                const result = await submitData(submissionData);
+
+                showStatus('กำลังส่งข้อความ...', 80);
+                await sendLineNotification(submissionData, result.imageUrl);
+
+                showStatus('เสร็จสิ้น', 100);
+                await handleSuccess();
+            } catch (error) {
+                handleError(error);
+            } finally {
+                hideStatus();
+            }
+        }
+
+        function validateForm(formData) {
+            if (!formData.get('paymentType')) {
+                Swal.fire({
+                    title: 'กรุณาเลือกประเภทการชำระเงิน',
+                    icon: 'warning'
+                });
+                return false;
+            }
+
+            if (!formData.get('bankAccount')) {
+                Swal.fire({
+                    title: 'กรุณาเลือกบัญชีรับโอน',
+                    icon: 'warning'
+                });
+                return false;
+            }
+
+            return true;
+        }
+
+async function prepareSubmissionData(formData) {
+    const file = formData.get('evidence');
+    const base64String = await convertToBase64(file);
+
+    // เพิ่มช่องทางการทำสัญญา
+    const contractChannel = "ร้อยเอ็ด"; // ค่าคงที่เนื่องจากเป็นฟอร์มของสำนักงานใหญ่
+
+    // จัดรูปแบบข้อมูลให้ตรงกับคอลัมน์ใน Google Sheet
+    return {
+        userId: await getUserId(),
+        transferDate: formData.get('paymentTime'),  // วัน/เวลาที่โอน
+        notificationTime: new Date().toISOString(), // เวลาที่แจ้ง
+        name: formData.get('customerName'),         // ชื่อ สกุล
+        contractChannel: contractChannel,           // ช่องทางที่ทำสัญญา
+        serviceType: getPaymentTypeName(formData.get('paymentType')), // ชำระค่าบริการ
+        amount: formData.get('serviceFee'),        // จำนวนเงิน
+        bankAccount: getBankInfo(formData.get('bankAccount')), // บัญชีรับโอน
+        image: base64String                        // ไฟล์สลิป
+    };
+}
+
+// ปรับปรุงการส่งข้อมูล
+async function submitData(data) {
+    try {
+        // ปรับรูปแบบข้อมูลให้ตรงกับ backend
+        const formData = {
+            userId: data.userId,
+            transferDate: data.transferDate,
+            name: data.name,
+            contractChannel: 'ไอฟินน์ [ร้อยเอ็ด]',
+            serviceType: data.serviceType,
+            amount: data.amount,
+            bankAccount: data.bankAccount,
+            image: data.image.split(',')[1] // ส่งเฉพาะ base64 ไม่รวม data:image/...
+        };
+
+        const response = await fetch(CONFIG.SCRIPT_URL, {
+            method: 'POST',
+            body: new URLSearchParams(formData)
+        });
+
+        const result = await response.json();
+        if (result.result !== 'success') {
+            throw new Error(result.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+        }
+        return result;
+    } catch (error) {
+        console.error('Submit Data Error:', error);
+        throw error;
+    }
+}
+
+async function sendLineNotification(data, imageUrl) {
+    const flexMessage = {
+        type: "flex",
+        altText: "แจ้งชำระเงิน",
+        contents: {
+            type: "bubble",
+            hero: {
+                type: "image",
+                url: imageUrl,
+                size: "full",
+                aspectRatio: "13:20",
+                aspectMode: "cover",
+                action: {
+                    type: "uri",
+                    uri: imageUrl
+                }
+            },
+            body: {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                    {
+                        type: "box",
+                        layout: "horizontal",
+                        contents: [
+                            {
+                                type: "text",
+                                text: "แจ้งชำระเงิน",
+                                weight: "bold",
+                                size: "xl",
+                                color: "#1DB446",
+                                align: "center",
+                                margin: "md"
+                            }
+                        ],
+                        alignItems: "center",
+                        justifyContent: "center",
+                        paddingAll: "xs"
+                    },
+                    {
+                        type: "separator",
+                        margin: "lg",
+                        color: "#E0E0E0"
+                    },
+                    {
+                        type: "box",
+                        layout: "vertical",
+                        margin: "lg",
+                        spacing: "sm",
+                        contents: [
+                            createFlexField("👤 ชื่อลูกค้า", data.name),
+                            createFlexField("💰 จำนวนเงิน", `${Number(data.amount).toLocaleString()} บาท`),
+                            createFlexField("📝 ประเภท", data.serviceType),
+                            createFlexField("🏦 บัญชี", data.bankAccount),
+                            createFlexField("📅 วันที่โอน", formatDateTime(data.transferDate))
+                        ]
+                    },
+                    {
+                        type: "separator",
+                        margin: "lg",
+                        color: "#E0E0E0"
+                    },
+                    {
+                        type: "box",
+                        layout: "vertical",
+                        margin: "lg",
+                        contents: [
+                            {
+                                type: "text",
+                                text: "คลิกที่รูปภาพเพื่อขยาย",
+                                color: "#999999",
+                                size: "xs",
+                                align: "center",
+                                style: "italic"
+                            }
+                        ]
+                    }
+                ],
+                backgroundColor: "#FFFFFF",
+                paddingAll: "xl"
+            },
+            styles: {
+                body: {
+                    backgroundColor: "#FFFFFF"
+                }
+            }
+        }
+    };
+
+    if (liff.isLoggedIn()) {
+        await liff.sendMessages([flexMessage]);
+    }
+}
+
+function createFlexField(label, value) {
+    return {
+        type: "box",
+        layout: "horizontal",
+        contents: [
+            {
+                type: "text",
+                text: label,
+                color: "#aaaaaa",
+                size: "sm",
+                flex: 2
+            },
+            {
+                type: "text",
+                text: value,
+                wrap: true,
+                color: "#666666",
+                size: "sm",
+                flex: 5
+            }
+        ],
+        spacing: "lg",
+        cornerRadius: "md",
+        margin: "sm"
+    };
+}
+
+        // Utility Functions
+        async function getUserId() {
+            if (liff.isLoggedIn()) {
+                const profile = await liff.getProfile();
+                return profile.userId;
+            }
+            throw new Error('กรุณาเข้าสู่ระบบ LINE ก่อนดำเนินการ');
+        }
+
+        function getPaymentTypeName(typeId) {
+            const type = CONFIG.PAYMENT_TYPES.find(t => t.id === typeId);
+            return type ? type.name : typeId;
+        }
+
+        function getBankInfo(bankId) {
+            const bankInfo = CONFIG.BANK_ACCOUNTS[bankId];
+            if (!bankInfo) return bankId;
+            return `${bankInfo.bank} : ${bankInfo.account}`;
+        }
+
+        function convertToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function formatDateTime(datetime) {
+            const date = new Date(datetime);
+            return date.toLocaleString('th-TH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+        }
+
+        async function handleSuccess() {
+            await Swal.fire({
+                title: 'สำเร็จ',
+                text: 'บันทึกข้อมูลการชำระเงินเรียบร้อยแล้ว',
+                icon: 'success'
+            });
+
+            if (liff.isInClient()) {
+                liff.closeWindow();
+            } else {
+                window.location.reload();
+            }
+        }
+
+        function handleError(error) {
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'เกิดข้อผิดพลาด',
+                text: error.message || 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
+                icon: 'error'
+            });
+        }
+
+        // Initialize Everything
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeLiff();
+            initializePaymentTypes();
+            initializeBankAccounts();
+            document.getElementById('paymentForm').addEventListener('submit', handleFormSubmit);
+        });
+    </script>
+</body>
+</html>
