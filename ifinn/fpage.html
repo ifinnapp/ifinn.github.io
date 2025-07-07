@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINE Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var liffId = "1661371622-q1Yo7yZR";
+            initializeLiff(liffId);
+        })
+
+        function initializeLiff(liffId) {
+            liff
+                .init({
+                    liffId: liffId,
+                    withLoginOnExternalBrowser: true,
+                })
+                .then(() => {
+                    if (!liff.isInClient() && !liff.isLoggedIn()) {
+                        Swal.fire('มีข้อผิดพลาด', 'คุณยังไม่ได้ทำการ Login LINE', 'info').then(() => {
+                            liff.login();
+                        });
+
+                    }
+                    liff.ready.then(() => {
+                        liff.shareTargetPicker(
+                            [
+                                {
+                                    "type": "flex",
+                                    "altText": "Thank You",
+                                    "contents": {
+                                        "type": "bubble",
+                                        "size": "deca",
+                                        "hero": {
+                                            "type": "image",
+                                            "url": "" + liff.getDecodedIDToken().picture,
+                                            "size": "full",
+                                            "aspectRatio": "1:1",
+                                            "aspectMode": "fit"
+
+                                        },
+                                        "body": {
+                                            "type": "box",
+                                            "layout": "vertical",
+                                            "spacing": "md",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "" + liff.getDecodedIDToken().name,
+                                                    "wrap": true,
+                                                    "weight": "bold",
+                                                    "gravity": "center",
+                                                    "size": "xl"
+                                                },
+                                                {
+                                                    "type": "box",
+                                                    "layout": "vertical",
+                                                    "margin": "xxl",
+                                                    "contents": [
+                                                        {
+                                                            "type": "text",
+                                                            "text": "ขอบคุณสำหรับการรับชมเว็บไซต์",
+                                                            "color": "#aaaaaa",
+                                                            "wrap": true,
+                                                            "margin": "xxl",
+                                                            "size": "xs"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                            ],
+                            {
+                                isMultiple: true,
+                            }
+                        )
+                            .then(function (res) {
+                                if (res) {
+                                    const userId = liff.getDecodedIDToken().sub;
+                                    const state = userId;
+                                    const lineNonce = Math.random().toString(36).substring(7);
+
+                                    localStorage.setItem("state", state);
+
+                                    const redirectUri = 'https://ifinn.glitch.me/callback.html';
+                                    const clientId = '1661371622';
+                                    window.location.replace(`https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=profile%20openid%20email&nonce=${lineNonce}`);
+
+                                } else {
+                                    Swal.fire({
+                                        position: "top-end",
+                                        icon: "info",
+                                        title: "คุณได้ยกเลิกการแชร์ให้เพื่อน",
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    }).then(() => {
+                                        liff.closeWindow();
+                                    })
+                                }
+                            })
+                            .catch(function (error) {
+                              
+                                console.log("something wrong happen");
+                            });
+
+                    });
+                })
+                .catch((err) => {
+                    console.log('LIFF Initialization failed ', err);
+                });
+        }
+
+        const params = (new URL(document.location)).searchParams;
+        const event = params.get("event");
+        localStorage.setItem("event", event);
+
+    </script>
+</body>
+
+</html>
