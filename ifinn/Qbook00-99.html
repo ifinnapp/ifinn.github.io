@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมส์ทายผล ชิงรางวัล</title>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <!-- LIFF SDK -->
+    <script src="https://static.line-scdn.net/liff/edge/versions/2.7.1/sdk.js"></script>
+
+    <!-- Tailwind CSS for styling (optional) -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.2/dist/tailwind.min.css" rel="stylesheet">
+
+<style>
+    .status-pending {
+        background-color: #28a745; /* สีเขียวมิ้น #48fa92*/
+        width: 80px;
+        text-align: center; /* กำหนดให้ข้อความอยู่ตรงกลาง */
+        padding: 2px 8px;
+        border-radius: 12px;
+        animation: blinker 1.5s infinite;
+    }
+
+    .status-transfer {
+        background-color: #07daed; /* สีฟ้าอ่อน */
+        width: 80px;
+        text-align: center; /* กำหนดให้ข้อความอยู่ตรงกลาง */
+        padding: 2px 8px;
+        border-radius: 12px;
+    }
+
+    .status-done {
+        background-color: #28a745; /* สีเขียว */
+        width: 80px;
+        text-align: center; /* กำหนดให้ข้อความอยู่ตรงกลาง */
+        padding: 2px 8px;
+        border-radius: 12px;
+    }
+
+    .status-editing {
+        background-color: #fa675c; /* สีแดงอ่อน */
+        width: 80px;
+        text-align: center; /* กำหนดให้ข้อความอยู่ตรงกลาง */
+        padding: 2px 8px;
+        border-radius: 12px;
+        animation: blinker 1.5s infinite;
+    }
+  
+    .status-skip {
+        background-color: #c07dfa; /* สีม่วงอ่อน */
+        width: 80px;
+        text-align: center; /* กำหนดให้ข้อความอยู่ตรงกลาง */
+        padding: 2px 8px;
+        border-radius: 12px;
+    }
+  
+    .status-available {
+    background-color: #e2e8f0; /* สีเทา */
+    width: 80px;
+    text-align: center; /* กำหนดให้ข้อความอยู่ตรงกลาง */
+    padding: 2px 8px;
+    border-radius: 12px;
+    }
+
+    @keyframes blinker {
+        50% {
+            opacity: 0.5;
+        }
+    }
+</style>
+
+
+  
+</head>
+
+<body>
+    <div class="container mx-auto mt-10 p-4 bg-white rounded-lg shadow">
+        <h1 class="text-center text-2xl font-bold mb-6">เล่นฟรี‼️ ทายถูกรับ ฿500</h1>
+        <h1 class="text-center text-xl font-bold mb-6">กติกาง่ายๆ‼️ แชร์โพสที่กลุ่ม <a href="https://www.facebook.com/groups/802704657652538" style="color: #4169E1" class="border-b border-gray-500 border-dotted">Facebook</a></h1>
+        <h1 class="text-center text-2xl font-bold mb-6">แล้วเลือกคำตอบที่ <a href="https://line.me/R/ti/p/@hqg1050l" style="color: #069e50" class="border-b border-gray-500 border-dotted">LINE OA</a></h1>
+        <div class="grid grid-cols-5 gap-4" id="queueContainer">
+            <!-- คิวที่สามารถจองจะแสดงตรงนี้ -->
+        </div>
+    </div>
+
+    <script>
+        liff.init({
+            liffId: '1661371622-6jXDBnp0'
+        }).catch((err) => {
+            console.error('LIFF Initialization failed: ', err);
+        });
+      
+      function isBookingAllowed() {
+  const now = new Date();
+  const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+  const currentDate = now.getDate(); // ได้วันที่ปัจจุบัน (1-31)
+
+  // ตรวจสอบวันที่
+  if (currentDate === 1 || currentDate === 16) {
+    // วันที่ 1 และ 16 ต้องไม่เกินเวลา 15.30น.
+    if (currentHour < 15 || (currentHour === 15 && currentMinute <= 30)) {
+      return true;
+    } else {
+      return false;
+    }
+  } else if ((currentDate >= 13 && currentDate <= 15) || (currentDate >= 28 && currentDate <= 31)) {
+    // วันที่ 13-15 และ 28-31 กดจองได้ตลอดเวลา
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+        liff.ready.then(async () => {
+            if (!liff.isLoggedIn()) {
+                liff.login();
+                return;
+            }
+
+            const idToken = liff.getDecodedIDToken();
+            const userId = idToken.sub;
+            const displayName = idToken.name;
+            const pictureUrl = idToken.picture;
+            const email = idToken.email;
+
+            $('form').append(`<input type="hidden" name="userId" value="${userId}">`);
+            $('form').append(`<input type="hidden" name="displayName" value="${displayName}">`);
+            $('form').append(`<input type="hidden" name="pictureUrl" value="${pictureUrl}">`);
+            $('form').append(`<input type="hidden" name="email" value="${email}">`);
+
+            let bookedData = {};
+            await $.get('https://script.google.com/macros/s/AKfycbwhsFXmXUaTyelJR4_j0T9K41_j8o2fXYeCiVr7qwxWcZJb-mfZGYBHNODi69nBz9WN/exec', function(data) {
+                bookedData = data;
+            });
+
+            const queueContainer = document.getElementById('queueContainer');
+for (let i = 1; i <= 100; i++) {
+    let displayNumber = i < 10 ? "0" + i.toString() : i.toString(); // แปลงเป็นตัวเลข 2 หลักสำหรับการแสดงผล
+    if (i === 100) displayNumber = "00";
+
+    let formattedNumber = i.toString(); // ใช้สำหรับการอ้างอิงกับ bookedData
+    if (i === 100) formattedNumber = "100"; // สำหรับคิวที่ 100 ใช้ค่า "100" เพื่อตรงกับข้อมูล
+
+    let queueWrapper = document.createElement('div');
+    queueWrapper.className = "flex flex-col items-center mb-4";
+
+    let queueElement = document.createElement('div');
+    queueElement.className = "relative flex justify-center items-center bg-blue-500 text-white w-16 h-16 rounded-full cursor-pointer";
+    queueWrapper.appendChild(queueElement);
+
+    let statusElement = document.createElement('div');
+statusElement.className = "text-sm mt-2 text-black";
+    queueWrapper.appendChild(statusElement);
+
+    if (bookedData[formattedNumber] && bookedData[formattedNumber].userId) {
+    queueElement.innerHTML = `<img src="${bookedData[formattedNumber].pictureUrl}" class="queue-image w-16 h-16 rounded-full" alt="User Profile Picture"/>`;
+
+    const statusFromSheet = bookedData[formattedNumber].G; // ตรงนี้ค Assumption ว่าคอลัมน์ G มีชื่อว่า "G"
+
+    switch(statusFromSheet) {
+    case "กำลังดำเนินการ":
+        statusElement.textContent = "ดำเนินก...";
+        statusElement.classList.add("status-pending");
+        break;
+    case "รอโอน":
+        statusElement.textContent = "รอโอน";
+        statusElement.classList.add("status-transfer");
+        break;
+    case "แล้วเสร็จ":
+        statusElement.textContent = "โอนแล้ว";
+        statusElement.classList.add("status-done");
+        break;
+    case "ข้ามคิว":
+        statusElement.textContent = "ข้ามคิว";
+        statusElement.classList.add("status-skip");
+        break;
+    case "รอแก้ไขข้อมูล":
+        statusElement.textContent = "รอแก้ไข...";
+        statusElement.classList.add("status-editing");
+        break;
+    default:
+        statusElement.textContent = "จองแล้ว";
+        statusElement.classList.add('status-pending');
+        break;
+}
+
+} else {
+    queueElement.innerHTML = `<span class="queue-number text-2xl">${displayNumber}</span><img class="queue-image w-20 h-20 rounded-full hidden" alt="User Profile Picture"/>`; 
+    statusElement.textContent = "ว่าง";
+    statusElement.classList.add('status-available');
+}
+
+                queueElement.dataset.queue = formattedNumber;
+                queueElement.addEventListener('click', async function() {
+                    if (!isBookingAllowed()) {
+                      Swal.fire({
+                            title: '‼️แจ้งเตือน‼️',
+                            html: 'สามารถจองคิวได้<br>เฉพาะวันที่ 30-1 ของเดือน<br>เวลา 08:30น. - 15:30น.',
+                            //html: 'หยุดเฉพาะกิจ<br>จองได้อีกที วันที่ 22 กันยายน 2566<br>เวลาจอง 08:30น. - 17:00น.',    
+                            icon: 'warning'
+                      });
+
+                      return;
+                    }
+                    let numberElement = this.querySelector('.queue-number');
+                    let imageElement = this.querySelector('.queue-image');
+
+                    if (imageElement.src && !imageElement.classList.contains('hidden')) {
+                        if (bookedData[formattedNumber] && bookedData[formattedNumber].userId === userId) {
+                            // ยกเลิกการจอง
+                            const cancelBookingData = {
+                                action: 'cancel',
+                                queueNumber: this.dataset.queue,
+                                userId: "",
+                                displayName: "",
+                                pictureUrl: "",
+                                email: "",
+                                G: ""
+                            };
+
+                            $.post('https://script.google.com/macros/s/AKfycbwhsFXmXUaTyelJR4_j0T9K41_j8o2fXYeCiVr7qwxWcZJb-mfZGYBHNODi69nBz9WN/exec', cancelBookingData);
+
+                            Swal.fire('⚠️ยกเลิกการจอง⚠️', 'คุณได้ยกเลิกการจองคิวนี้แล้ว', 'info').then(() => {
+        liff.closeWindow();
+    });
+
+                            imageElement.classList.add('hidden');
+                        } else {
+                            Swal.fire('‼️แจ้งเตือน‼️', 'คิวนี้ถูกจองแล้ว', 'warning');
+                        }
+                    } else if (userAlreadyBooked(userId, bookedData)) {
+                        Swal.fire('‼️แจ้งเตือน‼️', 'คุณได้จองคิวเรียบร้อยแล้ว ไม่สามารถจองเพิ่มเติมได้', 'warning');
+                        return;
+                    } else {
+    numberElement.classList.add('hidden');
+    imageElement.src = pictureUrl;
+    imageElement.classList.remove('hidden');
+
+    const bookingData = {
+        action: 'book',
+        queueNumber: this.dataset.queue,
+        userId: userId,
+        displayName: displayName,
+        pictureUrl: pictureUrl,
+    };
+
+    $.post('https://script.google.com/macros/s/AKfycbwhsFXmXUaTyelJR4_j0T9K41_j8o2fXYeCiVr7qwxWcZJb-mfZGYBHNODi69nBz9WN/exec', bookingData);
+
+    Swal.fire('ดำเนินการสำเร็จ', 'คุณได้จองคิวเรียบร้อยแล้ว', 'success').then(() => {
+        liff.closeWindow();
+    });
+}
+                });
+
+                queueContainer.appendChild(queueWrapper);
+            }
+        });
+
+        function userAlreadyBooked(userId, bookedData) {
+            for (let queue in bookedData) {
+                if (bookedData[queue].userId === userId) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function sendMsgLiff(msgTemplate) {
+            if (liff.isInClient()) {
+                liff.sendMessages([msgTemplate]).then(() => {
+                    liff.closeWindow();
+                }).catch((err) => {
+       //             Swal.fire('ข้อผิดพลาด', 'เกิดข้อผิดพลาดในการส่งข้อความ', 'error');
+                });
+            } else {
+                console.warn('This function is for sending messages from within the LINE app.');
+            }
+        }
+    </script>
+</body>
+
+</html>
