@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/script.js" defer></script>
+  <script src="/datasheet.js" defer></script>
+  <script src="/datajson.js" defer></script>
+  <link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8" />
+  <style type="text/css">
+    html,
+    body {
+      font-family: 'line_seed_sans_th';
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .sidebar {
+      z-index: 1000;
+    }
+
+
+    .content {
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-200">
+  <div class="relative min-h-screen md:flex">
+    <!-- mobile menubar -->
+    <div class="bg-gray-800 text-gray-100 flex justify-between md:hidden">
+      <!-- logo -->
+      <a href="#" class="block p-4 text-white font-bold">BOTSTICKERLTH</a>
+      <!-- side menu button -->
+      <button class="mobile-menu-btn p-4 focus:outline-none focus:bg-gray-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z"
+            clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- sidebar -->
+    <div
+      class="sidebar bg-blue-800 text-blue-100 w-64 space-y-6 px-2 py-7 absolute inset-y-0 left-0 transform -translate-x-full transition duration-300 ease-in-out md:relative md:translate-x-0">
+      <!-- logo -->
+      <a class="text-white flex items-center space-x-2 px-4" href="#">
+        <img class="w-10 h-10 overflow-hidden object-cover rounded-full"
+          src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjg5ajlhemdyZjlrZDgwdjMwbTl1dGdtbnhvM2p4Y2t0ZnpnZnE4ciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/l150Tal3EKqgj0v9gs/giphy.gif"
+          alt="profile" id="pictureUrl" />
+        <span class="text-2xl font-extrabold" id="displayName">Displayname</span>
+      </a>
+      <!-- navbar -->
+      <div>
+        <a href="#"
+          class="block py-2.5 px-4 flex items-center rounded hover:bg-blue-700 hover:text-white font-bold transition duration-200"
+          onclick="showContent('home')">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          Home
+        </a>
+        <a href="#"
+          class="block py-2.5 px-4 flex items-center rounded hover:bg-blue-700 hover:text-white font-bold transition duration-200"
+          onclick="showContent('dashboard')">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          dashboard
+        </a>
+        <a href="#"
+          class="block py-2.5 px-4 flex items-center rounded hover:bg-blue-700 hover:text-white font-bold transition duration-200"
+          onclick="showContent('features')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5 mr-2">
+            <path fill-rule="evenodd"
+              d="M9 4.5a.75.75 0 0 1 .721.544l.813 2.846a3.75 3.75 0 0 0 2.576 2.576l2.846.813a.75.75 0 0 1 0 1.442l-2.846.813a3.75 3.75 0 0 0-2.576 2.576l-.813 2.846a.75.75 0 0 1-1.442 0l-.813-2.846a3.75 3.75 0 0 0-2.576-2.576l-2.846-.813a.75.75 0 0 1 0-1.442l2.846-.813A3.75 3.75 0 0 0 7.466 7.89l.813-2.846A.75.75 0 0 1 9 4.5ZM18 1.5a.75.75 0 0 1 .728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 0 1 0 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 0 1-1.456 0l-.258-1.036a2.625 2.625 0 0 0-1.91-1.91l-1.036-.258a.75.75 0 0 1 0-1.456l1.036-.258a2.625 2.625 0 0 0 1.91-1.91l.258-1.036A.75.75 0 0 1 18 1.5ZM16.5 15a.75.75 0 0 1 .712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 0 1 0 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 0 1-1.422 0l-.395-1.183a1.5 1.5 0 0 0-.948-.948l-1.183-.395a.75.75 0 0 1 0-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0 1 16.5 15Z"
+              clip-rule="evenodd" />
+          </svg>
+
+          Features
+        </a>
+        <a href="#"
+          class="block py-2.5 px-4 flex items-center rounded hover:bg-blue-700 hover:text-white font-bold transition duration-200"
+          onclick="showContent('about')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5 mr-2">
+            <path fill-rule="evenodd"
+              d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+              clip-rule="evenodd" />
+          </svg>
+
+          </svg>
+          Contact
+        </a>
+      </div>
+    </div>
+
+    <!-- main content -->
+    <div class="flex-1 p-10 text-2xl font-bold">
+      <!-- home content -->
+      <div id="home" class="content">
+
+
+        <div class="px-4 py-8 max-w-5xl mx-auto">
+          <div id="cards-container" class="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          </div>
+        </div>
+
+        <template id="base-card">
+          <div id="main-container"
+            class="flex justify-between bg-emerald-500 rounded-md overflow-hidden hover:-translate-y-1 hover:shadow-xl transition ">
+            <div class="p-4  space-y-4 text-white">
+              <h1 id='title' class="text-3xl font-bold"></h1>
+              <p id='sub-title' class="text-lg opacity-70"></p>
+            </div>
+
+            <div class="relative">
+
+              <img loading="lazy" class='w-full object-contain' id='image' />
+              <button id='drop-btn'
+                class="absolute bottom-6 right-4 rounded-full bg-white h-10 w-10 text-xl hover:scale-105 transition shadow-xl">&#9654;</button>
+            </div>
+          </div>
+        </template>
+      </div>
+      <!-- end home content -->
+      <!-- dashboard content -->
+      <div id="dashboard" class="content hidden">
+
+
+        <div id="myProject">
+          <center>
+            <div id="loading-overlay">
+              <img class="h-32 w-32 dark:border-gray-800 mx-auto my-4"
+                src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3psdDI1NTBvMnh3d2o5b2FoMzlyNTM1azJxcDI2dmpqb2NvOXY1bCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/kuTMoE30RJwFry8Yqm/giphy.gif"
+                alt="Load Data">
+
+            </div>
+          </center>
+        </div>
+
+
+      </div>
+      <!-- end dashboard content -->
+      <!-- features content -->
+      <div id="features" class="content hidden">Features Content</div>
+      <!-- end features content -->
+      <!-- about content -->
+      <div id="about" class="content hidden">
+
+        <center>
+          <div
+            class="relative w-full max-w-2xl my-8 md:my-16 flex flex-col items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 px-4 py-8 border-2 border-dashed border-gray-400 dark:border-gray-400 shadow-lg rounded-lg">
+
+            <span
+              class="absolute text-xs font-medium top-0 left-0 rounded-br-lg rounded-tl-lg px-2 py-1 bg-primary-100 dark:bg-gray-900 dark:text-gray-300 border-gray-400 dark:border-gray-400 border-b-2 border-r-2 border-dashed ">
+              Social media
+            </span>
+
+            <div class="w-full flex justify-center sm:justify-start sm:w-auto">
+              <img class="object-cover w-20 h-20 mt-3 mr-3 rounded-full"
+                src="https://lh3.googleusercontent.com/d/1Ck_OCfEW4dEp3A1k9yfQplYmW7qmwzFF">
+            </div>
+
+            <div class="w-full sm:w-auto flex flex-col items-center sm:items-start">
+
+              <p class="font-display mb-2 text-2xl font-semibold dark:text-gray-200" itemprop="author">
+                BOTSTICKERLTH
+              </p>
+
+              <div class="mb-4 md:text-lg text-gray-400">
+                <p>จำหน่ายสติกเกอร์ไลน์ทั้งไทยและต่างประเทศ รวมถึงอัพเดท Solution LINE OA</p>
+              </div>
+
+              <div class="flex gap-4">
+
+                <a title="line" href="https://page.line.me/botstickerlth" target="_blank" rel="noopener noreferrer">
+                  <svg class="h-6 w-6 dark:text-gray-300" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <style>
+                        .cls-1 {
+                          fill: #00cf2e;
+                        }
+
+                        .cls-2 {
+                          fill: #fff;
+                        }
+                      </style>
+                    </defs>
+                    <title />
+                    <g data-name="5-line" id="_5-line">
+                      <rect class="cls-1" height="64" rx="11.2" ry="11.2" transform="translate(64 64) rotate(180)"
+                        width="64" />
+                      <path class="cls-2"
+                        d="M56.4,28.4C56.4,19.6,46,10,32.4,10c-13.25,0-24,7.8-24,18.4,0,9.78,8.38,17.86,20.17,19.05a2.38,2.38,0,0,1,1.79,1.06A2.82,2.82,0,0,1,30.8,50a19,19,0,0,1-.36,3.23.8.8,0,0,0,1.1.91C37.19,51.64,56.4,41.36,56.4,28.4Z" />
+                      <path class="cls-1"
+                        d="M23.6,32.8H20V24.4a1.2,1.2,0,1,0-2.4,0V34a1.2,1.2,0,0,0,1.2,1.2h4.8a1.2,1.2,0,0,0,0-2.4Z" />
+                      <path class="cls-1"
+                        d="M26.8,23.2a1.2,1.2,0,0,0-1.2,1.2V34A1.2,1.2,0,0,0,28,34V24.4A1.2,1.2,0,0,0,26.8,23.2Z" />
+                      <path class="cls-1"
+                        d="M38,23.2a1.2,1.2,0,0,0-1.2,1.2v6l-5-6.72a1.2,1.2,0,0,0-2.16.72V34A1.2,1.2,0,0,0,32,34V28l5,6.72a1.19,1.19,0,0,0,1,.48,1.26,1.26,0,0,0,.38-.06A1.2,1.2,0,0,0,39.2,34V24.4A1.2,1.2,0,0,0,38,23.2Z" />
+                      <path class="cls-1"
+                        d="M46.8,30.4a1.2,1.2,0,1,0,0-2.4H43.2V25.6h3.6a1.2,1.2,0,1,0,0-2.4H42a1.2,1.2,0,0,0-1.2,1.2V34A1.2,1.2,0,0,0,42,35.2h4.8a1.2,1.2,0,0,0,0-2.4H43.2V30.4Z" />
+                    </g>
+                  </svg>
+                </a>
+                <a title="facebook" href="https://www.facebook.com/stickerlinebyiton5" target="_blank"
+                  rel="noopener noreferrer">
+                  <svg class="h-6 w-6 dark:text-gray-300" height="100%"
+                    style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" version="1.1"
+                    viewBox="0 0 512 512" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:serif="http://www.serif.com/" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g>
+                      <path
+                        d="M512,256c0,-141.385 -114.615,-256 -256,-256c-141.385,0 -256,114.615 -256,256c0,127.777 93.616,233.685 216,252.89l0,-178.89l-65,0l0,-74l65,0l0,-56.4c0,-64.16 38.219,-99.6 96.695,-99.6c28.009,0 57.305,5 57.305,5l0,63l-32.281,0c-31.801,0 -41.719,19.733 -41.719,39.978l0,48.022l71,0l-11.35,74l-59.65,0l0,178.89c122.385,-19.205 216,-125.113 216,-252.89Z"
+                        style="fill:#1877f2;fill-rule:nonzero;" />
+                      <path
+                        d="M355.65,330l11.35,-74l-71,0l0,-48.022c0,-20.245 9.917,-39.978 41.719,-39.978l32.281,0l0,-63c0,0 -29.297,-5 -57.305,-5c-58.476,0 -96.695,35.44 -96.695,99.6l0,56.4l-65,0l0,74l65,0l0,178.89c13.033,2.045 26.392,3.11 40,3.11c13.608,0 26.966,-1.065 40,-3.11l0,-178.89l59.65,0Z"
+                        style="fill:#fff;fill-rule:nonzero;" />
+                    </g>
+                  </svg>
+                </a>
+                <a title="youtube url" href="https://www.youtube.com/@iton5" target="_blank" rel="noopener noreferrer">
+                  <svg class="h-6 w-6 dark:text-gray-300" height="100%"
+                    style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" version="1.1"
+                    viewBox="0 0 512 512" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:serif="http://www.serif.com/" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g>
+                      <path
+                        d="M501.299,132.766c-5.888,-22.03 -23.234,-39.377 -45.264,-45.264c-39.932,-10.701 -200.037,-10.701 -200.037,-10.701c0,0 -160.105,0 -200.038,10.701c-22.025,5.887 -39.376,23.234 -45.264,45.264c-10.696,39.928 -10.696,123.236 -10.696,123.236c0,0 0,83.308 10.696,123.232c5.888,22.03 23.239,39.381 45.264,45.268c39.933,10.697 200.038,10.697 200.038,10.697c0,0 160.105,0 200.037,-10.697c22.03,-5.887 39.376,-23.238 45.264,-45.268c10.701,-39.924 10.701,-123.232 10.701,-123.232c0,0 0,-83.308 -10.701,-123.236Z"
+                        style="fill:#ed1f24;fill-rule:nonzero;" />
+                      <path d="M204.796,332.803l133.018,-76.801l-133.018,-76.801l0,153.602Z"
+                        style="fill:#fff;fill-rule:nonzero;" />
+                    </g>
+                  </svg>
+                </a>
+
+                <div id="shareFlex">
+
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
+                    <path fill-rule="evenodd"
+                      d="M15.75 4.5a3 3 0 1 1 .825 2.066l-8.421 4.679a3.002 3.002 0 0 1 0 1.51l8.421 4.679a3 3 0 1 1-.729 1.31l-8.421-4.678a3 3 0 1 1 0-4.132l8.421-4.679a3 3 0 0 1-.096-.755Z"
+                      clip-rule="evenodd" />
+                  </svg>
+
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+      </div>
+
+      </center>
+    </div>
+    <!-- end about content -->
+  </div>
+  <!--end main content -->
+  </div>
+  </div>
+
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script>
+    window.onload = function () {
+
+      const defaultLiffId = "1661371622-4zmvokyQ";
+      initializeLiff(defaultLiffId);
+
+
+    };
+
+    function initializeLiff(defaultLiffId) {
+      liff.init({
+        liffId: defaultLiffId,
+        withLoginOnExternalBrowser: true,
+      })
+
+      liff.ready.then(() => {
+        liff.getProfile()
+          .then((profile) => {
+            const name = profile.displayName;
+            const picture = profile.pictureUrl;
+
+            document.getElementById("pictureUrl").src =
+              "" + picture;
+            document.getElementById("displayName").textContent =
+              "" + name;
+          })
+          .catch((err) => {
+            console.log("error", err);
+          });
+        getData()
+
+
+      });
+
+    }
+
+    document.getElementById('shareFlex').addEventListener('click', () => {
+      const msg = [{
+        "type": "text",
+        "text": "Hello, world"
+      }]
+      shareTargetPicker(msg)
+    });
+
+
+    function sendText(text) {
+      if (!liff.isInClient()) {
+        shareTargetPicker(text);
+      } else {
+        sendflex(text);
+      }
+    }
+    function sendflex(text) {
+      liff.sendMessages(text).then(function () {
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: 'ส่งเข้าแชทเรียบร้อย',
+          showConfirmButton: false,
+          timer: 1500
+        })
+
+
+      })
+    }
+    function shareTargetPicker(text) {
+      liff.shareTargetPicker(text).then(function (res) {
+        if (res) {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: 'ส่งเข้าแชทเรียบร้อย',
+            showConfirmButton: false,
+            timer: 1500
+          })
+
+        } else {
+
+          console.log("TargetPicker was closed!");
+        }
+      }).catch(function (error) {
+        window.alert("Failed to send message " + error);
+      });
+    }
+
+  </script>
+</body>
+
+</html>
