@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบจองคิว : ไอฟินน์ [แฟรนไชส์]</title>
+  <!-- External Libraries -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script src="https://static.line-scdn.net/liff/edge/versions/2.7.1/sdk.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.2/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* Queue Status Styles */
+    .status-pending { background-color: #48fa92; width: 80px; text-align: center; padding: 2px 8px; border-radius: 12px; animation: blinker 1.5s infinite; }
+    .status-transfer { background-color: #07daed; width: 80px; text-align: center; padding: 2px 8px; border-radius: 12px; }
+    .status-done { background-color: #28a745; width: 80px; text-align: center; padding: 2px 8px; border-radius: 12px; }
+    .status-editing { background-color: #fa675c; width: 80px; text-align: center; padding: 2px 8px; border-radius: 12px; animation: blinker 1.5s infinite; }
+    .status-skip { background-color: #c07dfa; width: 80px; text-align: center; padding: 2px 8px; border-radius: 12px; }
+    .status-available { background-color: #e2e8f0; width: 80px; text-align: center; padding: 2px 8px; border-radius: 12px; }
+    /* Status Card Styles */
+    .status-card { border: 2px solid #e2e8f0; border-radius: 12px; padding: 12px; margin: 8px; cursor: pointer; transition: all 0.3s; text-align: center; background-color: white; }
+    .status-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .status-card.selected { border-color: #4299e1; background-color: #ebf8ff; }
+    /* Queue Details Styles */
+    .queue-details { font-size: 0.875rem; margin-top: 0.5rem; padding: 0.5rem; background-color: #f7fafc; border-radius: 0.375rem; max-width: 200px; overflow-wrap: break-word; }
+    .queue-status-label { font-size: 0.875rem; font-weight: 600; margin-top: 0.25rem; }
+    /* Animation */
+    @keyframes blinker { 50% { opacity: 0.5; } }
+    /* Custom SweetAlert Styles */
+    .swal2-popup { font-size: 1rem !important; }
+    .booking-dialog-content { margin: 1rem 0; }
+    .status-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem; }
+    .details-input { width: 100%; margin-top: 1rem; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 0.375rem; }
+    .queue-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 1rem; width: 100%; }
+    .queue-status-container { display: flex; flex-direction: column; gap: 0.25rem; width: 100%; margin-top: 0.5rem; align-items: center; }
+    .status-row { font-size: 0.875rem; text-align: center; }
+    .details-text { font-size: 0.875rem; margin-top: 0.25rem; max-width: 200px; overflow-wrap: break-word; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container mx-auto mt-10 p-4 bg-white rounded-lg shadow">
+    <h1 class="text-center text-2xl font-bold mb-6">💰ขอบคุณที่จองคุณเข้ามา💰</h1>
+    <h1 class="text-center text-3xl font-bold mb-6">‼️โปรดรอดำเนินการตามคิว‼️</h1>
+    <div class="grid grid-cols-5 gap-4" id="queueContainer">
+      <!-- Queue items will be generated here -->
+    </div>
+  </div>
+
+  <script>
+    // LIFF initialization
+    liff.init({ liffId: '1661371622-JOE1rQ5o' })
+      .catch((err) => { console.error('LIFF Initialization failed: ', err); });
+
+    // Booking time validation
+    function isBookingAllowed() {
+      const now = new Date();
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+      const currentDate = now.getDate();
+      if (currentDate < 1 || currentDate > 31) return false;
+      if (currentHour === 8 && currentMinute < 30) return false;
+      if (currentHour < 8) return false;
+      if (currentHour > 23) return false;
+      return true;
+    }
+
+    // Booking dialog function
+    async function showBookingDialog() {
+      return await Swal.fire({
+        title: 'กรุณาเลือกรับบริการพร้อมกรอกรายละเอียด',
+        html: `
+          <div class="booking-dialog-content">
+            <div class="status-grid">
+              <div class="status-card" data-status="เปลี่ยนรหัส">
+                <div class="text-lg font-semibold">เปลี่ยนรหัส</div>
+              </div>
+              <div class="status-card" data-status="แจ้งเตือน">
+                <div class="text-lg font-semibold">แจ้งเตือน</div>
+              </div>
+              <div class="status-card" data-status="ลบเครื่อง">
+                <div class="text-lg font-semibold">ลบเครื่อง</div>
+              </div>
+              <div class="status-card" data-status="โหลดแอฟ">
+                <div class="text-lg font-semibold">โหลดแอฟ</div>
+              </div>
+              <div class="status-card" data-status="ปลดล็อค">
+                <div class="text-lg font-semibold">ปลดล็อค</div>
+              </div>
+              <div class="status-card" data-status="ขอไอดี">
+                <div class="text-lg font-semibold">ขอไอดี</div>
+              </div>
+              <div class="status-card" data-status="ขอลูกค้า">
+                <div class="text-lg font-semibold">ขอลูกค้า</div>
+              </div>
+              <div class="status-card" data-status="อื่นๆ">
+                <div class="text-lg font-semibold">อื่นๆ</div>
+              </div>
+            </div>
+            <input id="selected-status" type="hidden">
+            <textarea id="booking-details" class="details-input" placeholder="กรอกรายละเอียดเพิ่มเติม..." rows="3"></textarea>
+          </div>
+        `,
+        showCancelButton: true,
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonText: 'ยืนยัน',
+        didOpen: () => {
+          document.querySelectorAll('.status-card').forEach(card => {
+            card.addEventListener('click', () => {
+              document.querySelectorAll('.status-card').forEach(c => c.classList.remove('selected'));
+              card.classList.add('selected');
+              document.getElementById('selected-status').value = card.dataset.status;
+            });
+          });
+        },
+        preConfirm: () => {
+          const status = document.getElementById('selected-status').value;
+          const details = document.getElementById('booking-details').value;
+          if (!status) {
+            Swal.showValidationMessage('กรุณาเลือกสถานะ');
+            return false;
+          }
+          return { status, details };
+        }
+      });
+    }
+
+    // Main LIFF ready function
+    liff.ready.then(async () => {
+      if (!liff.isLoggedIn()) {
+        liff.login();
+        return;
+      }
+      const idToken = liff.getDecodedIDToken();
+      const userId = idToken.sub;
+      const displayName = idToken.name;
+      const pictureUrl = idToken.picture;
+      const email = idToken.email;
+
+      // ถ้ามี form ให้เพิ่มข้อมูลผู้ใช้ลงใน form
+      $('form').append(`<input type="hidden" name="userId" value="${userId}">`);
+      $('form').append(`<input type="hidden" name="displayName" value="${displayName}">`);
+      $('form').append(`<input type="hidden" name="pictureUrl" value="${pictureUrl}">`);
+      $('form').append(`<input type="hidden" name="email" value="${email}">`);
+
+      // ดึงข้อมูลการจองจาก backend
+      let bookedData = {};
+      await $.get('https://script.google.com/macros/s/AKfycbzJUHqaO-Ga9gC21jcCW-UeEbpxD_-fAOYvmRRRQteNYmVihUhF9rd_lDCVs3UHfqXlEQ/exec', function(data) {
+        bookedData = data;
+      });
+
+      // สร้าง element สำหรับแสดงคิว
+      const queueContainer = document.getElementById('queueContainer');
+      for (let i = 1; i <= 500; i++) {
+        let formattedNumber = String(i);
+        createQueueElement(formattedNumber, bookedData, queueContainer, userId, displayName, pictureUrl);
+      }
+    });
+
+    // Create queue element function
+    function createQueueElement(number, bookedData, container, userId, displayName, pictureUrl) {
+      let queueWrapper = document.createElement('div');
+      queueWrapper.className = "queue-wrapper";
+      let queueElement = document.createElement('div');
+      queueElement.className = "relative flex justify-center items-center bg-blue-500 text-white w-16 h-16 rounded-full cursor-pointer";
+
+      if (bookedData[number] && bookedData[number].userId) {
+        queueElement.innerHTML = `<img src="${bookedData[number].pictureUrl}" class="queue-image w-16 h-16 rounded-full" alt="User Profile Picture"/>`;
+        let statusContainer = document.createElement('div');
+        statusContainer.className = "queue-status-container";
+        let statusG = document.createElement('div');
+        statusG.className = "status-row";
+        const gStatus = setQueueStatusLabel(bookedData[number].G || "รอคิว");
+        statusG.innerHTML = `<div class="${getStatusClass(bookedData[number].G)}">${gStatus}</div>`;
+        statusContainer.appendChild(statusG);
+        if (bookedData[number].userStatus) {
+          let statusH = document.createElement('div');
+          statusH.className = "status-row";
+          statusH.textContent = bookedData[number].userStatus;
+          statusContainer.appendChild(statusH);
+        }
+        // if (bookedData[number].userDetails) {
+        //   let detailsRow = document.createElement('div');
+        //   detailsRow.className = "details-text";
+        //   detailsRow.textContent = bookedData[number].userDetails;
+        //   statusContainer.appendChild(detailsRow);
+        // }
+        queueWrapper.appendChild(queueElement);
+        queueWrapper.appendChild(statusContainer);
+      } else {
+        queueElement.innerHTML = `<span class="queue-number text-2xl">${number}</span>
+                                  <img class="queue-image w-20 h-20 rounded-full hidden" alt="User Profile Picture"/>`;
+        let statusElement = document.createElement('div');
+        statusElement.className = "text-sm mt-2 text-black status-available";
+        statusElement.textContent = "ว่าง";
+        queueWrapper.appendChild(queueElement);
+        queueWrapper.appendChild(statusElement);
+      }
+      queueElement.dataset.queue = number;
+      addQueueClickHandler(queueElement, userId, displayName, pictureUrl, bookedData);
+      container.appendChild(queueWrapper);
+    }
+
+    // Helper functions
+    function setQueueStatusLabel(status) {
+      if (status === "แล้วเสร็จ" || status === "เครื่องออนไลน์แจ้งเตือนเรียบร้อย" || status === "ลบเครื่องเรียบร้อย" || status === "โหลดแอพเรียบร้อย" || status === "เปลี่ยนรหัสเรียบร้อย") {
+        return "แล้วเสร็จ";
+      }
+      const statusMap = {
+        "กำลังดำเนินการ": "ดำเนินก...",
+        "รอโอน": "รอโอน",
+        "ข้ามคิว": "ข้ามคิว",
+        "รอแก้ไขข้อมูล": "รอแก้ไข...",
+        "เครื่องออฟไลน์แจ้งเตือนเรียบร้อย": "เครื่องออฟไลน์แจ้งเตือนเรียบร้อย",
+        "เครื่องออฟไลน์ ลบเครื่องไว้เรียบร้อย": "เครื่องออฟไลน์ ลบเครื่องไว้เรียบร้อย",
+        "ไม่พบข้อมูล": "ไม่พบข้...",
+        "ไม่ได้รับสิทธิ": "ไม่ได้รับสิทธิ"
+      };
+      return statusMap[status] || "รอคิว";
+    }
+
+    function getStatusClass(status) {
+      if (status === "แล้วเสร็จ" || status === "เครื่องออนไลน์แจ้งเตือนเรียบร้อย" || status === "ลบเครื่องเรียบร้อย" || status === "โหลดแอพเรียบร้อย" || status === "เปลี่ยนรหัสเรียบร้อย") {
+        return "status-done";
+      }
+      const classMap = {
+        "กำลังดำเนินการ": "status-pending",
+        "รอโอน": "status-transfer",
+        "ข้ามคิว": "status-skip",
+        "รอแก้ไขข้อมูล": "status-editing",
+        "เครื่องออฟไลน์แจ้งเตือนเรียบร้อย": "status-editing",
+        "เครื่องออฟไลน์ ลบเครื่องไว้เรียบร้อย": "status-editing",
+        "ไม่พบข้อมูล": "status-editing",
+        "ไม่ได้รับสิทธิ": "status-editing"
+      };
+      return classMap[status] || "status-available";
+    }
+
+    // ฟังก์ชัน helper สำหรับสร้าง field ใน Flex Message
+    function createFlexField(label, value) {
+      return {
+        type: "box",
+        layout: "horizontal",
+        contents: [
+          {
+            type: "text",
+            text: label,
+            color: "#aaaaaa",
+            size: "sm",
+            flex: 2
+          },
+          {
+            type: "text",
+            text: value,
+            wrap: true,
+            color: "#666666",
+            size: "sm",
+            flex: 5
+          }
+        ],
+        spacing: "lg",
+        cornerRadius: "md",
+        margin: "sm"
+      };
+    }
+
+    // ฟังก์ชันสำหรับจัดรูปแบบวันที่และเวลา
+    function formatDateTime(datetime) {
+      const date = new Date(datetime || new Date());
+      
+      // รายชื่อเดือนภาษาไทย
+      const thaiMonths = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+      ];
+      
+      // จัดรูปแบบเป็น "วันที่ เดือน ปี เวลา"
+      const day = date.getDate();
+      const month = thaiMonths[date.getMonth()];
+      const year = date.getFullYear() + 543; // แปลงเป็นปี พ.ศ.
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      
+      return `${day} ${month} ${year} ${hours}:${minutes} น.`;
+    }
+
+    // ฟังก์ชันสร้าง Flex Message ที่ปรับปรุงใหม่
+function createFlexMessage(queueNumber, displayName, status, details, pictureUrl) {
+  const currentDate = new Date();
+  
+  return {
+    type: "flex",
+    altText: "จองคิวสำเร็จ "+`คิวที่ ${queueNumber}`,
+    contents: {
+      type: "bubble",
+      body: {
+        type: "box",
+        layout: "vertical",
+        contents: [
+          {
+            type: "box",
+            layout: "horizontal",
+            contents: [
+              {
+                type: "text",
+                text: "จองคิวสำเร็จ", // เปลี่ยนข้อความตามที่ต้องการ
+                weight: "bold",
+                size: "xl",
+                color: "#8C6900", // สีข้อความเข้มขึ้นเพื่อให้เห็นชัดบนพื้นหลังสีเหลือง
+                align: "center",
+                margin: "md"
+              }
+            ],
+            alignItems: "center",
+            justifyContent: "center",
+            paddingAll: "xs",
+            backgroundColor: "#FFF59D" // พื้นหลังสีเหลือง
+          },
+          {
+            type: "box",
+            layout: "horizontal",
+            contents: [
+              {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                  {
+                    type: "image",
+                    url: pictureUrl,
+                    aspectMode: "cover",
+                    size: "full"
+                  }
+                ],
+                width: "60px",
+                height: "60px",
+                cornerRadius: "100px"
+              },
+              {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                  {
+                    type: "text",
+                    text: displayName,
+                    weight: "bold",
+                    size: "md"
+                  },
+                  {
+                    type: "text",
+                    text: `คิวที่ ${queueNumber}`,
+                    size: "sm",
+                    color: "#999999"
+                  }
+                ],
+                margin: "md",
+                spacing: "sm"
+              }
+            ],
+            margin: "md"
+          },
+          {
+            type: "separator",
+            margin: "lg",
+            color: "#E0E0E0"
+          },
+          {
+            type: "box",
+            layout: "vertical",
+            margin: "lg",
+            spacing: "sm",
+            contents: [
+              createFlexField("👤 ผู้จอง", displayName),
+              createFlexField("🔢 คิวที่", queueNumber),
+              createFlexField("🛠️ บริการ", status),
+              createFlexField("📝 รายละเอียด", details || "-"),
+              createFlexField("📅 เวลาจอง", formatDateTime(currentDate))
+            ]
+          },
+          {
+            type: "separator",
+            margin: "lg",
+            color: "#E0E0E0"
+          },
+          {
+            type: "box",
+            layout: "vertical",
+            margin: "lg",
+            contents: [
+              {
+                type: "text",
+                text: "กดเพื่อตรวจสอบสถานะคิว", // เปลี่ยนข้อความตามที่ต้องการ
+                color: "#4285F4", // สีฟ้าสำหรับลิงก์
+                size: "sm",
+                align: "center",
+                style: "italic",
+                decoration: "underline" // เพิ่มเส้นใต้เพื่อแสดงว่าเป็นลิงก์
+              }
+            ],
+            action: {
+              type: "uri",
+              uri: "https://liff.line.me/1661371622-JOE1rQ5o" // เพิ่มลิงก์ตามที่ต้องการ
+            }
+          }
+        ],
+        backgroundColor: "#FFFFFF",
+        paddingAll: "xl"
+      },
+      styles: {
+        body: {
+          backgroundColor: "#FFFFFF"
+        }
+      }
+    }
+  };
+}
+    
+    // ฟังก์ชันสำหรับส่งข้อความ LINE ง่ายๆ เมื่ออยู่ใน LIFF
+    function sendMsgLiff(msgTemplate) {
+      if (liff.isInClient()) {
+        return liff.sendMessages([msgTemplate]);
+      } else {
+        console.warn('This function is for sending messages from within the LINE app.');
+        return Promise.resolve();
+      }
+    }
+
+    // ปรับปรุงฟังก์ชัน queue click handler
+    async function addQueueClickHandler(element, userId, displayName, pictureUrl, bookedData) {
+      element.addEventListener('click', async function() {
+        if (!isBookingAllowed()) {
+          Swal.fire({
+            title: '‼️แจ้งเตือน‼️',
+            html: 'สามารถจองคิวได้<br>เฉพาะวันที่ 6-25 ของเดือน<br>เวลา 08:30น. - 17:00น.',
+            icon: 'warning'
+          });
+          return;
+        }
+        
+        const queueNumber = this.dataset.queue;
+        if (bookedData[queueNumber] && bookedData[queueNumber].userId) {
+          Swal.fire('‼️แจ้งเตือน‼️', 'คิวนี้ถูกจองแล้ว', 'warning');
+          return;
+        }
+        
+        let numberElement = this.querySelector('.queue-number');
+        let imageElement = this.querySelector('.queue-image');
+        
+        const result = await showBookingDialog();
+        
+        if (result.value) {
+          // อัพเดต UI ก่อน
+          numberElement.classList.add('hidden');
+          imageElement.src = pictureUrl;
+          imageElement.classList.remove('hidden');
+          
+          const bookingData = {
+            action: 'book',
+            queueNumber: queueNumber,
+            userId: userId,
+            displayName: displayName,
+            pictureUrl: pictureUrl,
+            status: result.value.status,
+            details: result.value.details
+          };
+          
+          try {
+            // บันทึกข้อมูล
+            await $.post('https://script.google.com/macros/s/AKfycbzJUHqaO-Ga9gC21jcCW-UeEbpxD_-fAOYvmRRRQteNYmVihUhF9rd_lDCVs3UHfqXlEQ/exec', bookingData);
+            
+            // สร้าง Flex message
+            const flexMsg = createFlexMessage(queueNumber, displayName, result.value.status, result.value.details, pictureUrl);
+            
+            // ส่ง Flex message ด้วย Promise แยกต่างหาก
+            if (liff.isInClient()) {
+              try {
+                await sendMsgLiff(flexMsg);
+                console.log('ส่ง Flex Message สำเร็จ');
+              } catch (msgError) {
+                console.error('Error sending message:', msgError);
+              }
+            }
+            
+            // แจ้งเตือนการจองสำเร็จหลังจากส่ง Flex
+            await Swal.fire({
+              title: 'ดำเนินการสำเร็จ',
+              text: 'คุณได้จองคิวเรียบร้อยแล้ว',
+              icon: 'success',
+              timer: 2000,
+              timerProgressBar: true,
+              showConfirmButton: false
+            });
+            
+            // รอให้ Flex message ส่งเสร็จก่อนปิดหน้าต่าง
+            if (liff.isInClient()) {
+              // รอเวลาเล็กน้อยเพื่อให้แน่ใจว่าข้อความถูกส่งก่อนปิดหน้าต่าง
+              setTimeout(() => {
+                liff.closeWindow();
+              }, 1500);
+            } else {
+              window.location.reload();
+            }
+          } catch (error) {
+            console.error('Error in booking process:', error);
+            Swal.fire('มีข้อผิดพลาด', 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง', 'error');
+          }
+        }
+      });
+    }
+
+    // ฟังก์ชันตรวจสอบการจอง (เก็บไว้เผื่อใช้ในอนาคต)
+    function userAlreadyBooked(userId, bookedData) {
+      for (let queue in bookedData) {
+        if (bookedData[queue].userId === userId) {
+          return true;
+        }
+      }
+      return false;
+    }
+  </script>
+</body>
+</html>
