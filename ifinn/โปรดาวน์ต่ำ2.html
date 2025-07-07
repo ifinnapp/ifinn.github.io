@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ลงทะเบียน : ผ่อนดาวน์ต่ำ</title>
+    <link
+      href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <script
+    src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js"
+    defer
+  ></script>
+    <link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8" />
+<style type="text/css">
+   body {
+       font-family: 'line_seed_sans_th';
+  }
+</style>
+   
+   
+</head>
+<body class="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
+    
+        <div class="max-w-screen-xl m-0 sm:m-20 bg-white shadow sm:rounded-lg flex justify-center flex-1">
+        <form action="">
+          <div class="w-full px-4">
+            <div>
+              <center><img id="picurl"
+                src="https://media.giphy.com/media/eNwGfck2Awo3d2gB32/giphy.gif"
+                class="dark:shadow-xl border-white dark:border-gray-500 rounded-full align-middle border-8 " width=30%
+              /></center>
+            </div>
+            <div class="mt-2 flex flex-col items-center">
+              <h1 class="text-2xl xl:text-3xl font-extrabold">
+               ลงทะเบียนจองโปรดาวน์ต่ำ
+              </h1>
+              <div class="w-full flex-1 mt-6">
+                
+    
+              
+    
+                <div class="mx-auto max-w-xs">
+                  <input
+                    class="mt-2 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                    type="text"
+                    id="agent" name="agent"
+                    placeholder="รหัสตัวผู้แนะนำ AGxxxxx (ถ้ามี)"
+                  />
+                  <input
+                    class="mt-2 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                    type="text"
+                    id="name" name="name"
+                    placeholder="ชื่อ-สกุล (ไม่ต้องใส่คำนำหน้า)"
+                    required
+                  />
+                  <input
+                    class="mt-2 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                    type="text"
+                    id="nickname" name="nickname"
+                    placeholder="ชื่อเล่น"
+                    required
+                  />
+<!--                   <input
+                    class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-2"
+                    type="tel"
+                    id="pin" name="pin"
+                    placeholder="รหัส Pin สำหรับเข้าระบบ (6 หลัก)"
+                    required
+                  /> -->
+                  <input
+                    class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-2"
+                    type="tel"
+                    id="phone" name="phone"
+                    placeholder="เบอร์โทร : ไม่ต้องใส่ขีด"
+                    required
+                  />
+<!--                   <input
+                    class="mt-2 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                    type="text"
+                    id="facebook" name="facebook"
+                    placeholder="ชื่อเฟส"
+                    required
+                  />
+                  <input
+                    class="mt-2 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                    type="text"
+                    id="lineid" name="lineid"
+                    placeholder="LINE ID"
+                    required
+                  /> -->
+                  <input
+                    class="mt-2 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                    type="text"
+                    id="address" name="address"
+                    placeholder="ที่อยู่ปัจจุบัน (โดยละเอียด)"
+                    required
+                  />
+                  เลือกวันเกิด
+                  <input
+                    class="mt-8 w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                    type="date"
+                    id="birthday" name="birthday"
+                    placeholder="วันเกิด"
+                    required
+                  />
+                    
+                 
+                 
+                  <div id="data"></div>
+                
+                
+            
+             
+<!-- <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="user_avatar">แนบเอกสารตัวแทน</label>
+<input  name="file" id="uploadfile" type="file" required class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" aria-describedby="user_avatar_help" >
+             -->
+                  <p class="mt-6 text-xs text-gray-600 text-center">
+                   ฉันยอมรับข้อตกลงในการใช้ระบบเพื่ออำนวยความสะดวก หากสงสัย
+                    <a href="tel:0822809000" class="border-b border-gray-500 border-dotted">
+                      คลิกติดต่อ
+                    </a>
+                    ฝ่ายบริการ
+                    
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex-1 bg-indigo-100 text-center hidden lg:flex">
+            <div
+              class="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
+              style="background-image: url('https://storage.googleapis.com/devitary-image-host.appspot.com/15848031292911696601-undraw_designer_life_w96d.svg');"
+            ></div>
+          </div>
+       
+        <div class="REMOVE-THIS-ELEMENT-IF-YOU-ARE-USING-THIS-PAGE hidden treact-popup fixed inset-0 flex items-center justify-center" style="background-color: rgba(0,0,0,0.3);">
+           <div class="p-8 sm:pb-4 bg-white rounded shadow-lg text-center sm:text-left" style="width: 90%; margin: auto;"> 
+              <h3 class="text-xl sm:text-2xl font-semibold mb-6 flex flex-col sm:flex-row items-center">
+                <div class="bg-green-200 p-2 rounded-full flex items-center mb-4 sm:mb-0 sm:mr-2">
+                  <svg class="text-green-800 inline-block w-5 h-5" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                  ฉลองเปิดสำนักงานใหม่
+                </div>
+                  ให้สิทธิ์จองเฉพาะคนในพื้นที่
+                
+              </h3>  
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">กาฬสินธุ์</p>
+                <p class="ml-4"> - อ.คำม่วง, อ.สามชัย, อ.สมเด็จ</p>
+              </div>
+
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">ขอนแก่น</p>
+                <p class="ml-4"> - อ.เมือง, ม.ขอนแก่น</p>
+              </div>
+              
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">ปทุมธานี</p>
+                <p class="ml-4"> - อ.คลองหลวง, อ.ธัญบุรี, อ.ลำลูกกา, ม.เทคโนโลยีราชมงคลธัญบุรี</p>
+              </div>
+              
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">กรุงเทพฯ</p>
+                <p class="ml-4"> - โซนพระราม2, โซนพระราม3, โซนบางแค, โซนจรัญ</p>
+              </div>
+              
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">สุรินทร์</p>
+                <p class="ml-4"> - อ.ท่าตูม, อ.สังขะ, อ.ปราสาท</p>
+              </div>
+
+<!--               <div class="mt-8 pt-8 sm:pt-4 border-t -mx-8 px-8 flex flex-col sm:flex-row justify-end leading-relaxed"> -->
+<!--                 <a class="font-bold mt-4 sm:mt-0 sm:ml-4 px-8 py-3 sm:py-2 rounded  text-black-100 hover:bg-gray-700 transition duration-300 text-center"  href="https://line.me/R/oaMessage/@hqg1050l/" target="_blank">ปิด</a> -->
+                <button class="close-treact-popup px-8 py-3 sm:py-2 rounded bg-green-900 text-gray-100 border border-green-400 hover:bg-green-200 transition duration-300 mt-8">รับทราบ</button>
+                
+<!--             </div> -->
+            </div>
+            </div>
+        
+        </form>
+     </div>
+ 
+    
+      <script>
+      
+function closeTreactPopup(){ 
+  document.querySelector(".treact-popup").classList.add("hidden");
+}
+function openTreactPopup(){ 
+  document.querySelector(".treact-popup").classList.remove("hidden");
+}
+document.querySelector(".close-treact-popup").addEventListener("click", closeTreactPopup);
+setTimeout(openTreactPopup, 3000)
+      </script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+      <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+      <script>
+        liff.init({
+       liffId: '1661371622-q1Yo7yZR', withLoginOnExternalBrowser: true,
+     }).catch((err) => {
+       console.log(err);
+     });
+ 
+     liff.ready.then(() => {
+       if (!liff.isLoggedIn()) {
+         liff.login();
+       }
+      
+       const idToken = liff.getDecodedIDToken();
+       const userId = idToken.sub;
+       const displayName = idToken.name;
+       const pictureUrl = idToken.picture;
+       const email = idToken.email;
+       document.getElementById("picurl").src = pictureUrl
+
+
+       $('form').append(`<input type="hidden" name="userId" value="${userId}">`);
+       $('form').append(`<input type="hidden" name="displayName" value="${displayName}">`);
+       $('form').append(`<input type="hidden" name="pictureUrl" value="${pictureUrl}">`);
+       $('form').append(`<input type="hidden" name="email" value="${email}">`);
+       $('form').append(`<center><button class="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-9/12 py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+        >
+        
+          <svg
+            class="w-6 h-6 -ml-2"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+            <circle cx="8.5" cy="7" r="4" />
+            <path d="M20 8v6M23 11h-6" />
+          </svg>
+          <span class="ml-3">
+           ลงทะเบียน
+          </span>
+        </button></center><br/>`);
+     })
+ 
+     $('form').submit(function( event ) {
+       event.preventDefault();
+       // ตรวจสอบค่าใน input สำหรับรหัสตัวแทน
+        var agentValue = $('#agent').val();
+        if (agentValue === '') {
+            // ถ้าไม่มีการกรอก, ให้เซ็ตค่าเป็น "ไม่มีตัวแทน"
+            $('#agent').val('ไม่มีตัวแทน');
+        }
+
+        // ส่งข้อมูลฟอร์มด้วย AJAX
+       $.post( 'https://script.google.com/macros/s/AKfycbyEcqPSbUGl4YAjv3Qq9IeS1FKFDl757Tx_YNI5BP-tA34PUufbznVQul-FvB9nIAhEPg/exec', $('form').serialize() );
+        setTimeout( Swal.fire(
+   'ดำเนินการสำเร็จ',
+   'คุณได้ลงทะเบียนเรียบร้อยแล้ว',
+   'success'
+ ).then((result) => {
+       
+       const agent = document.getElementById("agent").value
+       const name = document.getElementById("name").value
+       const nickname = document.getElementById("nickname").value
+       const birthday = document.getElementById("birthday").value
+       //const pin = document.getElementById("pin").value
+       const phone = document.getElementById("phone").value
+       //const facebook = document.getElementById("facebook").value
+       //const lineid = document.getElementById("lineid").value
+       const address = document.getElementById("address").value
+       
+       const idToken = liff.getDecodedIDToken();
+          
+       const userId = idToken.sub;
+       const displayName = idToken.name;
+       const pictureUrl = idToken.picture;
+       const email = idToken.email;
+       
+       const ss = [{ "type": "flex", 
+                "altText": "ลงทะเบียนสำเร็จ", "contents": 
+{
+  "type": "bubble",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "image",
+        "url": "https://lh3.googleusercontent.com/d/1fvzM9Xfnzdq_RETGocWcIWzVUdZu188h?key=123",
+        "size": "full",
+        "aspectMode": "cover",
+        "aspectRatio": "1000:600",
+        "gravity": "center"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "image",
+            "url": "" + pictureUrl,
+            "aspectMode": "cover"
+          }
+        ],
+        "position": "absolute",
+        "width": "65px",
+        "height": "65px",
+        "cornerRadius": "100px",
+        "offsetTop": "3%",
+        "offsetStart": "40%"
+      }
+    ],
+    "paddingAll": "0px"
+  }
+}
+               }]        
+   sendMsgLiff(ss)
+ }), 5000) 
+       
+     });
+     
+        /* SendMessage */
+        function sendMsgLiff(flex){
+          liff.sendMessages(flex).then(() => {
+    liff.closeWindow();
+  })
+        }
+     /*===== FOCUS =====*/
+ const inputs = document.querySelectorAll(".form__input")
+ 
+ /*=== Add focus ===*/
+ function addfocus(){
+     let parent = this.parentNode.parentNode
+     parent.classList.add("focus")
+ }
+ 
+ /*=== Remove focus ===*/
+ function remfocus(){
+     let parent = this.parentNode.parentNode
+     if(this.value == ""){
+         parent.classList.remove("focus")
+     }
+ }
+ 
+ /*=== To call function===*/
+ inputs.forEach(input=>{
+     input.addEventListener("focus",addfocus)
+     input.addEventListener("blur",remfocus)
+ })
+     </script>
+<!--     <script>
+       $('#uploadfile').on("change", function() {
+           var file = this.files[0];
+           var fr = new FileReader();
+           fr.fileName = file.name;
+           fr.onload = function(e) {
+               e.target.result
+               html = '<input type="hidden" name="data" value="' + e.target.result.replace(/^.*,/, '') + '" >';
+               html += '<input type="hidden" name="mimetype" value="' + e.target.result.match(/^.*(?=;)/)[0] + '" >';
+               html += '<input type="hidden" name="filename" value="' + e.target.fileName + '" >';
+               $("#data").empty().append(html);
+           }
+           fr.readAsDataURL(file);
+       });
+       </script>     -->
+</body>
+</html>
