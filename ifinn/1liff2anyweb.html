@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Loading...</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
+    <link rel="stylesheet" href="https://bit.ly/3CZa0Sz" type="text/css" charset="utf-8" />
+    <style type="text/css">
+        body {
+            font-family: "line_seed_sans_th";
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: url('https://obs.line-scdn.net/hKKMqdg-YCGVFZBtrEjIPHAwWQl1fOAE6HD4PC1VcHlBZbVFnRWldBFcNGlRaPARhTmo/mp4') no-repeat center center fixed;
+            background-size: contain;
+        }
+    </style>
+</head>
+
+<body>
+    <div wire:loading class="flex items-center justify-center h-screen"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+        $(document).ready(function() {
+            var params = new URL(document.location).searchParams;
+
+            liff.init({
+                liffId: "1661371622-vJ3xormj",
+            }).then(() => {
+                if (liff.isInClient()) {
+                    if (liff.getOS() == "ios" || liff.getOS() == "android") {
+                        var key = params.get("url");
+                        window.location.replace(key);
+                    } else {
+                        setTimeout(function() {
+                            liff.closeWindow();
+                        }, 3000);
+                    }
+                }
+            }).catch((err) => {});
+        });
+    </script>
+</body>
+
+</html>
