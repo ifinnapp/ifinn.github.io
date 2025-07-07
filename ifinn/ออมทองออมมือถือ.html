@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ลงทะเบียน : ออมทองออมมือถือ</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" rel="stylesheet" />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+    <link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8" />
+    <style type="text/css">
+        body {
+            font-family: 'line_seed_sans_th';
+
+        }
+
+        .rounded-full {
+            border-radius: 50%;
+        }
+
+        .profile-item {
+            margin-bottom: 20px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            line-height: 1.2;
+        }
+
+
+        @media (max-width: 768px) {
+            .grid-cols-3 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+
+        @media (max-width: 640px) {
+            .grid-cols-3 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+        }
+    
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.blinking {
+  animation: blink 1.5s linear infinite;
+}
+
+.status-considering { background-color: #b8e994; color: black; }
+.status-out-of-area, .status-not-approved { background-color: red; color: white; }
+.status-awaiting-deposit { background-color: #aed9e0; color: black; }
+.status-awaiting-contract { background-color: #fff3cd; color: black; }
+.status-awaiting-shipment { background-color: #dcb6d5; color: black; }
+.status-awaiting-receipt { background-color: #f9d5a7; color: black; }
+.status-received { background-color: #2d6a4f; color: white; }
+.status-pending { background-color: #f8f9fa; color: black; }
+    </style>
+</head>
+
+<body>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
+
+
+    <div class="flex h-auto items-center justify-center bg-gray-50">
+
+        <div class="text-center w-full md:w-1/2 rounded-lg bg-white px-8 py-4 shadow-md m-4">
+
+
+            <!-- Modal toggle -->
+            <button data-modal-target="authentication-modal" data-modal-toggle="authentication-modal"
+                class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700"
+                type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6 me-2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+                </svg>
+
+                คลิกลงทะเบียน
+            </button>
+
+
+
+            <!-- Main modal -->
+            <div id="authentication-modal" tabindex="-1" aria-hidden="true"
+                class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                <div class="relative p-4 w-full max-w-md max-h-full">
+                    <!-- Modal content -->
+                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                        <!-- Modal header -->
+                        <div
+                            class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                ลงทะเบียน ออมทองออมมือถือ
+                            </h3>
+                            <button type="button" id="closemodal"
+                                class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                data-modal-hide="authentication-modal">
+                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                </svg>
+                                <span class="sr-only">Close modal</span>
+                            </button>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="p-4 md:p-5">
+<!--                             <p class="text-sm text-gray-500 pb-2">อยากได้ iPhone แต่เงินไม่พอ คิดถึง...</p>
+                            <h1 class="text-2xl font-bold text-gray-600 pb-4">ไอฟินน์</h1> -->
+                          
+                            <form class="space-y-4" action="#">
+                                <div class="text-left">
+                                    <label for="agent" class="text-gray-500 inline-block pb-2">ตัวแทน</label>
+                                    <input class="w-full border-gray-200 px-4 py-2 focus:outline-none" type="text"
+                                        id="agent" name="agent" placeholder="รหัสตัวผู้แนะนำ AGxxxxx (ถ้ามี)" />
+                                </div>
+                                <div class="text-left">
+                                    <label for="name" class="text-gray-500 inline-block pb-2">ชื่อ-สกุล</label>
+                                    <input class="w-full border-gray-200 px-4 py-2 focus:outline-none" type="text"
+                                        id="name" name="name" placeholder="ชื่อ-สกุล (ไม่ต้องใส่คำนำหน้า)" required />
+                                </div>
+
+                                <div class="text-left">
+                                    <label class="text-gray-500 inline-block pb-2" for="nickname">ชื่อเล่น</label>
+                                    <input class="w-full border-gray-200 px-4 py-2 focus:outline-none" type="text"
+                                        id="nickname" name="nickname" placeholder="ชื่อเล่น" required />
+                                </div>
+
+                                <div class="text-left">
+                                    <label class="text-gray-500 inline-block pb-2" for="phone">เบอร์โทร</label>
+                                    <input class="w-full border-gray-200 px-4 py-2 focus:outline-none" type="tel"
+                                        id="phone" name="phone" placeholder="เบอร์โทร : ไม่ต้องใส่ขีด" required />
+                                </div>
+
+                                <div class="text-left">
+                                    <label class="text-gray-500 inline-block pb-2" for="address">ที่อยู่ปัจจุบัน</label>
+                                    <input class="w-full border-gray-200 px-4 py-2 focus:outline-none" type="text"
+                                        id="address" name="address" placeholder="ที่อยู่ปัจจุบัน (โดยละเอียด)" required />
+                                </div>
+                              
+                                <div class="text-left">
+                                    <label class="text-gray-500 inline-block pb-2" for="birthday">วันเกิด</label>
+                                    <input class="w-full border-gray-200 px-4 py-2 focus:outline-none" type="date"
+                                        id="birthday" name="birthday" placeholder="วันเกิด" required />
+                                </div>
+
+                                <div>
+                                    <input
+                                        class="w-full bg-green-500 py-2 rounded-md text-white font-bold cursor-pointer"
+                                        type="button" id="submit" value="ลงทะเบียน" />
+                                </div>
+                            </form>
+                            <p class="text-center text-gray-600 pt-5">
+                                ติดต่อฝ่ายบริการ
+                                <a href="tel:0822802000" class="text-gray-600 font-bold">082-280-2000</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          
+            <div id="loading-overlay"
+                class="fixed inset-0 bg-gray-500 bg-opacity-75 z-50 flex items-center justify-center hidden">
+                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmM5ems4ZGR4bW82ZWF1d2RwZ2trdzc5d2JicDFoYXY3OTNmbGU2MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/sGBejL5i7iS9RTMnKx/giphy.gif"
+                    alt="Loading..." class="w-screen h-auto">
+            </div>
+
+            <div class="px-1 py-4">
+                <h3 class="font-bold text-2xl">แสดงรายชื่อผู้ลงทะเบียน</h3>
+            </div>
+            <hr><br>
+            <ul id="userList" class="text-center grid grid-cols-3 gap-2 px-1">
+
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Popup Advertisement -->
+<div class="fixed inset-0 flex items-center justify-center hidden" id="popupAdvertisement" style="background-color: rgba(0,0,0,0.3);">
+    <div class="bg-white p-4 sm:p-8 rounded-lg shadow-lg text-center" style="width: 90%; max-width: 640px;">
+            <h3 class="text-xl sm:text-2xl font-semibold mb-6 flex flex-col sm:flex-row items-center">
+                <div class="bg-green-200 p-2 rounded-full flex items-center mb-4 sm:mb-0 sm:mr-2">
+                  <svg class="text-green-800 inline-block w-5 h-5" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                  ฉลองเปิดสำนักงานใหม่
+                </div>
+                  ให้สิทธิ์จองเฉพาะคนในพื้นที่
+                
+            </h3>
+        <!-- ข้อมูลโซนพื้นที่ -->
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">กาฬสินธุ์</p>
+                <p class="ml-4"> - อ.คำม่วง, อ.สามชัย, อ.สมเด็จ</p>
+              </div>
+
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">ขอนแก่น</p>
+                <p class="ml-4"> - อ.เมือง, ม.ขอนแก่น</p>
+              </div>
+              
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">ปทุมธานี</p>
+                <p class="ml-4"> - อ.คลองหลวง, อ.ธัญบุรี, อ.ลำลูกกา, ม.เทคโนโลยีราชมงคลธัญบุรี</p>
+              </div>
+              
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">กรุงเทพฯ</p>
+                <p class="ml-4"> - โซนพระราม2, โซนพระราม3, โซนบางแค, โซนจรัญ</p>
+              </div>
+              
+              <div class="text-left mb-2">
+                <p class="font-bold text-lg">สุรินทร์</p>
+                <p class="ml-4"> - อ.ท่าตูม, อ.สังขะ, อ.ปราสาท</p>
+              </div>
+        
+        <!-- ปุ่มปิด Popup -->
+        <button class="mt-8 bg-green-900 text-white rounded-lg px-4 py-2 hover:bg-green-700 transition duration-300" id="closePopupBtn">รับทราบ</button>
+    </div>
+</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+        window.onload = function () {
+            const defaultLiffId = "1661371622-xoLq905n";
+            initializeLiff(defaultLiffId);
+        };
+
+        function initializeLiff(defaultLiffId) {
+            liff.init({
+                liffId: defaultLiffId,
+                withLoginOnExternalBrowser: true,
+            })
+            document.getElementById('submit').addEventListener('click', handleResult);
+
+        }
+
+        function handleResult() {
+            var agent = document.getElementById("agent").value
+            var name = document.getElementById("name").value
+            var nickname = document.getElementById("nickname").value
+            var birthday = document.getElementById("birthday").value
+            var phone = document.getElementById("phone").value
+            var address = document.getElementById("address").value
+            
+            // เช็คว่าถ้า agent ไม่ได้ถูกกรอก ให้เป็น "ไม่มีตัวแทน"
+            if (agent.trim() === '') {
+                  agent = "ไม่มีตัวแทน";
+            }
+     
+            if (name.trim() === '' || nickname.trim() === '' || birthday.trim() === '' || phone.trim() === '' || address.trim() === '') {
+
+                Swal.fire('Error', 'โปรดกรอกข้อมูลให้ครบทุกช่อง', 'error');
+                return;
+            }
+
+
+            if (!validatePhoneNumber(phone)) {
+                Swal.fire('Error', 'รูปแบบเบอร์โทรไม่ถูกต้อง', 'error');
+                return;
+            }
+
+            liff.getProfile()
+                .then(profile => {
+                    const displayName = profile.displayName;
+                    const userId = profile.userId;
+                    const pictureUrl = profile.pictureUrl;
+                    const email = profile.email;
+                    sendToGoogleSheet(userId , displayName,pictureUrl,email,agent, name,nickname,birthday,phone,address);
+                })
+                .catch(err => {
+                    console.log("Error", err);
+                });
+        }
+
+
+//         function validateEmail(email) {
+
+//             var re = /\S+@\S+\.\S+/;
+//             return re.test(email);
+//         }
+
+
+        function validatePhoneNumber(tel) {
+            var re = /^[0-9]{10}$/;
+            return re.test(tel);
+        }
+
+        function sendToGoogleSheet(userId , displayName,pictureUrl,email,agent, name,nickname,birthday,phone,address) {
+            $('#loading-overlay').removeClass('hidden');
+            //$.post('https://script.google.com/macros/s/AKfycbyCU4hLdiumZCdDq36VWHZsvBb8kLv7Rq9T2Xf13azrhdmLH0jRdjR06YWhM0iirLWNaQ/exec', {
+            $.post('https://script.google.com/macros/s/AKfycbyGv6oW8cPSRoF_EHbwGcvEUw5qlbkEAN2fmiZCIXau3Kfxq17RiNUeJr8hb_cuMw1pxw/exec', {
+                userId: userId,
+                displayName: displayName,
+                pictureUrl: pictureUrl,
+                email: email,
+                agent: agent,
+                name: name,
+                nickname: nickname,
+                birthday: birthday,
+                phone: phone,
+                address: address
+            })
+                .done(function (response) {
+                    $('#loading-overlay').addClass('hidden');
+                    if (response.statusCode === 200) {
+                        const flexMessage = JSON.parse(response.body);
+                        liff.sendMessages([flexMessage])
+                            .then(function (res) {
+                                if (res) {
+                                    Swal.fire('ดำเนินการสำเร็จ', 'คุณได้บันทึกเรียบร้อยแล้ว', 'success')
+                                        .then(() => {
+                                            document.getElementById('agent').value = '';
+                                            document.getElementById('name').value = '';
+                                            document.getElementById('nickname').value = '';
+                                            document.getElementById('birthday').value = '';
+                                            document.getElementById('phone').value = '';
+                                            document.getElementById('address').value = '';
+                                        });
+                                } else {
+                                    console.log("TargetPicker was closed!");
+                                }
+                            })
+                            .catch(function (error) {
+                                console.log("Something wrong happened");
+                            });
+                    }
+                })
+                .fail(function (error) {
+                    Swal.fire('Error', 'มีข้อผิดพลาดในการบันทึกข้อมูล', 'error');
+                    liff.closeWindow();
+                });
+        }
+      
+      
+function getStatusClass(status) {
+  switch (status) {
+    case 'กำลังพิจารณา':
+      return 'status-considering blinking';
+    case 'อยู่นอกพื้นที่':
+    case 'ไม่อนุมัติ':
+      return 'status-out-of-area';
+    case 'รอวางดาวน์':
+      return 'status-awaiting-deposit blinking';
+    case 'รอทำสัญญา':
+      return 'status-awaiting-contract blinking';
+    case 'รอส่งเครื่อง':
+      return 'status-awaiting-shipment blinking';
+    case 'รอรับเครื่อง':
+      return 'status-awaiting-receipt blinking';
+    case 'รับเครื่องแล้ว':
+      return 'status-received';
+    default:
+      return 'status-pending'; // สำหรับสถานะอื่นๆ
+  }
+}
+           
+    </script>
+  
+    <script>
+       
+        document.addEventListener("DOMContentLoaded", function () {
+//           // เมื่อหน้าเว็บโหลดเสร็จ แสดง Popup
+//         setTimeout(function() {
+//             document.getElementById('popupAdvertisement').classList.remove('hidden');
+//         }, 1000); // แสดงหลังจาก 1 วินาที
+
+//         // ฟังก์ชั่นปิด Popup
+//         document.getElementById('closePopupBtn').addEventListener('click', function() {
+//             document.getElementById('popupAdvertisement').classList.add('hidden');
+//         });
+            const userList = document.getElementById('userList');
+
+            function fetchAndDisplayUserData() {
+                fetch('https://opensheet.elk.sh/1NKgxE5dlhKJE59h_PQ19wkE7QFpKzdBPeCz9d9m8974/saving')
+                    .then(response => response.json())
+                    .then(data => {
+
+                        userList.innerHTML = '';
+
+                        data.forEach((user, index) => {
+                            const listItem = document.createElement('li');
+                            listItem.className = 'flex flex-col items-center profile-item';
+
+                            const userImg = document.createElement('img');
+                            userImg.src = user.ProfileUrl || "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzN5NDEweTFzd2w0ZXB5MGU5a2U1ODhqbnBvZnczbjRhOWU0Y3hsayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/78C8PFeItATMXKTx77/giphy.gif";
+                            userImg.alt = 'User Image';
+                            userImg.className = 'rounded-full w-16 h-16 object-cover mb-1';
+
+                            const userName = document.createElement('h5');
+                            userName.className = 'user-name mb-1';
+                            userName.innerHTML = `<b class="truncate">${user.DisplayName}</b><br>${user.Address2}<br><div class="mt-2"><span class="px-3 py-1 rounded-full text-xs font-semibold truncate ${getStatusClass(user.Status)}">${user.Status !== 'กำลังพิจารณา' && user.Status !== 'อยู่นอกพื้นที่' && user.Status !== 'ไม่อนุมัติ' && user.Status !== 'รอวางดาวน์' && user.Status !== 'รอทำสัญญา' && user.Status !== 'รอส่งเครื่อง' && user.Status !== 'รอรับเครื่อง' && user.Status !== 'รับเครื่องแล้ว' ? 'รอพิจารณา' : user.Status}</span></div>`;
+
+                            const orderNumber = document.createElement('span');
+                            orderNumber.className = 'text-base font-bold text-gray-500';
+                            orderNumber.textContent = `ลำดับที่ #${index + 1}`;
+                          
+                            listItem.appendChild(orderNumber);
+                            listItem.appendChild(userImg);
+                            //listItem.appendChild(document.createElement('br'));
+                            listItem.appendChild(userName);
+                            userList.appendChild(listItem);
+
+
+  listItem.addEventListener('click', () => {
+    // สมมติให้ num, LineName, Nickname, Agent, Phone, LineID, Score, imageToDisplay เป็นตัวแปรที่ได้มาจากข้อมูล user
+    let num = index + 1; // ลำดับที่
+    let LineName = user.DisplayName; // ชื่อที่แสดง
+    let Nickname = user.Nickname; // ชื่อเล่น
+    let Agent = user.Agent; // รหัสตัวแทน
+    let Status = user.Status; // คะแนน
+    let imageToDisplay = user.ProfileUrl; // รูปภาพ
+
+    Swal.fire({
+    title: `<span style="font-size: 20px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; max-width: 90%;">อันดับที่ ${num}: ${LineName}</span>`,
+    html:
+        `<div class="swal2-custom-image" style="border-radius: 20px; overflow: hidden; margin-bottom: 20px;"><img src="${imageToDisplay}" style="display: block; width: 100%;"></div>` +
+        `<div class="swal2-custom-content" style="font-size: 16px; color: #444; text-align: left;">` +
+        `<p style="margin-bottom: 0;"><b>ชื่อเล่น:</b> <span style="float: right; font-weight: normal;">${Nickname}</span></p>` +
+        `<p style="margin-bottom: 0;"><b>รหัสตัวแทน:</b> <span style="float: right; font-weight: normal;">${Agent}</span></p>` +
+        `<p style="margin-bottom: 0;"><b>สถานะ:</b> <span style="float: right; font-weight: normal;">${Status}</span></p>` +
+        `</div>`,
+    width: '65%',
+    showCloseButton: false,
+    showConfirmButton: true,
+    confirmButtonText: 'โอเค',
+    confirmButtonColor: '#6c757d', // สีเทา Bootstrap 4
+    showCancelButton: false,
+    buttonsStyling: true, // เปิดการตั้งค่าสไตล์ของปุ่มเพื่อให้ SweetAlert2 จัดการสไตล์
+});
+});
+
+                        });
+                    })
+                    .catch(error => console.error('Error fetching users:', error));
+            }
+
+            fetchAndDisplayUserData();
+            setInterval(fetchAndDisplayUserData, 5000);
+        });
+    </script>
+</body>
+
+</html>
