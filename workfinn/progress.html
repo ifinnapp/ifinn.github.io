@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตารางเวลาว่างและความคืบหน้าของงาน</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #f4f7f9;
+            --text-color: #333;
+            --card-background: #ffffff;
+            --busy-color: #e74c3c;
+            --free-color: #2ecc71;
+            --button-bg-color: #3498db;
+            --button-hover-color: #2980b9;
+            --button-text-color: white;
+        }
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        h1, h2 {
+            margin: 0;
+        }
+        .section {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            padding: 20px;
+        }
+        .availability-calendar-wrapper {
+            overflow-x: auto;
+            display: none;
+        }
+        .availability-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 20px;
+        }
+        .day-labels {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-weight: bold;
+            padding-bottom: 10px;
+        }
+        .day {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-weight: bold;
+            color: white;
+        }
+        .day.busy {
+            background-color: var(--busy-color);
+        }
+        .day.free {
+            background-color: var(--free-color);
+        }
+        .projects {
+            margin-top: 20px;
+        }
+        .project {
+            border-left: 4px solid var(--primary-color);
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+        .project-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .progress-bar {
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            height: 20px;
+            margin-top: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress {
+            background-color: var(--primary-color);
+            height: 100%;
+            width: 0;
+            transition: width 0.5s ease-in-out;
+        }
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .notes {
+            font-style: italic;
+            color: #666;
+            margin-top: 10px;
+        }
+        .calendar-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .calendar-controls button {
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .calendar-controls button:hover {
+            background-color: var(--button-hover-color);
+        }
+        #toggle-calendar {
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #toggle-calendar:hover {
+            background-color: var(--button-hover-color);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ความคืบหน้าของงาน</h1>
+    </header>
+    <div class="container">
+        <section class="section">
+          <h2>ตรวจสอบวันว่างก่อนนัดหมาย</h2><br>
+            <button id="toggle-calendar">🟢 ว่าง ≡ ปฏิทิน ≡ ไม่ว่าง 🔴</button>
+            <div class="availability-calendar-wrapper" id="calendar-section">
+                <div class="calendar-controls">
+                    <button id="prev-month"> ◀︎ </button>
+                    <h2 id="month-label"></h2>
+                    <button id="next-month"> ▶︎ </button>
+                </div>
+                <div class="day-labels">
+                    <div>อา.</div>
+                    <div>จ.</div>
+                    <div>อ.</div>
+                    <div>พ.</div>
+                    <div>พฤ.</div>
+                    <div>ศ.</div>
+                    <div>ส.</div>
+                </div>
+                <div id="availability-calendar" class="availability-calendar"></div>
+            </div>
+        </section>
+        <section class="section">
+            <h2>ความคืบหน้างาน</h2>
+            <div id="projects" class="projects"></div>
+        </section>
+    </div>
+
+    <script>
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        const today = new Date(); // Get the current date to compare with past dates
+
+        // Function to check if the day is busy
+        function isBusyDay(busyDates, day, month) {
+            const formattedDay = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}`;
+            return busyDates.includes(formattedDay);
+        }
+
+        // Toggle calendar visibility
+        document.getElementById('toggle-calendar').addEventListener('click', function() {
+            const calendarSection = document.getElementById('calendar-section');
+            if (calendarSection.style.display === 'none' || calendarSection.style.display === '') {
+                calendarSection.style.display = 'block';
+                updateCalendar();
+            } else {
+                calendarSection.style.display = 'none';
+            }
+        });
+
+        // Event listeners for month navigation
+        document.getElementById('prev-month').addEventListener('click', function() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            updateCalendar();
+        });
+
+        document.getElementById('next-month').addEventListener('click', function() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            updateCalendar();
+        });
+
+        // Fetch data from Google Apps Script
+        fetch('https://script.google.com/macros/s/AKfycbxuSrw7QM3pLB_LIhKu5ApJR-PQUbOLxBa_hsX0LDCKt7GoMtz0qfSnYkdr3n-A7VWe/exec')
+            .then(response => response.json())
+            .then(data => {
+                window.projectsData = data;
+                displayProjects(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+        function updateCalendar() {
+            const calendar = document.getElementById('availability-calendar');
+            const monthLabel = document.getElementById('month-label');
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay(); // Find the first day of the month
+            const monthNames = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+
+            // Update the month label
+            monthLabel.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
+            // Clear the existing calendar
+            calendar.innerHTML = '';
+
+            // Generate the calendar with empty slots for days before the first day of the month
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                const emptySlot = document.createElement('div');
+                emptySlot.className = 'day';
+                calendar.appendChild(emptySlot);
+            }
+
+            // Generate the days of the month
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'day';
+                dayElement.textContent = i;
+
+                const currentDate = new Date(currentYear, currentMonth, i);
+
+                // Mark the day as busy if it is in the past
+                if (currentDate < today) {
+                    dayElement.classList.add('busy');
+                } else {
+                    // Check if the current day is busy by checking all project busy dates
+                    const isBusy = window.projectsData.some(project => isBusyDay(project.busyDates, i, currentMonth + 1));
+
+                    if (isBusy) {
+                        dayElement.classList.add('busy');
+                    } else {
+                        dayElement.classList.add('free');
+                    }
+                }
+
+                calendar.appendChild(dayElement);
+            }
+        }
+
+        function displayProjects(projects) {
+            const projectsContainer = document.getElementById('projects');
+            projects.forEach(project => {
+                const projectElement = document.createElement('div');
+                projectElement.className = 'project';
+                
+                const coordinatorName = project.coordinator.length > 10 
+                    ? project.coordinator.slice(0, 10) + '...' 
+                    : project.coordinator;
+
+                projectElement.innerHTML = `
+                    <div class="project-title">${project.projectName}</div>
+                    <div>ผู้ประสานงาน: ${coordinatorName}</div>
+                    <div>เริ่ม-สิ้นสุด: ${project.startDate} - ${project.plannedEndDate}</div>
+                    <div>ระยะเวลา: ${project.duration} วัน</div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${project.completion}%"></div>
+                        <div class="progress-text">${project.completion}%</div>
+                    </div>
+                    <div class="notes">หมายเหตุ: ${project.notes || '-'}</div>
+                `;
+                projectsContainer.appendChild(projectElement);
+            });
+        }
+    </script>
+</body>
+</html>
