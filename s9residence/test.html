@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ระบบแจ้งการโอนเงิน</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+    <link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style type="text/css">
+  /* กำหนดให้แถบบนสุดมีตำแหน่งคงที่และแสดงอยู่ด้านบนสุดของหน้าจอ */
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        z-index: 100;
+        transition: top 0.2s;
+    }
+  
+    /* สร้างคลาสใหม่สำหรับการซ่อนแถบเมนูที่ด้านล่าง */
+.hidden-nav {
+    transform: translateY(100%); /* ซ่อนแถบลงไปใต้ล่าง */
+    transition: transform 0.2s; /* ทำให้การเคลื่อนย้ายนุ่มนวล */
+}
+
+  
+        body {
+            font-family: 'line_seed_sans_th';
+
+        }
+
+        .rounded-full {
+            border-radius: 50%;
+        }
+
+        .profile-item {
+            margin-bottom: 20px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            line-height: 1.2;
+        }
+
+
+        @media (max-width: 768px) {
+            .grid-cols-3 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+
+        @media (max-width: 640px) {
+            .grid-cols-3 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+        }
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.blinking {
+  animation: blink 1.5s linear infinite;
+}
+
+.status-normal { background-color: #b8e994; color: black; }
+.status-considering { background-color: #b8e994; color: black; }
+.status-out-of-area, .status-not-approved { background-color: red; color: white; }
+.status-awaiting-deposit { background-color: #aed9e0; color: black; }
+.status-awaiting-contract { background-color: #fff3cd; color: black; }
+.status-awaiting-shipment { background-color: #dcb6d5; color: black; }
+.status-awaiting-receipt { background-color: #f9d5a7; color: black; }
+.status-received { background-color: #2d6a4f; color: white; }
+.status-pending { background-color: #f8f9fa; color: black; }
+      
+.dashboard-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between; /* หรือ 'space-around' ตามความต้องการ */
+  padding: 0 4px; /* ปรับให้เข้ากับเลย์เอาต์ของคุณ */
+}
+
+.dashboard-card {
+  flex: 0 1 calc(50% - 8px); /* ปรับให้เหมาะสมกับช่องว่างระหว่างการ์ด */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px; /* ระยะห่างระหว่างการ์ด */
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  background-color: #ffffff;
+  overflow: hidden; /* ไม่ให้เอฟเฟควิบวับหลุดออกจากการ์ด */
+}
+      
+.gold, .silver, .bronze, .emerald, .ruby, .sapphire, .amethyst, .citrine, .topaz, .aquamarine {
+    position: relative;
+    overflow: hidden;
+}
+
+.gold::before, .silver::before, .bronze::before,.emerald::before, .ruby::before, .sapphire::before, .amethyst::before, .citrine::before, .topaz::before, .aquamarine::before,
+.gold::after, .silver::after, .bronze::after, .emerald::after, .ruby::after, .sapphire::after, .amethyst::after, .citrine::after, .topaz::after, .aquamarine::after {
+    content: "";
+    position: absolute;
+    top: -50%; right: -50%; bottom: -50%; left: -50%;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05));
+    transform: skewX(-15deg);
+    background-size: 200% 200%;
+}
+
+.gold::before, .silver::before, .bronze::before,.emerald::before, .ruby::before, .sapphire::before, .amethyst::before, .citrine::before, .topaz::before, .aquamarine::before {
+    animation: shine 3s infinite ease-in-out, moveDiagonal1 3s infinite linear;
+}
+
+.gold::after, .silver::after, .bronze::after, .emerald::after, .ruby::after, .sapphire::after, .amethyst::after, .citrine::after, .topaz::after, .aquamarine::after {
+    animation: shine 3s infinite ease-in-out, moveDiagonal2 3s infinite linear;
+}
+
+@keyframes shine {
+  from {
+    left: -100%;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+@keyframes moveDiagonal1 {
+    0%, 100% {
+        transform: translateX(-50%) rotate(45deg);
+    }
+    50% {
+        transform: translateX(150%) rotate(45deg);
+    }
+}
+
+@keyframes moveDiagonal2 {
+    0%, 100% {
+        transform: translateX(150%) rotate(45deg);
+    }
+    50% {
+        transform: translateX(-50%) rotate(45deg);
+    }
+}
+
+.gold {
+    background-image: linear-gradient(145deg, rgba(255, 215, 0, 0.6), rgba(255, 165, 0, 0.6));
+}
+
+.silver {
+    background-image: linear-gradient(145deg, rgba(192, 192, 192, 0.6), rgba(248, 248, 248, 0.6));
+}
+
+.bronze {
+    background-image: linear-gradient(145deg, rgba(205, 127, 50, 0.6), rgba(244, 164, 96, 0.6));
+}
+
+.emerald {
+    background-image: linear-gradient(145deg, rgba(80, 200, 120, 0.6), rgba(76, 187, 23, 0.6));
+}
+
+.ruby {
+    background-image: linear-gradient(145deg, rgba(224, 17, 95, 0.6), rgba(155, 17, 30, 0.3));
+}
+
+.sapphire {
+    background-image: linear-gradient(145deg, rgba(15, 82, 186, 0.6), rgba(0, 0, 205, 0.6));
+}
+
+.amethyst {
+    background-image: linear-gradient(145deg, rgba(153, 102, 204, 0.6), rgba(186, 85, 211, 0.6));
+}
+
+.citrine {
+    background-image: linear-gradient(145deg, rgba(228, 208, 10, 0.6), rgba(255, 215, 0, 0.6));
+}
+
+.topaz {
+    background-image: linear-gradient(145deg, rgba(255, 200, 124, 0.6), rgba(255, 170, 29, 0.6));
+}
+
+.aquamarine {
+    background-image: linear-gradient(145deg, rgba(127, 255, 212, 0.6), rgba(118, 238, 198, 0.6));
+}
+      
+#notificationPanel {
+    background-color: #ffffff; /* หรือสีตามต้องการ */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 70px; /* ปรับตำแหน่งให้เหมาะสมกับตำแหน่งไอคอน */
+    right: 20px; /* ปรับตำแหน่งให้เหมาะสมกับตำแหน่งไอคอน */
+    width: 300px; /* หรือขนาดตามต้องการ */
+    border-radius: 10px;
+    padding: 10px;
+    visibility: hidden;
+    z-index: 200;
+    opacity: 0;
+    transition: opacity 0.2s, visibility 0.2s;
+}
+
+#settingPanel {
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 10px;
+    visibility: hidden;
+    z-index: 500;
+    opacity: 0;
+    transition: transform 0.2s ease-in-out, opacity 0.2s ease;
+    transform: translateX(100%); /* แผงจะเริ่มจากด้านขวาเต็มขนาดหน้าจอ */
+}
+  
+#closeSettingPanel, #closemodal {
+  background-color: transparent; /* ไม่มีพื้นหลัง */
+  border: none; /* ไม่มีเส้นขอบ */
+  cursor: pointer; /* ทำให้เมาส์เป็นรูปมือเมื่อเลื่อนผ่าน */
+}
+
+#closeSettingPanel div, #closemodal div {
+  display: inline-flex; /* ใช้ inline-flex เพื่อให้ปุ่มอยู่ในแนวเดียวกับข้อความ */
+  align-items: center; /* จัดกลางแนวตั้ง */
+  justify-content: center; /* จัดกลางแนวนอน */
+  padding: 8px; /* ขนาดพื้นที่ภายในปุ่ม */
+  border-radius: 50%; /* ทำให้เป็นวงกลม */
+  background-color: #f3f4f6; /* สีพื้นหลัง */
+  color: #374151; /* สีไอคอน */
+}
+
+#authentication-modal {
+    position: fixed;
+    top: 0; right: 0; bottom: 0; left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    visibility: hidden; 
+    opacity: 0;
+    transition: visibility 0.2s, opacity 0.2s, transform 0.2s ease-in-out;
+    transform: translateX(0); 
+    
+}
+  
+#addFormModal {
+    position: fixed;
+    top: 0%;  /* หรืออาจปรับเป็น 0% เพื่อให้เต็มหน้าจอ */
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%; /* ความสูงของ modal */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 380;
+    visibility: hidden; 
+    opacity: 0;
+    transition: visibility 0.2s, opacity 0.2s, transform 0.2s ease-in-out;
+    transform: translateY(100%); /* เริ่มต้นอยู่นอกหน้าจอ */
+    border-radius: 20px 20px 0 0; /* โค้งมนที่มุมบน */
+}
+  
+#paymentFormModal {
+    position: fixed;
+    top: 0%;  /* หรืออาจปรับเป็น 0% เพื่อให้เต็มหน้าจอ */
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%; /* ความสูงของ modal */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 380;
+    visibility: hidden; 
+    opacity: 1;
+    transition: visibility 0.2s, opacity 0.2s, transform 0.2s ease-in-out;
+    transform: translateX(100%); /* ตั้งค่าเริ่มต้นให้อยู่นอกหน้าจอ */
+    visibility: hidden; /* ซ่อน modal ไว้เมื่อไม่ใช้งาน */
+    border-radius: 20px 20px 0 0; /* โค้งมนที่มุมบน */
+}
+
+#profileModal {
+    position: fixed;
+    top: 0%;  /* หรืออาจปรับเป็น 0% เพื่อให้เต็มหน้าจอ */
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%; /* ความสูงของ modal */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 380;
+    visibility: hidden; 
+    opacity: 1;
+    transition: visibility 0.2s, opacity 0.2s, transform 0.2s ease-in-out;
+    transform: translateX(100%); /* ตั้งค่าเริ่มต้นให้อยู่นอกหน้าจอ */
+    visibility: hidden; /* ซ่อน modal ไว้เมื่อไม่ใช้งาน */
+    border-radius: 20px 20px 0 0; /* โค้งมนที่มุมบน */
+}
+
+.modal-content {
+    width: 100%;
+    max-width: none;  /* ตั้งค่าความกว้างสูงสุดไม่จำกัด */
+    height: 100vh; /* ให้สูงเต็มหน้าจอ */
+    background-color: white;
+    border-radius: 0px !important; /* ตั้งค่าขอบเป็นเหลี่ยมและใช้ !important */
+    padding: 20px;
+    overflow: auto; /* หากมีเนื้อหามากจะสามารถเลื่อนได้ */
+    position: fixed; /* ให้อยู่ที่ตำแหน่งตายตัวของหน้าจอ */
+    top: 0; /* ตำแหน่งด้านบนสุด */
+    left: 0; /* ตำแหน่งซ้ายสุด */
+    z-index: 600; /* ให้อยู่เหนือส่วนอื่นๆ */
+    transition: transform 0.2s ease-in-out;
+}
+
+.swal2-container {
+    z-index: 700 !important; /* ตั้งค่าสูงกว่าส่วนอื่นๆ ในหน้าเว็บ */
+}
+  
+.setting-info {
+    border: 2px solid #f0f0f0; /* สีขอบ */
+    padding: 8px 12px;
+    border-radius: 10px; /* ขอบมน */
+    margin-bottom: 10px; /* ระยะห่างระหว่างข้อมูลแต่ละรายการ */
+    background-color: #fff; /* สีพื้นหลัง */
+}
+  
+.form-input {
+    width: 100%;
+    border: 2px solid #f0f0f0 !important; /* สีขอบ */
+    padding: 8px 12px;
+    border-radius: 10px !important; /* ขอบมน 10px */
+    transition: border-color 0.2s ease; /* การเปลี่ยนแปลงสีขอบ */
+    font-size: 18px !important;
+}
+
+.form-input:focus {
+    border-color: #10b981; /* สีขอบเมื่อโฟกัส */
+    outline: none; /* ลบเส้นขอบมาตรฐานของเบราว์เซอร์ */
+}
+
+
+/* ปุ่มสีเขียวสดใส */
+.submit-button {
+    width: 50%;
+    background-color: #10b981; /* สีพื้นหลัง */
+    color: white; /* สีข้อความ */
+    padding: 10px 15px;
+    border: none; /* ลบเส้นขอบ */
+    border-radius: 8px; /* รัศมีมุม */
+    cursor: pointer; /* เปลี่ยนเคอร์เซอร์เป็นมือชี้ */
+    transition: background-color 0.2s ease; /* การเปลี่ยนแปลงสีพื้นหลัง */
+    font-weight: bold; /* ทำให้ข้อความเป็นตัวหนา */
+}
+
+.submit-button:hover {
+    background-color: #059669; /* สีพื้นหลังเมื่อเมาส์อยู่เหนือ */
+}
+
+#detailPanel {
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 10px;
+    z-index: 300;
+    transition: transform 0.2s ease-in-out, opacity 0.2s ease;
+    transform: translateX(100%); 
+}
+  
+.nav-button i {
+    margin-bottom: 4px; /* เพิ่มระยะห่างระหว่างไอคอนและข้อความ */
+    color: gray; /* สีเทาสำหรับไอคอนที่ไม่ใช่หน้าหลัก */
+}
+
+.nav-button div {
+    margin-bottom: 8px; /* เพิ่มระยะห่างระหว่างข้อความและขอบล่างของปุ่ม */
+}
+
+.customer-icon i {
+    font-size: 1.5em; /* ทำให้ไอคอนของลูกค้าใหญ่ขึ้น */
+}
+
+.active i, .active div {
+    color: #4CAF50; /* สีเขียวสำหรับไอคอนหน้าหลัก */
+}
+
+.nav-button.active i {
+    color: #4CAF50; /* สีเขียว */
+}
+
+/* สีข้อความสำหรับปุ่มที่ active */
+.text-active {
+    color: #4CAF50; /* สีเขียว */
+}
+
+.custom-dropdown .dropdown-selected {
+    display: flex; /* ใช้ flexbox เพื่อจัดวางเนื้อหา */
+    align-items: center; /* จัดภาพและข้อความให้อยู่กึ่งกลางแนวตั้ง */
+    gap: 5px; /* ตั้งระยะห่างระหว่างภาพกับข้อความ */
+    font-size: 18px !important;
+    color: #888888; /* สีข้อความเมื่อเลือก */
+    padding: 8px 12px; /* ตั้งค่า padding ให้เหมาะสม */
+    border: 2px solid #f0f0f0; /* ตั้งสีขอบ */
+    border-radius: 10px; /* ขอบมน */
+    cursor: pointer; /* ตั้งให้ cursor เป็นแบบ pointer เมื่อโฮเวอร์ */
+}
+
+.custom-dropdown .dropdown-selected.selected {
+    color: #000000; /* สีข้อความเมื่อเลือก */
+}
+
+.custom-dropdown .dropdown-options {
+    display: none; /* ซ่อนตัวเลือกไว้ก่อน */
+    position: absolute; /* ตั้งให้ตัวเลือกแสดงในตำแหน่งที่ตรงกับช่องเลือก */
+    width: 80%; /* ตั้งความกว้างให้เท่ากับช่องเลือก */
+    background-color: white; /* ตั้งสีพื้นหลัง */
+    border: 1px solid #ccc; /* ตั้งสีขอบ */
+    border-radius: 5px; /* ขอบมน */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* เพิ่มเงาเล็กน้อย */
+    z-index: 1000; /* ให้แสดงเหนือส่วนอื่นๆ */
+}
+
+.custom-dropdown .dropdown-options.show {
+    display: block; /* แสดงตัวเลือกเมื่อคลิกช่องเลือก */
+}
+
+.custom-dropdown .dropdown-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+.custom-dropdown .dropdown-option img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%; /* ทำให้รูปเป็นวงกลม */
+    margin-right: 10px;
+}
+
+.custom-dropdown .dropdown-selected img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%; /* ทำให้รูปในช่องเลือกเป็นวงกลม */
+}
+
+.custom-dropdown .dropdown-option:hover {
+    background-color: #f0f0f0;
+}
+
+.custom-dropdown .dropdown-selected:focus {
+    border-color: #10b981; /* สีขอบเมื่อโฟกัส */
+    outline: none; /* ลบเส้นขอบมาตรฐานของเบราว์เซอร์ */
+}
+
+
+    </style>
+</head>
+
+<body>
+
+
+        <div class="p-4">
+          <h1 class="text-center text-2xl font-bold text-blue-600 pb-1">กรอกข้อมูลให้ถูกต้อง</h1>
+          <h1 class="text-center text-2xl font-bold text-blue-600 pb-4">เพื่อง่ายต่อการตรวจสอบ</h1>
+            <!-- แบบฟอร์มการชำระเงิน -->
+          
+           <form id="paymentFormData">
+                <div class="text-left" style="margin-bottom: 8px;">
+                     <label for="customerName" style="color: #888; margin-bottom: 4px; display: inline-block;">อาคาร ห้อง เช่น A201 </label>
+                     <input class="form-input" type="text" id="customerName" name="customerName" placeholder="A201" required />
+                </div>
+                
+                <div class="text-left" style="margin-bottom: 8px;">
+                  <label for="paymentType" style="color: #888; margin-bottom: 4px; display: inline-block;">บัญชีรับโอน</label>
+                    <div class="custom-dropdown" id="dropdownPaymentType">
+                      <div class="dropdown-selected" onclick="toggleDropdown('dropdownPaymentType')">เลือกบัญชีรับโอน</div>
+                        <div class="dropdown-options hidden">
+                          <div class="dropdown-option" onclick="selectOption('dropdownPaymentType', 'KBANK:1218345006 (เอสไนน์ เรสซิเด้นซ์)', 'downPayment', this)" data-branch="downPayment">
+                            <img src="https://lh3.googleusercontent.com/d/1BkSPDWn1LY3lzJmbqbZ4KBVpZnfRoB11?key=123" alt="Down Payment Icon" />
+                              A : 1218345006 (เอสไนน์ เรสซิเด้นซ์)
+                          </div>
+                          <div class="dropdown-option" onclick="selectOption('dropdownPaymentType', 'BAY:2400006264 (สุรชน อ่อนทอง)', 'installment', this)" data-branch="installment">
+                            <img src="https://lh3.googleusercontent.com/d/137sEpTwQB3Ph-gi6nmCixn3sKPYLGCvy?key=123" alt="Installment Icon" />
+                              A : 2400006264 (สุรชน อ่อนทอง)
+                          </div>
+            <div class="dropdown-option" onclick="selectOption('dropdownPaymentType', 'SCB:2643006108 (สุรชน อ่อนทอง)', 'fine', this)" data-branch="fine">
+                <img src="https://lh3.googleusercontent.com/d/1X9zSCATLhN9H75hkL7E52VXAGHdI7wh4?key=123" alt="Fine Icon" />
+                A: 2643006108 (สุรชน อ่อนทอง)
+            </div>
+            <div class="dropdown-option" onclick="selectOption('dropdownPaymentType', 'KK:1000044885 (เอสไนน์ เรสซิเด้นซ์)', 'defermentFee', this)" data-branch="defermentFee">
+                <img src="https://lh3.googleusercontent.com/d/10KSVwMMmVL5BGXXwJ5F5TgEGL5oLL2Jl?key=123" />
+                B : 1000044885 (เอสไนน์ เรสซิเด้นซ์)
+            </div>
+            <div class="dropdown-option" onclick="selectOption('dropdownPaymentType', 'TTB:1252211287 (สุรชน อ่อนทอง)', 'appLoadingFee', this)" data-branch="appLoadingFee">
+                <img src="https://lh3.googleusercontent.com/d/1824z-LqIWB4p_ugEDYkWg-CtLVmfXULT?key=123" alt="App Loading Fee Icon" />
+                B : 1252211287 (สุรชน อ่อนทอง)
+            </div>
+        </div>
+    </div>
+</div>
+                <div class="text-left" style="margin-bottom: 8px;">
+                     <label for="serviceFee" style="color: #888; margin-bottom: 4px; display: inline-block;">จำนวนเงิน</label>
+                     <input class="form-input" type="number" id="serviceFee" name="serviceFee" placeholder="ใส่เฉพาะตัวเลข" required />
+                </div>
+                <div class="text-left" style="margin-bottom: 8px;">
+                     <label for="paymentTime" style="color: #888; margin-bottom: 4px; display: inline-block;">วัน/เวลาที่โอน (ดูจากสลิป)</label>
+                     <input class="form-input" type="datetime-local" id="paymentTime" name="paymentTime" placeholder="วัน/เวลาที่โอน (ดูจากสลิป)" required />
+                </div>
+              
+                <div class="text-left" style="margin-bottom: 50px;">
+                     <label for="transEvidence" style="color: #888; margin-bottom: 4px; display: inline-block;">หลักฐานการชำระเงิน</label>
+                     <input type="file" id="transEvidence" name="file2" accept="image/*" class="block w-xl text-sm text-gray-900 rounded-lg cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 ml-4" required>
+                </div>
+                  <div id="data2"></div>
+                <!-- ปุ่มเพิ่มข้อมูล -->
+                <div class="text-left" style="display: flex; justify-content: center; margin-bottom: 50px;">
+                     <input class="submit-button" type="button" id="submitpaymentdata" value="เพิ่มข้อมูลการชำระเงิน" />
+                </div>
+            </form>
+
+        </div>
+  
+  <div id="loading-overlay"
+     class="fixed inset-0 bg-gray-500 bg-opacity-75 z-[9999] flex items-center justify-center hidden">
+<!--      <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXduMnZlZHR3cmVhazNvdndvYnl3dDdtNndqbno4Y2lvdjY3ZnlqcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/p7enJwoOJcCr6xSV3K/giphy.gif" -->
+          <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdzJiNjNkeWR6eXlndjhpdDM5eTdydmVmN2wzMzd2bXI5M2RrNW43cyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/vfru2aeeqPA5H73fIB/giphy.gif"
+          alt="Loading..." class="w-1/4 h-auto">
+</div>
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  
+  <script>
+//ดรอปดาวน์ paymentFormModal
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdowns = document.querySelectorAll('.custom-dropdown');
+
+    dropdowns.forEach(dropdown => {
+        const dropdownSelected = dropdown.querySelector('.dropdown-selected');
+        const optionsContainer = dropdown.querySelector('.dropdown-options');
+        const optionsList = optionsContainer.querySelectorAll('.dropdown-option');
+
+        dropdownSelected.addEventListener('click', () => {
+            optionsContainer.classList.toggle('show'); // สลับการแสดงผล
+        });
+
+        optionsList.forEach(option => {
+            option.addEventListener('click', function() {
+                const imgSrc = this.querySelector('img').src;
+                dropdownSelected.innerHTML = `<img src="${imgSrc}" alt="Icon" style="width: 20px; height: 20px; border-radius: 50%;"> ${this.textContent}`;
+                dropdownSelected.classList.add('selected'); // ทำให้ข้อความเป็นสีดำเมื่อเลือก
+                optionsContainer.classList.remove('show'); // ซ่อนตัวเลือก
+            });
+        });
+    });
+});
+
+function selectOption(dropdownId, value, text, element) {
+    var selected = document.getElementById(dropdownId).querySelector('.dropdown-selected');
+    const imgSrc = element.querySelector('img').src;
+    selected.innerHTML = `<img src="${imgSrc}" alt="Icon" style="width: 20px; height: 20px; border-radius: 50%;"> ${text}`;
+    selected.dataset.value = value;
+    toggleDropdown(dropdownId);
+    selected.classList.add('selected'); // ตรวจสอบให้แน่ใจว่าคลาสถูกเพิ่มไม่ว่าจะเลือกอย่างไร
+
+    if (dropdownId === 'dropdownContractChannel') {
+        const branch = element.dataset.branch;
+        updateAccountDropdown(branch);
+    }
+}
+    
+function toggleDropdown(dropdownId, show) {
+    const dropdown = document.getElementById(dropdownId);
+    const optionsContainer = dropdown.querySelector('.dropdown-options');
+    if (show) {
+        optionsContainer.classList.add('show');
+    } else {
+        optionsContainer.classList.remove('show');
+    }
+}
+
+</script>
+  
+    <script>
+      
+const userList = document.getElementById('userList');
+const filter = document.getElementById('filter');
+const listItems = [];
+      
+window.onload = function() {
+    // เริ่มโดยการเรียกใช้ฟังก์ชัน initializeLiff พร้อมกับ LIFF ID ที่กำหนด
+    const defaultLiffId = "2005462631-yzJKA2LK"; // ตรวจสอบให้แน่ใจว่าค่านี้ถูกต้อง
+    initializeLiff(defaultLiffId);
+
+};
+      
+async function initializeLiff(defaultLiffId) {
+  try {
+    await liff.init({ liffId: defaultLiffId, withLoginOnExternalBrowser: true });
+    if (!liff.isLoggedIn()) {
+      liff.login();
+    } else {
+      const profile = await liff.getProfile();
+      const userId = profile.userId;
+      setUpUser(profile);
+      fetchAndDisplayUserData(profile.userId); // โหลดข้อมูลสัญญาทั้งหมดที่นี่
+    }
+  } catch (error) {
+    //console.error('Initialize LIFF failed', error);
+  }
+}
+      
+function setUpUser(profile) {
+    const pictureUrl = profile.pictureUrl;
+    const userId = profile.userId;
+
+    document.getElementById('submitpaymentdata').addEventListener('click', () => handleResultPaymentFormData(profile));
+
+    
+}
+
+
+async function handleResultPaymentFormData(profile) {
+    // การรับค่าจากฟอร์ม
+    var dropdownPaymentType = document.querySelector("#dropdownPaymentType .dropdown-selected").getAttribute('data-value');
+    
+    var serviceFee = document.getElementById("serviceFee").value;
+    var paymentTime = document.getElementById("paymentTime").value;
+    var customerName = document.getElementById("customerName").value;
+  
+    var datas2 = document.getElementById("datas2").value;
+    var mmt2 = document.getElementById("mmt2").value;
+    var filen2 = document.getElementById("filen2").value; 
+  
+
+//     // ตรวจสอบไฟล์ที่แนบมา
+//     var fileElement = document.getElementById("transferEvidence");
+//     var fileAttached = fileElement.files.length > 0; // ตรวจสอบว่ามีไฟล์ถูกเลือกแล้วหรือไม่
+
+    // ตรวจสอบรูปแบบของเงินที่กรอก
+    if (!validatemoneyFollow(serviceFee)) {
+        Swal.fire('Error', 'รูปแบบยอดเงินไม่ถูกต้อง', 'error');
+        return;
+    }
+
+    // ตรวจสอบการกรอกข้อมูล
+    if (!dropdownPaymentType || !serviceFee || !paymentTime || !customerName) {
+        Swal.fire('Error', 'โปรดกรอกข้อมูลให้ครบทุกช่อง', 'error');
+        return;
+    }
+
+
+        sendPaymentDataToGoogleSheet(profile.userId, profile.displayName, profile.pictureUrl, profile.email, dropdownPaymentType, serviceFee, paymentTime, customerName, datas2, mmt2, filen2);
+       
+}
+      
+        function validatePhoneNumber(tel) {
+            var re = /^[0-9]{10}$/;
+            return re.test(tel);
+        }
+      
+        function validatemoneyFollow(money) {
+            var re = /^[0-9]+$/; // เปลี่ยนจาก {10} เป็น + เพื่อรับค่าตัวเลขไม่จำกัดจำนวน
+            return re.test(money);
+        }
+
+async function sendPaymentDataToGoogleSheet(userId, displayName, pictureUrl, email, dropdownPaymentType, serviceFee, paymentTime, customerName, datas2, mmt2, filen2) {
+            $('#loading-overlay').removeClass('hidden');
+            $.post('https://script.google.com/macros/s/AKfycbycoGXKG_22jh5jQX6bs4KZ51tXt2TZ_uxYHGOrP8s1e1pVcz-7wVqarZTbTKloo7pg/exec', {
+        userId: userId,
+        displayName: displayName,
+        pictureUrl: pictureUrl,
+        email: email,
+              
+        dropdownPaymentType: dropdownPaymentType,
+              
+        serviceFee: serviceFee,
+        paymentTime: paymentTime,
+        customerName: customerName,
+        
+        datas2: datas2,
+        mmt2: mmt2,
+        filen2: filen2
+            })
+                .done(function (response) {
+                    $('#loading-overlay').addClass('hidden');
+                    if (response.statusCode === 200) {
+                        const flexMessage = JSON.parse(response.body);
+                        liff.sendMessages([flexMessage])
+                            .then(function (res) {
+                                if (res) {
+                                    Swal.fire('ดำเนินการสำเร็จ', 'เพิ่มข้อมูลเรียบร้อยแล้ว', 'success')
+                                        .then(() => {
+                                            // document.getElementById('dropdownContractChannel').value = '';
+                                            // document.getElementById('dropdownAccountTransfer').value = '';
+                                            document.getElementById('dropdownPaymentType').value = '';
+                                            document.getElementById('serviceFee').value = '';
+                                            document.getElementById('paymentTime').value = '';
+                                            document.getElementById('customerName').value = '';
+                                            
+                                      
+                                            // ดึง element
+                                            var fileInput = document.getElementById('transEvidence');
+
+                                            // รีเซ็ตค่าของ file input โดยการบังคับสร้างใหม่
+                                            fileInput.outerHTML = fileInput.outerHTML;
+
+                                            // ปิดหน้าต่างแก้ไขทันที
+                                            liff.closeWindow();
+                                            // หน่วงเวลา 1 วินาทีก่อนจำลองการกดปุ่มปิดหน้าต่างตั้งค่า
+                                            setTimeout(() => {
+                                              document.getElementById('closePaymentFormModal').click();
+                                            }, 1000); // หน่วงเวลา 1000 มิลลิวินาที (1 วินาที)
+                                        });
+                                } else {
+                                    //console.log("TargetPicker was closed!");
+                                }
+                            })
+                            .catch(function (error) {
+                                //console.log("Something wrong happened");
+                            });
+                    }
+                })
+                .fail(function (error) {
+                    Swal.fire('Error', 'มีข้อผิดพลาดในการบันทึกข้อมูล', 'error');
+                    $('#loading-overlay').addClass('hidden');
+                    liff.closeWindow();
+                });
+        }
+
+
+      
+    </script>
+  
+  <script>
+ 
+    
+       $('#transEvidence').on("change", function() {
+           var file2 = this.files[0];
+           var fr2 = new FileReader();
+           fr2.fileName2 = file2.name;
+           fr2.onload = function(e) {
+               e.target.result
+               html2 = '<input type="hidden" id="datas2" name="data2" value="' + e.target.result.replace(/^.*,/, '') + '" >';
+               html2 += '<input type="hidden" id="mmt2" name="mimetype2" value="' + e.target.result.match(/^.*(?=;)/)[0] + '" >';
+               html2 += '<input type="hidden" id="filen2" name="filename2" value="' + e.target.fileName2 + '" >';
+               $("#data2").empty().append(html2);
+           }
+           fr2.readAsDataURL(file2);
+       });
+
+       </script>
+</body>
+
+</html>
