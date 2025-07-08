@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ระบบจัดการการแจ้งเตือน LINE OA</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https:; img-src 'self' data: https:;">
+    <style>
+/* ===========================================
+   1. GLOBAL STYLES & RESETS
+   =========================================== */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Kanit', sans-serif;
+}
+
+.container {
+    padding: 20px;
+    max-width: 1400px;
+}
+
+/* ===========================================
+   2. HEADER STYLES
+   =========================================== */
+.header {
+    background: linear-gradient(135deg, #00B900 0%, #008000 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* ===========================================
+   3. TABLE CONTAINER & GENERAL TABLE STYLES
+   =========================================== */
+.table-container {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin: 20px 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+    table-layout: fixed;
+    width: 100%;
+    font-size: 14px;
+    min-width: 800px;
+    background-color: white;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Table Header */
+.table thead {
+    background: #343a40;
+}
+
+.table th {
+    color: white;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 15px 10px;
+    text-align: center;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Table Body */
+.table td {
+    padding: 12px 10px;
+    vertical-align: middle;
+    border-bottom: 1px solid #dee2e6;
+    background-color: white;
+    height: 60px;
+}
+
+/* Table Row Hover */
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Column Widths */
+.table th:nth-child(1), .table td:nth-child(1) { width: 100px !important; } /* สถานะ */
+.table th:nth-child(2), .table td:nth-child(2) { width: 120px !important; } /* วันที่ */
+.table th:nth-child(3), .table td:nth-child(3) { width: 100px !important; } /* รอบแจ้งเตือน */
+.table th:nth-child(4), .table td:nth-child(4) { width: 100px !important; } /* Type */
+.table th:nth-child(5), .table td:nth-child(5) { width: 120px !important; } /* AltText */
+.table th:nth-child(6), .table td:nth-child(6) { width: 200px !important; } /* Message */
+.table th:nth-child(7), .table td:nth-child(7) { width: 150px !important; } /* Token */
+.table th:nth-child(8), .table td:nth-child(8) { width: 150px !important; } /* User ID */
+.table th:nth-child(9), .table td:nth-child(9) { width: 160px !important; } /* การจัดการ */
+
+/* ===========================================
+   4. STATUS STYLES
+   =========================================== */
+.status-cell {
+    text-align: center;
+    padding: 8px !important;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    min-width: 90px;
+}
+
+.status-active {
+    background: linear-gradient(135deg, #dcf5dc 0%, #d1e7dd 100%);
+    color: #0f5132;
+    transform: translateY(-1px);
+}
+
+.status-inactive {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c2c7 100%);
+    color: #842029;
+    transform: translateY(-1px);
+}
+      
+.table td:first-child {
+    width: 100px !important;
+    min-width: 100px;
+    max-width: 100px;
+    padding: 8px !important;
+    text-align: center;
+}
+
+/* ===========================================
+   5. ACTION BUTTONS STYLES
+   =========================================== */
+.table td:nth-child(9) {
+    padding: 10px !important;
+    background-color: #f8f9fa;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    padding: 4px;
+    width: 100%;
+    height: 100%;
+    min-height: 42px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.action-buttons .btn-sm {
+    flex: 1;
+    min-width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.action-buttons .btn-send {
+    background: linear-gradient(135deg, #00B900 0%, #008000 100%);
+}
+
+.action-buttons .btn-share {
+    background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+}
+
+.action-buttons .btn-danger {
+    background: linear-gradient(135deg, #DC3545 0%, #BB2D3B 100%);
+}
+
+.action-buttons .btn-sm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+.action-buttons .btn-sm:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.action-buttons .btn-sm i {
+    font-size: 14px;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+
+.action-buttons .btn-sm:hover i {
+    transform: scale(1.1);
+}
+
+/* ===========================================
+   6. EDITABLE CELL STYLES
+   =========================================== */
+.editable-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 36px;
+    padding: 4px 0;
+    position: relative;
+    max-width: 100%;
+}
+
+.editable-cell span {
+    flex: 1;
+    padding-right: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.multiline-text {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.edit-icon {
+    position: absolute;
+    right: 4px;
+    color: #6c757d;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.edit-icon:hover {
+    color: #0d6efd;
+    transform: scale(1.1);
+}
+
+.editable-cell.editing input,
+.editable-cell.editing select,
+.editable-cell.editing textarea {
+    width: 100%;
+    padding: 6px 30px 6px 8px;
+    border: 1px solid #0d6efd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.save-icon {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #198754;
+    color: white;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 1;
+}
+
+.save-icon:hover {
+    background-color: #146c43;
+}
+
+/* ===========================================
+   7. MODAL STYLES
+   =========================================== */
+.modal-content {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #00B900 0%, #008000 100%);
+    color: white;
+    border-radius: 15px 15px 0 0;
+    padding: 15px 20px;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 15px 20px;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #00B900;
+    box-shadow: 0 0 0 0.2rem rgba(0,185,0,0.25);
+}
+
+/* ===========================================
+   8. ADD BUTTON STYLES
+   =========================================== */
+.btn-add {
+    background: linear-gradient(135deg, #00B900 0%, #008000 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.btn-add:hover {
+    background: linear-gradient(135deg, #009900 0%, #007000 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+.btn-add i {
+    margin-right: 8px;
+}
+
+/* ===========================================
+   9. LOADING STYLES
+   =========================================== */
+.loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    color: #00B900;
+}
+
+/* ===========================================
+   10. RESPONSIVE STYLES
+   =========================================== */
+@media (max-width: 768px) {
+    .header {
+        border-radius: 0;
+        margin: -20px -20px 20px -20px;
+        padding: 15px;
+    }
+
+    .header h1 {
+        font-size: 20px;
+    }
+
+    .table-container {
+        padding: 10px;
+        margin: 10px 0;
+    }
+
+    .status-badge {
+        font-size: 12px;
+        min-width: 100px;
+    }
+
+    .action-buttons {
+        gap: 4px;
+        padding: 3px;
+    }
+
+    .action-buttons .btn-sm {
+        min-width: 32px;
+        height: 32px;
+    }
+
+    .action-buttons .btn-sm i {
+        font-size: 12px;
+    }
+
+    .edit-icon {
+        font-size: 12px;
+    }
+
+    .table td {
+        padding: 8px 6px;
+        height: 50px;
+    }
+  
+    .table td:first-child {
+        padding: 6px !important;
+    }
+
+    .status-badge {
+        font-size: 12px;
+        min-width: 70px;
+    }
+}
+
+@media (max-width: 375px) {
+    .table {
+        font-size: 12px;
+    }
+
+    .btn-add {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    .status-badge {
+        font-size: 11px;
+        min-width:70px;
+    }
+}
+</style>
+</head>
+<body>
+    <div id="loading" class="loading">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">กำลังโหลด...</span>
+        </div>
+    </div>
+
+    <div id="content" class="container" style="display: none;">
+    <div class="header">
+        <h1>ระบบจัดการการแจ้งเตือน LINE OA</h1>
+    </div>
+    
+    <div class="action-bar mb-4">
+        <button class="btn btn-add" data-bs-toggle="modal" data-bs-target="#addModal">
+            <i class="bi bi-plus-circle me-2"></i>เพิ่มข้อมูลใหม่
+        </button>
+    </div>
+
+        <div class="table-container">
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th style="width: 15%;">สถานะ</th>
+                <th style="width: 15%;">วัน/เวลา แจ้งเตือน</th>
+                <th style="width: 10%;">รอบแจ้งเตือน</th>
+                <th style="width: 10%;">Type</th>
+                <th style="width: 10%;">AltText</th>
+                <th style="width: 14%;">Message</th>
+                <th style="width: 10%;">Channel Access Token</th>
+                <th style="width: 10%;">User ID Group ID</th>
+                <th style="width: 6%;">การจัดการ</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+        </div>
+    </div>
+
+    <!-- Modal เพิ่มข้อมูล -->
+    <div class="modal fade" id="addModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">เพิ่มข้อมูลใหม่</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addForm">
+                        <!-- ฟอร์มเดิม -->
+                        <div class="mb-3">
+                            <label class="form-label">Type</label>
+                            <select class="form-select" name="type" required>
+                                <option value="text">text</option>
+                                <option value="flex">flex</option>
+                                <option value="image map">image map</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">วัน/เวลา แจ้งเตือน</label>
+                            <input type="datetime-local" class="form-control" name="notifyTime" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">รอบการแจ้งเตือน</label>
+                            <select class="form-select" name="cycle" required>
+                                <option value="">เลือกรอบการแจ้งเตือน</option>
+                                <option value="ทุกวัน">ทุกวัน</option>
+                                <option value="ทุกสัปดาห์">ทุกสัปดาห์</option>
+                                <option value="ทุกเดือน">ทุกเดือน</option>
+                                <option value="ครั้งเดียว">ครั้งเดียว</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">AltText</label>
+                            <input type="text" class="form-control" name="altText" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Message</label>
+                            <textarea class="form-control" name="message" required rows="4"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Channel Access Token</label>
+                            <input type="text" class="form-control" name="token" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">User ID Group ID</label>
+                            <input type="text" class="form-control" name="userId" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="button" class="btn btn-primary" onclick="addData()">บันทึก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUserId = '';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwRSJdrcdppa1PmDmD19rSW8qWTx3ywoKUhPfMAss95dnN-lszR0xXlDO5jsTdu3Spy/exec';
+
+      let isInLineApp = false; // ตัวแปรเก็บสถานะ
+        // Initialize LIFF
+async function initializeLiff() {
+    try {
+        await liff.init({ liffId: "2006502519-RA82EJjg" });
+        if (!liff.isLoggedIn()) {
+            liff.login();
+        } else {
+            isInLineApp = liff.isInClient();
+            const profile = await liff.getProfile();
+            currentUserId = profile.userId;
+
+            // บันทึกข้อมูลผู้ใช้
+            await logUserAccess(profile);
+
+            checkLiffAvailability();
+            fetchData();
+        }
+    } catch (err) {
+        console.error('LIFF Initialization failed', err);
+        alert('เกิดข้อผิดพลาดในการเริ่มต้น LIFF: ' + err.message);
+    }
+}
+      
+async function logUserAccess(profile) {
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'logAccess',
+                data: {
+                    userId: profile.userId,
+                    displayName: profile.displayName,
+                    pictureUrl: profile.pictureUrl
+                }
+            })
+        });
+        const result = await response.json();
+        if (!result.success) {
+            console.error('Error logging user access:', result.error);
+        }
+    } catch (error) {
+        console.error('Error logging user access:', error);
+    }
+}
+
+// แก้ไขฟังก์ชัน displayData
+function displayData(data) {
+    const tableBody = document.getElementById('tableBody');
+    tableBody.innerHTML = '';
+
+    data.forEach((row, index) => {
+        const tr = document.createElement('tr');
+
+        // สถานะ
+        const statusTd = document.createElement('td');
+statusTd.innerHTML = `
+    <div class="status-wrapper">
+        <span class="status-badge status-${row[0].toLowerCase()}">${row[0]}</span>
+    </div>
+`;
+tr.appendChild(statusTd);
+
+        // วัน/เวลา แจ้งเตือน
+        tr.appendChild(createEditableTd(formatDateTime(row[2]), index, 2, 'datetime'));
+
+        // รอบแจ้งเตือน
+        tr.appendChild(createEditableTd(getCycleText(row[4]), index, 4, 'select-cycle'));
+
+        // Type
+        tr.appendChild(createEditableTd(row[5], index, 5, 'select'));
+
+        // AltText
+        tr.appendChild(createEditableTd(row[6], index, 6));
+
+        // Message
+        tr.appendChild(createEditableTd(row[7], index, 7, 'textarea'));
+
+        // Channel Access Token
+        tr.appendChild(createEditableTd(row[8], index, 8));
+
+        // User ID Group ID
+        tr.appendChild(createEditableTd(row[9], index, 9));
+
+        // Action buttons
+        const actionTd = document.createElement('td');
+        actionTd.className = 'action-buttons';
+        actionTd.innerHTML = `
+            <button class="btn btn-sm btn-send" onclick="sendMessage(${index})">
+                <i class="bi bi-send"></i>
+            </button>
+            <button class="btn btn-sm btn-share" onclick="shareMessage(${index})">
+                <i class="bi bi-share"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteRow(${index})">
+                <i class="bi bi-trash"></i>
+            </button>
+        `;
+        tr.appendChild(actionTd);
+
+        tableBody.appendChild(tr);
+    });
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+}
+
+// แก้ไขฟังก์ชัน createEditableTd
+function createEditableTd(text, rowIndex, colIndex, inputType = 'text') {
+    const td = document.createElement('td');
+    td.innerHTML = `<div class="editable-cell">
+        <span class="${inputType === 'textarea' ? 'multiline-text' : ''}">${text || ''}</span>
+        <i class="bi bi-pencil-square edit-icon" onclick="editCell(this, ${rowIndex}, ${colIndex}, '${inputType}')"></i>
+    </div>`;
+    return td;
+}
+
+// เพิ่มฟังก์ชันตรวจสอบการทำงานของ LIFF API
+function checkLiffAvailability() {
+    if (!liff.isApiAvailable('shareTargetPicker')) {
+        document.querySelectorAll('.btn-share').forEach(btn => {
+            btn.style.display = 'none';
+        });
+    }
+}
+
+        // ฟังก์ชันสำหรับแก้ไขเซลล์
+function editCell(icon, rowIndex, colIndex, inputType) {
+    const cell = icon.parentElement;
+    const span = cell.querySelector('span');
+    const originalText = span.textContent;
+    let input;
+
+    // สร้าง overlay สำหรับมือถือ
+    if (window.innerWidth <= 768) {
+        const overlay = document.createElement('div');
+        overlay.className = 'editing-overlay';
+        document.body.appendChild(overlay);
+    }
+
+    if (inputType === 'select-cycle') {
+        input = document.createElement('select');
+        input.className = 'form-select form-select-sm';
+        const cycles = [
+            { value: 'ทุกวัน', text: 'ทุกวัน' },
+            { value: 'ทุกสัปดาห์', text: 'ทุกสัปดาห์' },
+            { value: 'ทุกสัปดาห์', text: 'ทุกเดือน' },
+            { value: 'ทุกสัปดาห์', text: 'ครั้งเดียว' }
+        ];
+        cycles.forEach(cycle => {
+            const option = document.createElement('option');
+            option.value = cycle.value;
+            option.textContent = cycle.text;
+            if (cycle.text === originalText) {
+                option.selected = true;
+            }
+            input.appendChild(option);
+        });
+    } else if (inputType === 'select') {
+        input = document.createElement('select');
+        input.className = 'form-select form-select-sm';
+        ['text', 'flex', 'image map'].forEach(optionValue => {
+            const option = document.createElement('option');
+            option.value = optionValue;
+            option.textContent = optionValue;
+            if (optionValue === originalText) {
+                option.selected = true;
+            }
+            input.appendChild(option);
+        });
+    } else if (inputType === 'datetime') {
+        input = document.createElement('input');
+        input.type = 'datetime-local';
+        input.className = 'form-control form-control-sm';
+        input.value = formatDateTimeForInput(originalText);
+    } else if (inputType === 'textarea') {
+        input = document.createElement('textarea');
+        input.className = 'form-control form-control-sm';
+        input.rows = window.innerWidth <= 768 ? 8 : 4;
+        input.value = originalText;
+    } else {
+        input = document.createElement('input');
+        input.type = 'text';
+        input.value = originalText;
+        input.className = 'form-control form-control-sm';
+    }
+
+    cell.classList.add('editing');
+    
+    // ซ่อน span และ edit icon
+    span.style.display = 'none';
+    icon.style.display = 'none';
+    
+    // เพิ่ม input
+    cell.appendChild(input);
+
+    // เพิ่มปุ่มบันทึก
+    const saveIcon = document.createElement('i');
+    saveIcon.className = 'bi bi-check-circle-fill save-icon';
+    saveIcon.onclick = function() {
+        saveCell(icon, rowIndex, colIndex, inputType);
+        const overlay = document.querySelector('.editing-overlay');
+        if (overlay) {
+            overlay.remove();
+        }
+    };
+    cell.appendChild(saveIcon);
+
+    input.focus();
+    if (inputType !== 'select') {
+        input.select();
+    }
+
+    // เพิ่มการกด Enter เพื่อบันทึก
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && inputType !== 'textarea') {
+            saveIcon.click();
+        }
+    });
+}
+      
+// ฟังก์ชันแปลงค่ารอบแจ้งเตือนจาก value เป็นข้อความ
+function getCycleText(cycle) {
+    const cycles = {
+        'ทุกวัน': 'ทุกวัน',
+        'ทุกสัปดาห์': 'ทุกสัปดาห์',
+        'ทุกเดือน': 'ทุกเดือน',
+        'ครั้งเดียว': 'ครั้งเดียว'
+    };
+    return cycles[cycle] || cycle;
+}
+
+// ฟังก์ชันแปลงค่าข้อความเป็น value
+function getCycleValue(text) {
+    const cycles = {
+        'ทุกวัน': 'ทุกวัน',
+        'ทุกสัปดาห์': 'ทุกสัปดาห์',
+        'ทุกเดือน': 'ทุกเดือน',
+        'ครั้งเดียว': 'ครั้งเดียว'
+    };
+    return cycles[text] || text;
+}
+
+async function saveCell(icon, rowIndex, colIndex, inputType) {
+    const cell = icon.parentElement;
+    const input = cell.querySelector('input, select, textarea');
+    let newValue = input.value;
+
+    // ถ้าเป็นการแก้ไขรอบแจ้งเตือน
+    if (inputType === 'select-cycle') {
+        newValue = getCycleText(input.value);
+    }
+
+    const overlay = document.querySelector('.editing-overlay');
+    if (overlay) {
+        overlay.remove();
+    }
+
+    if (inputType === 'datetime') {
+        newValue = new Date(newValue).toLocaleString('th-TH');
+    }
+
+    try {
+        // แสดงสถานะการบันทึก
+        cell.classList.add('saving');
+        const savingIndicator = document.createElement('span');
+        savingIndicator.className = 'saving-indicator';
+        savingIndicator.textContent = 'กำลังบันทึก...';
+        cell.appendChild(savingIndicator);
+
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'updateCell',
+                rowIndex: rowIndex,
+                colIndex: colIndex,
+                newValue: newValue,
+                userId: currentUserId
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // ลบ input และ save icon อย่างปลอดภัย
+            if (input && input.parentElement === cell) {
+                cell.removeChild(input);
+            }
+
+            const saveIconElement = cell.querySelector('.save-icon');
+            if (saveIconElement && saveIconElement.parentElement === cell) {
+                cell.removeChild(saveIconElement);
+            }
+
+            // ลบ saving indicator
+            if (savingIndicator && savingIndicator.parentElement === cell) {
+                cell.removeChild(savingIndicator);
+            }
+
+            // สร้าง span ใหม่และแทนที่ span เดิม
+            const span = document.createElement('span');
+            if (inputType === 'textarea') {
+                span.className = 'multiline-text';
+            }
+            span.textContent = newValue;
+
+            // สร้างไอคอนแก้ไขใหม่
+            const newEditIcon = document.createElement('i');
+            newEditIcon.className = 'bi bi-pencil-square edit-icon';
+            newEditIcon.onclick = () => editCell(newEditIcon, rowIndex, colIndex, inputType);
+
+            // ลบทุก element เดิมออกจาก cell
+            while (cell.firstChild) {
+                cell.removeChild(cell.firstChild);
+            }
+
+            // เพิ่ม elements ใหม่เข้าไป
+            const editableCellDiv = document.createElement('div');
+            editableCellDiv.className = 'editable-cell';
+            editableCellDiv.appendChild(span);
+            editableCellDiv.appendChild(newEditIcon);
+            cell.appendChild(editableCellDiv);
+
+            // ลบคลาส editing และ saving
+            cell.classList.remove('editing');
+            cell.classList.remove('saving');
+
+            alert('บันทึกข้อมูลสำเร็จ');
+        } else {
+            throw new Error(result.error || 'Failed to update data');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + error.message);
+
+        // ลบ saving indicator และคลาส saving
+        if (savingIndicator && savingIndicator.parentElement === cell) {
+            cell.removeChild(savingIndicator);
+        }
+        cell.classList.remove('saving');
+    }
+}
+
+        // Add new data
+        async function addData() {
+            const form = document.getElementById('addForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Set default values
+            data.status = '';        // สถานะเป็นค่าว่าง
+            data.checkbox = '';      // Checkbox เป็นค่าว่าง
+            data.clearTime = '';     // วัน/เวลา ล้างข้อมูลเป็นค่าว่าง
+            data.groupId = data.userId;  // เก็บ User ID Group ID ที่ผู้ใช้กรอก
+            data.currentUserId = currentUserId;  // เก็บ User ID จาก LIFF
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'create',
+                        data: data
+                    })
+                });
+
+                if (response.ok) {
+                    $('#addModal').modal('hide');
+                    form.reset();
+                    fetchData();
+                    alert('เพิ่มข้อมูลสำเร็จ');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาดในการเพิ่มข้อมูล');
+            }
+        }
+
+        // Delete row
+        async function deleteRow(index) {
+            if (confirm('ต้องการลบข้อมูลนี้ใช่หรือไม่?')) {
+                try {
+                    const response = await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            action: 'delete',
+                            rowIndex: index,
+                            userId: currentUserId
+                        })
+                    });
+
+                    if (response.ok) {
+                        fetchData();
+                        alert('ลบข้อมูลสำเร็จ');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('เกิดข้อผิดพลาดในการลบข้อมูล');
+                }
+            }
+        }
+
+// แก้ไขฟังก์ชัน fetchData และเพิ่มฟังก์ชันตรวจสอบสิทธิ์
+let isUserAuthorized = false;
+
+async function checkAuthorization() {
+    try {
+        const response = await fetch(`${SCRIPT_URL}?action=checkAuth&userId=${currentUserId}`);
+        const result = await response.json();
+        return result.isAuthorized;
+    } catch (error) {
+        console.error('Error checking authorization:', error);
+        return false;
+    }
+}
+
+async function fetchData() {
+    try {
+        const [dataResponse, authResponse] = await Promise.all([
+            fetch(`${SCRIPT_URL}?action=read&userId=${currentUserId}`),
+            fetch(`${SCRIPT_URL}?action=checkAuth&userId=${currentUserId}`)
+        ]);
+
+        const data = await dataResponse.json();
+        const auth = await authResponse.json();
+        
+        isUserAuthorized = auth.isAuthorized;
+        displayData(data);
+    } catch (error) {
+        console.error('Error:', error);
+        alert('เกิดข้อผิดพลาดในการดึงข้อมูล');
+    }
+}
+
+        function formatDateTime(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleString('th-TH');
+        }
+
+        function formatDateTimeForInput(dateStr) {
+            const date = new Date(dateStr);
+            return date.toISOString().slice(0, 16);
+        }
+
+        // Start the application
+        window.onload = initializeLiff;
+      
+// ฟังก์ชันตรวจสอบประเภทข้อความที่รองรับ
+function isMessageTypeSupported(type, isShare = false) {
+    // ประเภทข้อความที่ LIFF SDK รองรับ
+    const supportedTypes = {
+        'text': true,
+        'flex': true,
+        'image map': false  // imagemap ไม่รองรับใน LIFF SDK
+    };
+    
+    return supportedTypes[type.toLowerCase()] || false;
+}
+
+// ฟังก์ชันสร้าง Message Object
+function createMessageObject(type, altText, message) {
+    try {
+        switch(type.toLowerCase()) {
+            case 'text':
+                return {
+                    type: 'text',
+                    text: message
+                };
+                
+            case 'flex':
+                let flexContent = JSON.parse(message);
+                return {
+                    type: 'flex',
+                    altText: altText,
+                    contents: flexContent
+                };
+                
+            case 'image map':
+                throw new Error('Imagemap messages ไม่สามารถส่งผ่าน LIFF SDK ได้โดยตรง กรุณาใช้ Messaging API แทน');
+                
+            default:
+                throw new Error(`ไม่รองรับประเภทข้อความ: ${type}`);
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+// ฟังก์ชันส่งข้อความ
+async function sendMessage(index) {
+    try {
+        const auth = await checkAuthorization();
+        if (!auth) {
+            alert('คุณไม่ได้รับสิทธิ์ใช้งานฟังก์ชันนี้');
+            return;
+        }
+
+        if (!isInLineApp) {
+            alert('ฟังก์ชันการทดสอบส่งข้อความใช้งานได้ผ่าน App LINE เท่านั้น');
+            return;
+        }
+
+        const rows = document.getElementById('tableBody').getElementsByTagName('tr');
+        const cells = rows[index].getElementsByTagName('td');
+
+        const type = cells[3].querySelector('span').textContent.trim();
+        
+        // ตรวจสอบประเภทข้อความที่รองรับ
+        if (!isMessageTypeSupported(type)) {
+            alert(`ไม่สามารถส่งข้อความประเภท ${type} ผ่าน LIFF SDK ได้โดยตรง\nกรุณาใช้ Messaging API แทน`);
+            return;
+        }
+
+        const altText = cells[4].querySelector('span').textContent.trim();
+        const message = cells[5].querySelector('span').textContent.trim();
+
+        let messageObject = createMessageObject(type, altText, message);
+        await liff.sendMessages([messageObject]);
+        alert('ส่งข้อความสำเร็จ');
+    } catch (error) {
+        console.error('Error sending message:', error);
+        alert('เกิดข้อผิดพลาดในการส่งข้อความ: ' + error.message);
+    }
+}
+
+// ฟังก์ชันแชร์ข้อความ
+async function shareMessage(index) {
+    try {
+        const auth = await checkAuthorization();
+        if (!auth) {
+            alert('คุณไม่ได้รับสิทธิ์ใช้งานฟังก์ชันนี้');
+            return;
+        }
+
+        const rows = document.getElementById('tableBody').getElementsByTagName('tr');
+        const cells = rows[index].getElementsByTagName('td');
+        
+        const type = cells[3].querySelector('span').textContent.trim();
+
+        // ตรวจสอบประเภทข้อความที่รองรับ
+        if (!isMessageTypeSupported(type)) {
+            alert(`ไม่สามารถแชร์ข้อความประเภท ${type} ผ่าน LIFF SDK ได้โดยตรง\nกรุณาใช้ Messaging API แทน`);
+            return;
+        }
+
+        const altText = cells[4].querySelector('span').textContent.trim();
+        const message = cells[5].querySelector('span').textContent.trim();
+
+        if (!liff.isApiAvailable('shareTargetPicker')) {
+            throw new Error('ShareTargetPicker is not available');
+        }
+
+        let messageObject = createMessageObject(type, altText, message);
+        const result = await liff.shareTargetPicker([messageObject]);
+        if (result) {
+            alert('แชร์ข้อความสำเร็จ');
+        }
+    } catch (error) {
+        console.error('Error sharing message:', error);
+        alert('เกิดข้อผิดพลาดในการแชร์ข้อความ: ' + error.message);
+    }
+}
+
+// เพิ่มที่ต้น <script> ส่วนป้องกัน
+// ฟังก์ชันเข้ารหัสข้อมูล
+function encodeData(data) {
+    return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+}
+
+// ฟังก์ชันถอดรหัสข้อมูล
+function decodeData(encoded) {
+    return JSON.parse(decodeURIComponent(escape(atob(encoded))));
+}
+
+// ป้องกันการ copy หรือดูซอร์สโค้ด
+document.addEventListener('keydown', (e) => {
+    // ป้องกัน View Source (Ctrl+U)
+    if (e.ctrlKey && e.key === 'u') {
+        e.preventDefault();
+        return false;
+    }
+    
+    // ป้องกัน Developer Tools (F12)
+    if (e.key === 'F12') {
+        e.preventDefault();
+        return false;
+    }
+    
+    // ป้องกัน Developer Tools (Ctrl+Shift+I)
+    if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+        e.preventDefault();
+        return false;
+    }
+    
+    // ป้องกัน Developer Tools (Ctrl+Shift+J)
+    if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+        e.preventDefault();
+        return false;
+    }
+    
+    // ป้องกัน Developer Tools (Ctrl+Shift+C)
+    if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+        e.preventDefault();
+        return false;
+    }
+});
+
+// ป้องกันการคลิกขวา
+document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    return false;
+});
+
+// ป้องกันการ copy
+// document.addEventListener('copy', (e) => {
+//     e.preventDefault();
+//     return false;
+// });
+
+// ป้องกันการ select ข้อความ
+// document.addEventListener('selectstart', (e) => {
+//     e.preventDefault();
+//     return false;
+// });
+
+      
+    </script>
+</body>
+</html>
