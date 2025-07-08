@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จองคิวนวด : ไอมาสสาจ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fce4ec;
+        }
+        h1, h2, h3 {
+            color: #e91e63;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+      
+.tip-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.tip-button:hover {
+    background-color: #45a049;
+}
+
+.therapist-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: 20px 0;
+}
+
+.therapist-cards {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 10px;
+    position: relative;
+}
+
+.therapist-cards::-webkit-scrollbar {
+    display: none;
+}
+
+.therapist-card img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 5px; /* ลดระยะห่างลง */
+    border: 3px solid #f48fb1;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+      
+.therapist-card {
+    flex: 0 0 auto;
+    width: 220px;
+    margin-right: 20px;
+    background-color: #fff;
+    border-radius: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    text-align: left; /* เปลี่ยนเป็น left alignment */
+    justify-content: flex-start;
+    min-height: 300px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+  
+.therapist-card h3 {
+    margin: 2px 0; /* ลดระยะห่างด้านบนและล่าง */
+    font-size: 20px; /* ปรับขนาดตามความเหมาะสม */
+    text-align: center; /* ให้ชื่อยังคงอยู่ตรงกลาง */
+}
+
+.therapist-card p {
+    margin: 2px 0; /* ลดระยะห่างด้านบนและล่าง */
+    font-size: 14px; /* ปรับขนาดตามความเหมาะสม */
+    padding: 5px; /* เพิ่มระยะห่างจากขอบซ้าย */
+}
+
+.therapist-card .working-hours {
+    font-weight: bold; /* ทำให้ "เวลาทำงาน:" เป็นตัวหนา */
+}
+
+.therapist-card:last-child {
+    margin-right: 0;
+}
+
+.booked-times {
+    font-size: 14px; /* เพิ่มขนาดตัวอักษร */
+    margin-top: 5px;
+    padding: 5px; /* เพิ่มระยะห่างจากขอบซ้าย */
+    text-align: left;
+    flex-grow: 1;
+    overflow-y: auto;
+    max-height: 250px; /* เพิ่มความสูงสูงสุด */
+    background-color: #ffffff; /* เพิ่มสีพื้นหลังอ่อนๆ */
+    border-radius: 5px; /* เพิ่มขอบมน */
+}
+      
+.booked-times h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.booked-slot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffcdd2;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+
+.booked-slot-left {
+    display: flex;
+    align-items: center;
+}
+
+.user-profile-icon {
+    width: 25px !important;
+    height: 25px !important;
+    border-radius: 50%;
+    margin-right: 5px !important;
+    border: 2px solid #ccc !important;
+    object-fit: cover; /* เพิ่มเพื่อให้รูปภาพแสดงผลได้ดีขึ้น */
+}
+        .therapist-card:last-child {
+            margin-right: 0;
+        }
+        .therapist-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .therapist-card.selected {
+            border: 3px solid #e91e63;
+            background-color: #fce4ec;
+        }
+        
+        .scroll-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(233, 30, 99, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .scroll-button:hover {
+            background-color: rgba(233, 30, 99, 1);
+        }
+        .scroll-button.left {
+            left: 10px;
+        }
+        .scroll-button.right {
+            right: 10px;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        label, input, button {
+            display: block;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        input, select {
+            padding: 10px;
+            border: 2px solid #f48fb1;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .time-selection {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        .time-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .time-inputs {
+            display: flex;
+            justify-content: space-between;
+        }
+        .time-selection label {
+            margin-bottom: 0;
+            width: 45%;
+        }
+        .time-selection select {
+            width: 45%;
+        }
+        button {
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 25px;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background-color: #c2185b;
+            transform: scale(1.05);
+        }
+        #bookedSlots {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+              .time-inputs {
+            display: flex;
+            justify-content: space-between;
+        }
+        .time-inputs input[type="time"] {
+            width: 45%;
+        }
+      
+.status {
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+        .status[data-status="รอชำระ"] {
+            background-color: #FFA500;
+            color: black;
+            cursor: pointer;
+        }
+        .status[data-status="รอตรวจ"] {
+            background-color: #FFFF00;
+            color: black;
+        }
+        .status[data-status="ชำระแล้ว"] {
+            background-color: #027502;
+            color: white;
+        }
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+      
+.payment-info {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.payment-info h2 {
+    color: #e91e63;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.bank-info {
+    display: flex;
+    align-items: stretch;
+    background-color: #f8f8f8;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 30px;
+}
+
+.bank-logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 10px;
+    padding-right: 10px;
+    border-radius: 20%;
+}
+
+.bank-logo {
+    width: 71px;
+    height: 71px;
+    object-fit: contain;
+    border-radius: 20%;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.copy-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s, transform 0.3s;
+    width: 100%;
+    outline: none;  /* ลบเส้นขอบเมื่อกด */
+}
+
+.copy-button:hover {
+    background-color: #45a049;
+}
+
+.copy-button:active {
+    transform: scale(0.98);  /* เพิ่มเอฟเฟกต์เมื่อกด */
+}
+
+.copy-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+.bank-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.bank-details p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.qr-code {
+    text-align: center;
+    background-color: #f8f8f8;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.qr-code h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.qr-code-image {
+    max-width: 200px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+    </style>
+  
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+        window.onload = function() {
+            initializeLiff('2005939755-bWAP4K55');
+          fetchBookedSlots().then(() => {
+    updateTherapistCardBookings();
+    updateBookedSlotsDisplay();
+});
+        }
+
+function initializeLiff(myLiffId) {
+    liff
+        .init({
+            liffId: myLiffId
+        })
+        .then(() => {
+            if (!liff.isLoggedIn()) {
+                liff.login();
+            } else {
+                liff.getProfile().then(profile => {
+                    window.userProfile = {
+                        userId: profile.userId,
+                        displayName: profile.displayName,
+                        pictureUrl: profile.pictureUrl
+                    };
+                    console.log('User profile:', window.userProfile);
+                    // เรียกฟังก์ชันอื่นๆ ที่ต้องการข้อมูลผู้ใช้ที่นี่
+                    fetchBookedSlots().then(() => {
+                        updateTherapistCardBookings();
+                        updateBookedSlotsDisplay();
+                    });
+                }).catch(err => console.error('Error getting profile:', err));
+            }
+        })
+        .catch((err) => {
+            console.error('LIFF Initialization failed', err);
+        });
+}
+    </script>
+  
+</head>
+<body>
+    <h2>✨ ไอมาสสาจ : iMassage ✨</h2>
+    <h3>เลือกหมอนวดของคุณ</h3>
+    <div class="therapist-container">
+        <div id="therapistCards" class="therapist-cards"></div>
+        <button id="scrollLeft" class="scroll-button left">&lt;</button>
+        <button id="scrollRight" class="scroll-button right">&gt;</button>
+    </div>
+  
+    <form id="bookingForm">
+        <label for="date">เลือกวันที่:</label>
+        <input type="date" id="date" required>
+
+        <div class="time-selection">
+            <div class="time-labels">
+                <label for="startTime">เวลาเริ่มต้น:</label>
+                <label for="endTime">เวลาสิ้นสุด:</label>
+            </div>
+            <div class="time-inputs">
+                <input type="time" id="startTime" required>
+                <input type="time" id="endTime" required>
+            </div>
+        </div>
+
+        <button type="submit">จองคิวเลย! 🎉</button>
+    </form>
+  
+<div id="paymentInfo" class="payment-info">
+    <h2>วิธีการชำระเงิน</h2>
+    <p>การชำระเงินสามารถจ่ายเงินสดที่หน้าร้าน หรือ ชำระโดยการโอนเงิน หรือสแกนจ่ายเงินด้วย QR Code ก็ได้</p>
+    <div class="bank-info">
+        <div class="bank-logo-container">
+            <img src="https://lh3.googleusercontent.com/d/1X9zSCATLhN9H75hkL7E52VXAGHdI7wh4?key=123" alt="SCB Logo" class="bank-logo">
+            <button onclick="copyToClipboard('accountNumber')" class="copy-button">คัดลอก</button>
+        </div>
+        <div class="bank-details">
+            <p><strong>ธนาคาร:</strong> ไทยพาณิชย์ (SCB)</p>
+            <p><strong>เลขบัญชี:</strong> <span id="accountNumber">4068460777</span></p>
+            <p><strong>ชื่อบัญชี:</strong> นิติพล ศรีคิรินทร์</p>
+        </div>
+    </div>
+    <div class="qr-code">
+        <h3>สแกนจ่ายเงินด้วย QR Code</h3>
+        <img src="https://promptpay.io/1461000136919.png" alt="QR Code" class="qr-code-image">
+    </div>
+</div>
+
+    <script>
+        const bookingForm = document.getElementById('bookingForm');
+        const therapistCardsContainer = document.getElementById('therapistCards');
+        const dateInput = document.getElementById('date');
+        const startTimeSelect = document.getElementById('startTime');
+        const endTimeSelect = document.getElementById('endTime');
+        const bookedSlotsContainer = document.getElementById('bookedSlots');
+        let selectedTherapistId = null;
+        let therapists = [];
+        let bookedSlots = [];
+
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1f6X_O9QR9ezT0jEueDbRG5Ekrw5wRvwImCxNOkNpeJYzqz1E365gRGCe9KTHMB4fYA/exec';
+
+        const scrollAmount = 200;
+        const scrollDuration = 300;
+
+        document.getElementById('scrollLeft').addEventListener('click', () => {
+            smoothScroll(document.getElementById('therapistCards'), -scrollAmount, scrollDuration);
+        });
+
+        document.getElementById('scrollRight').addEventListener('click', () => {
+            smoothScroll(document.getElementById('therapistCards'), scrollAmount, scrollDuration);
+        });
+
+        function smoothScroll(element, amount, duration) {
+            const start = element.scrollLeft;
+            const startTime = performance.now();
+
+            function animation(currentTime) {
+                const timeElapsed = currentTime - startTime;
+                const run = easeInOutQuad(timeElapsed, start, amount, duration);
+                element.scrollLeft = run;
+                if (timeElapsed < duration) requestAnimationFrame(animation);
+            }
+
+            function easeInOutQuad(t, b, c, d) {
+                t /= d / 2;
+                if (t < 1) return c / 2 * t * t + b;
+                t--;
+                return -c / 2 * (t * (t - 2) - 1) + b;
+            }
+
+            requestAnimationFrame(animation);
+        }
+      
+        window.addEventListener('load', () => {
+    fetchTherapists();
+    setMinDate();
+    fetchBookedSlots();
+});
+
+        function setMinDate() {
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const yyyy = today.getFullYear();
+            const minDate = yyyy + '-' + mm + '-' + dd;
+            dateInput.min = minDate;
+        }
+
+        function fetchTherapists() {
+            fetch(`${SCRIPT_URL}?action=getTherapists`)
+                .then(response => response.json())
+                .then(data => {
+                    therapists = data.map(therapist => ({
+                        ...therapist,
+                        id: therapist.id.toString()
+                    }));
+                    generateTherapistCards();
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+function generateTherapistCards() {
+    therapistCardsContainer.innerHTML = '';
+    therapists.forEach(therapist => {
+        const card = document.createElement('div');
+        card.className = 'therapist-card';
+        card.dataset.id = therapist.id;
+        card.innerHTML = `
+            <img src="${therapist.image}" alt="${therapist.name}">
+            <h3>${therapist.name}</h3>
+            <p><span class="working-hours">เวลาทำงาน:</span> ${therapist.workingHours}</p>
+            <div class="booked-times">
+                <h4>เวลาที่ถูกจอง:</h4>
+            </div>
+            <button class="tip-button" onclick="showTipPrompt('${therapist.id}')">ให้ทิป</button>
+        `;
+        card.addEventListener('click', () => selectTherapist(therapist.id));
+        therapistCardsContainer.appendChild(card);
+    });
+}
+
+
+function closeTipForm() {
+    document.getElementById('tipForm').remove();
+}
+
+function submitTip(therapistId) {
+    const amount = document.getElementById('tipAmount').value;
+    const fileInput = document.getElementById('tipSlip');
+    if (amount && fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const tipData = {
+                action: 'addTip',
+                therapistId: therapistId,
+                therapistName: therapists.find(t => t.id === therapistId).name,
+                amount: amount,
+                slipImage: event.target.result
+            };
+            sendTipData(tipData);
+        };
+        reader.readAsDataURL(file);
+    } else {
+        alert('กรุณากรอกจำนวนเงินและแนบสลิป');
+    }
+}
+      
+function showTipPrompt(therapistId) {
+    event.stopPropagation();
+    showTipForm(therapistId);
+}
+      
+function selectTherapist(id) {
+    document.querySelectorAll('.therapist-card').forEach(card => card.classList.remove('selected'));
+    document.querySelector(`.therapist-card[data-id="${id}"]`).classList.add('selected');
+    selectedTherapistId = id;
+    updateBookedSlotsDisplay();
+}
+
+function isTimeBooked(startTime, endTime) {
+    return bookedSlots.some(slot => 
+        slot.therapistId === selectedTherapistId && 
+        ((startTime >= slot.start && startTime < slot.end) ||
+         (endTime > slot.start && endTime <= slot.end) ||
+         (startTime <= slot.start && endTime >= slot.end))
+    );
+}
+
+function fetchBookedSlots() {
+    const date = dateInput.value;
+    if (!date) {
+        return Promise.resolve();
+    }
+
+    const formattedDate = new Date(date).toISOString().split('T')[0];
+
+    showLoadingSpinner();
+    return fetch(`${SCRIPT_URL}?action=getAllBookedSlots&date=${formattedDate}`)
+        .then(response => response.json())
+        .then(data => {
+            hideLoadingSpinner();
+            bookedSlots = data;
+            updateTherapistCardBookings();
+            updateBookedSlotsDisplay();
+        })
+        .catch(error => {
+            hideLoadingSpinner();
+            console.error('Error:', error);
+        });
+}
+      
+function updateTherapistCardBookings() {
+    therapists.forEach(therapist => {
+        const card = document.querySelector(`.therapist-card[data-id="${therapist.id}"]`);
+        if (!card) return;
+        const bookedTimesElement = card.querySelector('.booked-times');
+        const therapistBookings = bookedSlots.filter(slot => slot.therapistId === therapist.id);
+        
+        bookedTimesElement.innerHTML = '<h4>เวลาที่ถูกจอง:</h4>';
+        
+        if (therapistBookings.length === 0) {
+            bookedTimesElement.innerHTML += '<p>ไม่มีการจอง</p>';
+        } else {
+            therapistBookings.forEach(slot => {
+                const bookedSlot = document.createElement('div');
+                bookedSlot.className = 'booked-slot';
+                bookedSlot.innerHTML = `
+                    <div class="booked-slot-left">
+                        <img src="${slot.userProfileUrl}" alt="User Profile" class="user-profile-icon">
+                        <span>${formatTime(slot.start)} - ${formatTime(slot.end)}</span>
+                    </div>
+                    <span class="status" data-status="${slot.paymentStatus}" data-user-id="${slot.userId}">${slot.paymentStatus}</span>
+                `;
+                if (slot.paymentStatus === 'รอชำระ') {
+                    bookedSlot.querySelector('.status').onclick = (e) => {
+                        checkUserPermissionAndShowPaymentPrompt(e, slot);
+                    };
+                }
+                bookedTimesElement.appendChild(bookedSlot);
+            });
+        }
+    });
+}
+
+function updateBookedSlotsDisplay() {
+    if (!bookedSlotsContainer) return;
+    const date = dateInput.value;
+    const therapist = therapists.find(t => t.id === selectedTherapistId);
+    bookedSlotsContainer.innerHTML = `<h2>เวลาที่ถูกจองแล้ว (${date})</h2>`;
+    if (!therapist) {
+        bookedSlotsContainer.innerHTML += '<p>กรุณาเลือกหมอนวด</p>';
+        return;
+    }
+    const therapistBookings = bookedSlots.filter(slot => slot.therapistId === selectedTherapistId);
+    if (therapistBookings.length === 0) {
+        const noBookingMsg = document.createElement('div');
+        noBookingMsg.textContent = `ไม่มีการจองสำหรับ ${therapist.name} ในวันที่ ${date}`;
+        bookedSlotsContainer.appendChild(noBookingMsg);
+    } else {
+        therapistBookings.forEach(slot => {
+            const bookedSlot = document.createElement('div');
+            bookedSlot.className = 'booked-slot';
+            bookedSlot.textContent = `${formatTime(slot.start)} - ${formatTime(slot.end)}`;
+            const statusSpan = document.createElement('span');
+            statusSpan.className = `status ${slot.paymentStatus}`;
+            statusSpan.textContent = slot.paymentStatus;
+            if (slot.paymentStatus === 'รอชำระ') {
+                statusSpan.onclick = () => showPaymentPrompt(slot);
+            }
+            bookedSlot.appendChild(statusSpan);
+            bookedSlotsContainer.appendChild(bookedSlot);
+        });
+    }
+}
+
+function showTipForm(therapistId) {
+    const therapist = therapists.find(t => t.id === therapistId);
+    const formHtml = `
+        <div id="tipForm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000; width: 300px;">
+            <h3 style="margin-bottom: 15px;">ให้ทิปสำหรับ ${therapist.name}</h3>
+            <input type="number" id="tipAmount" placeholder="จำนวนเงิน" style="width: calc(100% - 20px); margin-bottom: 15px; padding: 8px 10px;">
+            <input type="file" id="tipSlip" accept="image/*" style="width: calc(100% - 20px); margin-bottom: 15px;">
+            <div style="text-align: right;">
+                <button onclick="submitTip('${therapistId}')" style="margin-right: 10px; padding: 8px 15px;">บันทึก</button>
+                <button onclick="closeTipForm()" style="padding: 8px 15px;">ยกเลิก</button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', formHtml);
+}
+
+function showPaymentForm(slot) {
+    const formHtml = `
+        <div id="paymentForm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000; width: 300px;">
+            <h3 style="margin-bottom: 15px;">อัปเดตการชำระเงิน</h3>
+            <input type="number" id="paymentAmount" placeholder="จำนวนเงิน" style="width: calc(100% - 20px); margin-bottom: 15px; padding: 8px 10px;">
+            <input type="file" id="paymentSlip" accept="image/*" style="width: calc(100% - 20px); margin-bottom: 15px;">
+            <div style="text-align: right;">
+                <button onclick="submitPayment('${slot.id}')" style="margin-right: 10px; padding: 8px 15px;">บันทึก</button>
+                <button onclick="closePaymentForm()" style="padding: 8px 15px;">ยกเลิก</button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', formHtml);
+}
+
+function closePaymentForm() {
+    document.getElementById('paymentForm').remove();
+}
+
+function submitPayment(slotId) {
+    const amount = document.getElementById('paymentAmount').value;
+    const fileInput = document.getElementById('paymentSlip');
+    if (amount && fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const paymentData = {
+                action: 'updatePayment',
+                slotId: slotId,
+                amount: amount,
+                slipImage: event.target.result
+            };
+            sendPaymentData(paymentData);
+        };
+        reader.readAsDataURL(file);
+    } else {
+        alert('กรุณากรอกจำนวนเงินและแนบสลิป');
+    }
+}
+      
+function showPaymentPrompt(slot) {
+    const formHtml = `
+        <div id="paymentForm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000; width: 300px;">
+            <h3 style="margin-bottom: 15px;">อัปเดตการชำระเงิน</h3>
+            <input type="number" id="paymentAmount" placeholder="จำนวนเงิน" style="width: calc(100% - 20px); margin-bottom: 15px; padding: 8px 10px;">
+            <input type="file" id="paymentSlip" accept="image/*" style="width: calc(100% - 20px); margin-bottom: 15px;">
+            <div style="text-align: right;">
+                <button onclick="submitPayment('${slot.id}')" style="margin-right: 10px; padding: 8px 15px;">บันทึก</button>
+                <button onclick="closePaymentForm()" style="padding: 8px 15px;">ยกเลิก</button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', formHtml);
+}
+
+function sendTipData(tipData) {
+    tipData.userId = window.userProfile.userId;
+    tipData.userProfileUrl = window.userProfile.pictureUrl;
+
+    showLoadingSpinner();
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(tipData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoadingSpinner();
+        if (data.success) {
+            alert(`ขอบคุณสำหรับทิป ${tipData.amount} บาท ให้กับ ${tipData.therapistName}!`);
+            closeTipForm();
+            fetchBookedSlots();
+        } else {
+            alert('เกิดข้อผิดพลาดในการให้ทิป: ' + data.message);
+        }
+    })
+    .catch(error => {
+        hideLoadingSpinner();
+        console.error('Error:', error);
+        alert('เกิดข้อผิดพลาดในการให้ทิป กรุณาลองใหม่อีกครั้ง');
+    });
+}
+
+function sendPaymentData(paymentData) {
+    showLoadingSpinner();
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(paymentData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoadingSpinner();
+        if (data.success) {
+            alert('บันทึกการชำระเงินเรียบร้อยแล้ว');
+            closePaymentForm();
+
+            // อัพเดตข้อมูลใน bookedSlots
+            const updatedSlotIndex = bookedSlots.findIndex(slot => slot.id === paymentData.slotId);
+            if (updatedSlotIndex !== -1) {
+                bookedSlots[updatedSlotIndex].paymentStatus = 'รอตรวจ';
+            }
+
+            // อัพเดตการแสดงผลทันที
+            updateTherapistCardBookings();
+            updateBookedSlotsDisplay();
+        } else {
+            alert('เกิดข้อผิดพลาดในการบันทึกการชำระเงิน: ' + data.message);
+        }
+    })
+    .catch(error => {
+        hideLoadingSpinner();
+        console.error('Error:', error);
+        alert('เกิดข้อผิดพลาดในการบันทึกการชำระเงิน กรุณาลองใหม่อีกครั้ง');
+    });
+}
+
+        function formatTime(timeString) {
+            const [hours, minutes] = timeString.split(':');
+            return `${hours}:${minutes}น.`;
+        }
+
+dateInput.addEventListener('change', () => {
+    fetchBookedSlots();
+});
+
+function bookAppointment(e) {
+    e.preventDefault();
+    if (!selectedTherapistId) {
+        alert('กรุณาเลือกหมอนวด');
+        return;
+    }
+    const date = dateInput.value;
+    const startTime = startTimeSelect.value;
+    const endTime = endTimeSelect.value;
+
+    if (!date || !startTime || !endTime) {
+        alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+        return;
+    }
+
+    if (startTime >= endTime) {
+        alert('เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น');
+        return;
+    }
+
+    if (isTimeBooked(startTime, endTime)) {
+        alert('ช่วงเวลาที่เลือกมีการจองแล้ว กรุณาเลือกเวลาอื่น');
+        return;
+    }
+
+    const therapist = therapists.find(t => t.id === selectedTherapistId);
+
+    const bookingData = {
+        action: 'bookAppointment',
+        userId: window.userProfile.userId,
+        userProfileUrl: window.userProfile.pictureUrl,
+        therapist: therapist.name,
+        therapistId: selectedTherapistId,
+        date: date,
+        startTime: startTime,
+        endTime: endTime
+    };
+
+    showLoadingSpinner();
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(bookingData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoadingSpinner();
+        if (data.success) {
+            alert(`จองคิวสำเร็จ! 🎉\n\nหมอนวด: ${therapist.name}\nวันที่: ${date}\nเวลา: ${startTime} - ${endTime}`);
+            
+            // เพิ่มการจองใหม่เข้าไปใน bookedSlots
+            bookedSlots.push({
+                id: data.bookingId, // ต้องส่งค่านี้กลับมาจาก server
+                therapistId: selectedTherapistId,
+                start: startTime,
+                end: endTime,
+                paymentStatus: 'รอชำระ'
+            });
+            
+            updateTherapistCardBookings();
+            updateBookedSlotsDisplay();
+            
+            bookingForm.reset();
+            document.querySelectorAll('.therapist-card').forEach(card => card.classList.remove('selected'));
+            selectedTherapistId = null;
+        } else {
+            alert('การจองไม่สำเร็จ: ' + data.message);
+        }
+    })
+    .catch(error => {
+        hideLoadingSpinner();
+        console.error('Error:', error);
+        alert('เกิดข้อผิดพลาดในการจอง กรุณาลองใหม่อีกครั้ง');
+    });
+}
+
+bookingForm.addEventListener('submit', bookAppointment);
+      
+function checkUserPermissionAndShowPaymentPrompt(event, slot) {
+    event.stopPropagation();
+    const currentUserId = window.userProfile.userId;
+    
+    console.log(`Current user ID: ${currentUserId}`);
+    console.log(`Slot user ID: ${slot.userId}`);
+
+    // ตรวจสอบว่าผู้ใช้ปัจจุบันเป็นผู้จองหรือไม่
+    if (currentUserId === slot.userId) {
+        console.log('User is the booker');
+        showPaymentPrompt(slot);
+        return;
+    }
+    
+    // ตรวจสอบว่าผู้ใช้ปัจจุบันเป็นแอดมินหรือไม่
+    fetch(`${SCRIPT_URL}?action=checkAdminPermission&userId=${encodeURIComponent(currentUserId)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Admin check response:', data);
+            if (data.isAdmin) {
+                console.log('User is an admin');
+                showPaymentPrompt(slot);
+            } else {
+                console.log('User is not authorized');
+                alert('คุณไม่มีสิทธิ์ในการอัปเดตสถานะการชำระเงินนี้');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('เกิดข้อผิดพลาดในการตรวจสอบสิทธิ์: ' + error.message);
+        });
+}
+
+function copyToClipboard(elementId) {
+    const el = document.getElementById(elementId);
+    const text = el.textContent;
+
+    if (navigator.clipboard && window.isSecureContext) {
+        // ใช้ Clipboard API (ทำงานเฉพาะใน HTTPS)
+        navigator.clipboard.writeText(text).then(() => {
+            showCopiedFeedback();
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            fallbackCopyTextToClipboard(text);
+        });
+    } else {
+        // ใช้วิธีดั้งเดิมสำหรับ HTTP หรือเบราว์เซอร์ที่ไม่รองรับ Clipboard API
+        fallbackCopyTextToClipboard(text);
+    }
+}
+
+function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";  // ป้องกันการเลื่อนหน้าจอ
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        document.execCommand('copy');
+        showCopiedFeedback();
+    } catch (err) {
+        console.error('Fallback: Oops, unable to copy', err);
+    }
+
+    document.body.removeChild(textArea);
+}
+
+function showCopiedFeedback() {
+    const button = document.querySelector('.copy-button');
+    const originalText = button.textContent;
+    button.textContent = "คัดลอก";
+    button.style.backgroundColor = "#2196F3";
+    button.disabled = true;  // ป้องกันการกดซ้ำ
+
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = "";
+        button.disabled = false;
+    }, 2000);
+}
+   
+function showLoadingSpinner() {
+    const spinnerHtml = `
+        <div id="loadingSpinner" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 2000;">
+            <div style="background: white; padding: 20px; border-radius: 10px; text-align: center;">
+                <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
+                <p>โปรดรอสักครู่...</p>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', spinnerHtml);
+}
+
+function hideLoadingSpinner() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.remove();
+    }
+}
+
+        fetchTherapists();
+    </script>
+</body>
+</html>
