@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>App FINN</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
+    <link rel="stylesheet" href="https://bit.ly/3CZa0Sz" type="text/css" charset="utf-8" />
+    <style type="text/css">
+    .transparent-text {
+        opacity: 0; /* กำหนดความโปร่งใส */
+        color: white; /* สีขาว */
+    }
+    /* คุณสมบัติอื่นๆ ของ body ยังคงเหมือนเดิม */
+    body {
+        font-family: "line_seed_sans_th";
+        margin: 0;
+        overflow: hidden;
+        background-color: white;
+        position: relative;
+    }
+    body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+/*         background: url('https://obs.line-scdn.net/hKKMqdg-YCGVFZBtrEjIPHAwWQl1fOAE6HD4PC1VcHlBZbVFnRWldBFcNGlRaPARhTmo/mp4') no-repeat center center fixed; */
+        background-size: cover;
+        background-attachment: fixed;
+    }
+</style>
+
+  
+  
+    <script>
+        function runApp() {
+            liff.init({ liffId: "2002109149-EG8Z5n8j" }, () => {
+                if (liff.isLoggedIn()) {
+                    liff.getProfile().then(profile => {
+                        document.getElementById("user-name").textContent = profile.displayName;
+                    });
+                  
+                  // เรียกใช้ฟังก์ชัน searchflex
+                    searchflex();
+
+
+                } else {
+                    liff.login();
+                }
+            }, err => console.error(err));
+        }
+      
+function searchflex(){
+  // สร้าง URI สำหรับแชร์ Flex
+  
+  //var x = encodeURI("https://line.me/R/oaMessage/@hqg1050l/?สถานะ : "+status+"\n.\nชื่อ : "+name+"\nเบอร์โทร : "+phone+"\nจ่ายทุกวันที่ : "+payday+"\nจำนวนเงิน : "+money+"\nชำระแล้ว : "+paid+"\n.\nแชร์เรียบร้อย จากคุณ "+liff.getDecodedIDToken().name)
+  //var y = encodeURI("https://line.me/R/share?text=สถานะ : "+status+"\n.\nชื่อ : "+name+"\nเบอร์โทร : "+phone+"\nจ่ายทุกวันที่ : "+payday+"\nจำนวนเงิน : "+money+"\nชำระแล้ว : "+paid+"\n.\nแชร์เรียบร้อย จากคุณ "+liff.getDecodedIDToken().name)
+  
+  // สร้าง Flex Message
+  var flexMessage = {
+    "type": "flex",
+    "altText": "คอร์สสอน",
+    "contents": {
+  "type": "bubble",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "✨ สิทธิพิเศษ ✨",
+        "weight": "bold",
+        "size": "xxl",
+        "margin": "md",
+        "align": "center"
+      },
+      {
+        "type": "text",
+        "text": "- codeFINN -",
+        "size": "xs",
+        "color": "#aaaaaa",
+        "wrap": true,
+        "align": "center"
+      },
+      {
+        "type": "separator",
+        "margin": "lg"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "xl",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "สิทธิพิเศษ 🌟VIP🌟",
+                "weight": "bold",
+                "decoration": "underline",
+                "color": "#0ead23"
+              },
+              {
+                "type": "text",
+                "text": "[1] การเข้าถึงเนื้อหาและหลักสูตรพิเศษ ก่อน",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0
+              },
+              {
+                "type": "text",
+                "text": "สมาชิกทั่วไป",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "[2] ลดราคา 50% สำหรับทุกคอร์สเรียน",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "[3] ช่วยเหลือ ให้คำปรึกษา ปัญหาทางเทคนิค",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0
+              },
+              {
+                "type": "text",
+                "text": "และปัญหาอื่นๆ",
+                "size": "sm",
+                "color": "#555555",
+                "flex": 0
+              }
+            ]
+          },
+          {
+            "type": "separator",
+            "margin": "xl"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "margin": "xl",
+            "contents": [
+              {
+                "type": "text",
+                "text": "สมัคร 🌟VIP🌟",
+                "weight": "bold",
+                "decoration": "underline",
+                "color": "#0ead23"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "[1] มีค่าสมัครเข้าห้อง VIP ฿2,000",
+                "size": "sm",
+                "color": "#555555"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "[2] สมาชิกห้อง VIP ไม่มีวันหมดอายุ",
+                "size": "sm",
+                "color": "#555555"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "separator",
+        "margin": "xl"
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "margin": "xxl",
+        "contents": [
+          {
+            "type": "button",
+            "action": {
+              "type": "uri",
+              "label": "สมัคร VIP",
+              "uri": "https://liff.line.me/2002109149-9R7Jlz7b"
+            },
+            "height": "sm",
+            "style": "primary"
+          },
+          {
+            "type": "separator",
+            "color": "#ffffff",
+            "margin": "lg"
+          },
+          {
+            "type": "button",
+            "action": {
+              "type": "uri",
+              "label": "แชร์ให้เพื่อน",
+              "uri": "https://liff.line.me/2002109149-EG8Z5n8j"
+            },
+            "height": "sm",
+            "style": "primary"
+          }
+        ]
+      }
+    ]
+  },
+  "styles": {
+    "footer": {
+      "separator": true
+    }
+  }
+}
+      }
+   // เรียกใช้ shareTargetPicker พร้อม Flex Message
+  liff.shareTargetPicker([flexMessage])
+    .then(function (res) {
+      if (res) {
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: 'ส่งเข้าแชทเรียบร้อย',
+          showConfirmButton: false,
+          timer: 1500
+        });
+        liff.closeWindow();
+      } else {
+        console.log("TargetPicker was closed!");
+        liff.closeWindow();
+      }
+    })
+    .catch(function (error) {
+      console.log("something wrong happen", error);
+    liff.closeWindow();
+    });
+}
+
+      
+//       // ส่วนของการดึงข้อมูลจาก URI เมื่อ Flex ถูกแชร์
+// if (window.location.href.includes('line://app')) {
+//   const urlParams = new URLSearchParams(window.location.search);
+//   const name = urlParams.get('name');
+//   const address = urlParams.get('address');
+//   const phone = urlParams.get('phone');
+//   const facebook = urlParams.get('facebook');
+//   const lineId = urlParams.get('lineId');
+//   const status = urlParams.get('status');
+//   const payday = urlParams.get('payday');
+//   const paydate = urlParams.get('paydate');
+//   const money = urlParams.get('money');
+//   const instance = urlParams.get('instance');
+//   const paid = urlParams.get('paid');
+//   const paidM = urlParams.get('paidM');
+//   const paidPM = urlParams.get('paidPM');
+//   // ส่วนของการดึงค่าต่างๆ จาก URL
+//   // ...
+//   searchflex(name, address, phone, facebook, lineId, status, payday, paydate, money, instance, paid, paidM, paidPM); // เรียกใช้ฟังก์ชัน searchflex ด้วยค่าที่ได้
+// }
+    </script>
+</head>
+<body onload="runApp()">
+  
+<p class="transparent-text" style="margin-bottom: 320px;">.</p>
+   
+    <!-- ... ส่วนแสดงข้อมูลอื่นๆ -->
+  
+</body>
+</html>
