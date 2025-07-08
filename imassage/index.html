@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จองคิวนวด : ไอมาสสาจ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fce4ec;
+        }
+        h1, h2 {
+            color: #e91e63;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .therapist-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            padding: 20px 0;
+        }
+        .therapist-cards {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 10px;
+        }
+        .therapist-cards::-webkit-scrollbar {
+            display: none;
+        }
+        .therapist-card {
+            flex: 0 0 auto;
+            width: 120px;
+            margin-right: 20px;
+            background-color: #fff;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .therapist-card:last-child {
+            margin-right: 0;
+        }
+        .therapist-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .therapist-card.selected {
+            border: 3px solid #e91e63;
+            background-color: #fce4ec;
+        }
+        .therapist-card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 3px solid #f48fb1;
+        }
+        .scroll-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(233, 30, 99, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .scroll-button:hover {
+            background-color: rgba(233, 30, 99, 1);
+        }
+        .scroll-button.left {
+            left: 10px;
+        }
+        .scroll-button.right {
+            right: 10px;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        label, input, button {
+            display: block;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        input, select {
+            padding: 10px;
+            border: 2px solid #f48fb1;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .time-selection {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        .time-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .time-inputs {
+            display: flex;
+            justify-content: space-between;
+        }
+        .time-selection label {
+            margin-bottom: 0;
+            width: 45%;
+        }
+        .time-selection select {
+            width: 45%;
+        }
+        button {
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 25px;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background-color: #c2185b;
+            transform: scale(1.05);
+        }
+        #bookedSlots {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .booked-slot {
+            background-color: #ffcdd2;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>✨ ไอมาสสาจ : iMassage ✨</h1>
+    <h2>เลือกหมอนวดของคุณ</h2>
+    <div class="therapist-container">
+        <div id="therapistCards" class="therapist-cards"></div>
+        <button id="scrollLeft" class="scroll-button left">&lt;</button>
+        <button id="scrollRight" class="scroll-button right">&gt;</button>
+    </div>
+    <form id="bookingForm">
+        <label for="date">เลือกวันที่:</label>
+        <input type="date" id="date" required>
+
+        <div class="time-selection">
+            <div class="time-labels">
+                <label for="startTime">เวลาเริ่มต้น:</label>
+                <label for="endTime">เวลาสิ้นสุด:</label>
+            </div>
+            <div class="time-inputs">
+                <select id="startTime" required>
+                    <option value="">เลือกเวลาเริ่มต้น</option>
+                </select>
+                <select id="endTime" required>
+                    <option value="">เลือกเวลาสิ้นสุด</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit">จองคิวเลย! 🎉</button>
+    </form>
+
+    <div id="bookedSlots">
+        <h2>เวลาที่ถูกจองแล้ว</h2>
+    </div>
+
+    <script>
+        const bookingForm = document.getElementById('bookingForm');
+        const therapistCardsContainer = document.getElementById('therapistCards');
+        const dateInput = document.getElementById('date');
+        const startTimeSelect = document.getElementById('startTime');
+        const endTimeSelect = document.getElementById('endTime');
+        const bookedSlotsContainer = document.getElementById('bookedSlots');
+        let selectedTherapistId = null;
+        let therapists = [];
+        let bookedSlots = [];
+
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1f6X_O9QR9ezT0jEueDbRG5Ekrw5wRvwImCxNOkNpeJYzqz1E365gRGCe9KTHMB4fYA/exec';
+
+        const scrollAmount = 200;
+        const scrollDuration = 300;
+
+        document.getElementById('scrollLeft').addEventListener('click', () => {
+            smoothScroll(document.getElementById('therapistCards'), -scrollAmount, scrollDuration);
+        });
+
+        document.getElementById('scrollRight').addEventListener('click', () => {
+            smoothScroll(document.getElementById('therapistCards'), scrollAmount, scrollDuration);
+        });
+
+        function smoothScroll(element, amount, duration) {
+            const start = element.scrollLeft;
+            const startTime = performance.now();
+
+            function animation(currentTime) {
+                const timeElapsed = currentTime - startTime;
+                const run = easeInOutQuad(timeElapsed, start, amount, duration);
+                element.scrollLeft = run;
+                if (timeElapsed < duration) requestAnimationFrame(animation);
+            }
+
+            function easeInOutQuad(t, b, c, d) {
+                t /= d / 2;
+                if (t < 1) return c / 2 * t * t + b;
+                t--;
+                return -c / 2 * (t * (t - 2) - 1) + b;
+            }
+
+            requestAnimationFrame(animation);
+        }
+      
+        window.addEventListener('load', () => {
+            fetchTherapists();
+            if (dateInput.value && selectedTherapistId) {
+                fetchBookedSlots();
+            }
+        });
+
+        function fetchTherapists() {
+            fetch(`${SCRIPT_URL}?action=getTherapists`)
+                .then(response => response.json())
+                .then(data => {
+                    therapists = data.map(therapist => ({
+                        ...therapist,
+                        id: therapist.id.toString()
+                    }));
+                    generateTherapistCards();
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function generateTherapistCards() {
+            therapistCardsContainer.innerHTML = '';
+            therapists.forEach(therapist => {
+                const card = document.createElement('div');
+                card.className = 'therapist-card';
+                card.dataset.id = therapist.id;
+                card.innerHTML = `
+                    <img src="${therapist.image}" alt="${therapist.name}">
+                    <h3>${therapist.name}</h3>
+                `;
+                card.addEventListener('click', () => selectTherapist(therapist.id));
+                therapistCardsContainer.appendChild(card);
+            });
+        }
+
+        function selectTherapist(id) {
+            document.querySelectorAll('.therapist-card').forEach(card => card.classList.remove('selected'));
+            document.querySelector(`.therapist-card[data-id="${id}"]`).classList.add('selected');
+            selectedTherapistId = id;
+            if (dateInput.value) {
+                fetchBookedSlots();
+            }
+        }
+
+        function generateTimeOptions() {
+            const times = [];
+            for (let hour = 9; hour < 18; hour++) {
+                times.push(`${hour.toString().padStart(2, '0')}:00`);
+                times.push(`${hour.toString().padStart(2, '0')}:30`);
+            }
+
+            startTimeSelect.innerHTML = '<option value="">เลือกเวลาเริ่มต้น</option>';
+            endTimeSelect.innerHTML = '<option value="">เลือกเวลาสิ้นสุด</option>';
+
+            times.forEach(time => {
+                const startOption = document.createElement('option');
+                startOption.value = time;
+                startOption.textContent = time;
+                startOption.disabled = isTimeBooked(time, time);
+                startTimeSelect.appendChild(startOption);
+
+                const endOption = document.createElement('option');
+                endOption.value = time;
+                endOption.textContent = time;
+                endOption.disabled = isTimeBooked(time, time);
+                endTimeSelect.appendChild(endOption);
+            });
+        }
+
+        function isTimeBooked(startTime, endTime) {
+            return bookedSlots.some(slot => {
+                const slotStart = new Date(`2000-01-01T${slot.start}`);
+                const slotEnd = new Date(`2000-01-01T${slot.end}`);
+                const checkStart = new Date(`2000-01-01T${startTime}`);
+                const checkEnd = new Date(`2000-01-01T${endTime}`);
+                return (checkStart < slotEnd && checkEnd > slotStart);
+            });
+        }
+
+        function fetchBookedSlots() {
+            const date = dateInput.value;
+            if (!date || !selectedTherapistId) {
+                bookedSlotsContainer.innerHTML = '<h2>เวลาที่ถูกจองแล้ว</h2><p>กรุณาเลือกหมอนวดและวันที่</p>';
+                return;
+            }
+
+            const formattedDate = new Date(date).toISOString().split('T')[0];
+
+            fetch(`${SCRIPT_URL}?action=getBookedSlots&date=${formattedDate}&therapistId=${selectedTherapistId}`)
+                .then(response => response.json())
+                .then(data => {
+                    bookedSlots = data;
+                    updateBookedSlotsDisplay();
+                    generateTimeOptions();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    bookedSlotsContainer.innerHTML = '<h2>เวลาที่ถูกจองแล้ว</h2><p>เกิดข้อผิดพลาดในการดึงข้อมูล</p>';
+                });
+        }
+
+        function updateBookedSlotsDisplay() {
+            const date = dateInput.value;
+            const therapist = therapists.find(t => t.id === selectedTherapistId);
+            bookedSlotsContainer.innerHTML = `<h2>เวลาที่ถูกจองแล้ว (${date})</h2>`;
+            if (!therapist) {
+                bookedSlotsContainer.innerHTML += '<p>กรุณาเลือกหมอนวด</p>';
+                return;
+            }
+            if (bookedSlots.length === 0) {
+                const noBookingMsg = document.createElement('div');
+                noBookingMsg.textContent = `ไม่มีการจองสำหรับ ${therapist.name} ในวันที่ ${date}`;
+                bookedSlotsContainer.appendChild(noBookingMsg);
+            } else {
+                bookedSlots.forEach(slot => {
+                    const bookedSlot = document.createElement('div');
+                    bookedSlot.className = 'booked-slot';
+                    bookedSlot.textContent = `${formatTime(slot.start)} - ${formatTime(slot.end)}`;
+                    bookedSlotsContainer.appendChild(bookedSlot);
+                });
+            }
+        }
+
+        function formatTime(timeString) {
+            const [hours, minutes] = timeString.split(':');
+            return `${hours}:${minutes}น.`;
+        }
+
+        dateInput.addEventListener('change', () => {
+            if (selectedTherapistId) {
+                fetchBookedSlots();
+            }
+        });
+
+        bookingForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!selectedTherapistId) {
+                alert('กรุณาเลือกหมอนวด');
+                return;
+            }
+            const date = dateInput.value;
+            const startTime = startTimeSelect.value;
+            const endTime = endTimeSelect.value;
+
+            if (!date || !startTime || !endTime) {
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+
+            if (startTime >= endTime) {
+                alert('เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น');
+                return;
+            }
+
+            if (isTimeBooked(startTime, endTime)) {
+                alert('ช่วงเวลาที่เลือกมีการจองแล้ว กรุณาเลือกเวลาอื่น');
+                return;
+            }
+
+            const therapist = therapists.find(t => t.id === selectedTherapistId);
+
+            const bookingData = {
+                action: 'bookAppointment',
+                therapist: therapist.name,
+                therapistId: selectedTherapistId,
+                date: date,
+                startTime: startTime,
+                endTime: endTime
+            };
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(bookingData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`จองคิวสำเร็จ! 🎉\n\nหมอนวด: ${therapist.name}\nวันที่: ${date}\nเวลา: ${startTime} - ${endTime}`);
+                    this.reset();
+                    fetchBookedSlots();
+                    document.querySelectorAll('.therapist-card').forEach(card => card.classList.remove('selected'));
+                    selectedTherapistId = null;
+                } else {
+                    alert('การจองไม่สำเร็จ: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาดในการจอง กรุณาลองใหม่อีกครั้ง');
+            });
+        });
+
+        fetchTherapists();
+    </script>
+</body>
+</html>
