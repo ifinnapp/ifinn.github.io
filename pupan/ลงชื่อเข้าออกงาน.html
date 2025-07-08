@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบลงชื่อทำโอที</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://static.line-scdn.net/liff/edge/versions/2.3.0/sdk.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<style>
+  @keyframes blinking-border-checkIn {
+    0%, 100%  { border-color: #669cff; }
+    50% { border-color: transparent; }
+  }
+
+  @keyframes blinking-border-checkOut {
+    0%, 100%  { border-color: #f76d6d; }
+    50% { border-color: transparent; }
+  }
+
+  .border-animated-checkIn, .border-animated-checkOut {
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  button {
+    box-sizing: border-box; /* ทำให้การคำนวณขนาดรวม padding และ border */
+    width: 100px; /* กำหนดความกว้างของปุ่ม */
+    height: 80px; /* กำหนดความสูงของปุ่ม */
+    padding: 5px 5px; /* กำหนด padding ภายในปุ่ม */
+    border: 4px solid transparent; /* กำหนดขอบเริ่มต้นให้โปร่งใส */
+    border-radius: 12px; /* กำหนดรัศมีขอบ */
+    background-color: #4CAF50; /* กำหนดสีพื้นหลัง */
+    color: white; /* กำหนดสีข้อความ */
+    font-size: 16px; /* กำหนดขนาดข้อความ */
+    cursor: pointer; /* กำหนดเป็น cursor แบบ pointer */
+    display: inline-flex; /* ใช้ flexbox ในการจัดการ layout ของปุ่ม */
+    align-items: center; /* จัดกลางข้อความในแนวตั้ง */
+    justify-content: center; /* จัดกลางข้อความในแนวนอน */
+}
+
+  #btnCheckIn.border-animated-checkIn {
+    border-color: #669cff; /* กำหนดสีขอบเมื่อเข้าโอที */
+    animation-name: blinking-border-checkIn; /* กำหนดชื่อ animation */
+  }
+
+  #btnCheckOut.border-animated-checkOut {
+    border-color: #f76d6d; /* กำหนดสีขอบเมื่อออกโอที */
+    animation-name: blinking-border-checkOut; /* กำหนดชื่อ animation */
+  }
+</style>
+
+
+</head>
+
+<body class="bg-gradient-to-r from-blue-300 to-purple-400">
+    <div class="mt-16">
+        <!-- ส่วนแสดงรูปภาพ -->
+        <div class="mb-4 text-center">
+        <center>
+            <img id="picurl" src="https://media.giphy.com/media/eNwGfck2Awo3d2gB32/giphy.gif"
+                class="dark:shadow-xl border-white dark:border-gray-500 rounded-full align-middle border-2" width="30%" />
+        </center>
+    </div>
+
+    <!-- ส่วนแสดงชื่อผู้ใช้งาน (คุณสามารถใช้ JavaScript เพื่อตั้งค่าข้อความในตัวแปรนี้) -->
+    <div class="text-center text-2xl text-white mb-8" id="displayName">ชื่อผู้ใช้งานจาก LINE</div>
+
+    <div class="w-4/5 mx-auto p-8 rounded-xl bg-white bg-opacity-20 backdrop-blur-md">
+      <div class="text-center mt-4">
+            <button id="btnCheckIn" class="mr-4 py-6 px-8 bg-blue-500 text-white text-xl rounded-lg">เข้า</button>
+            <button id="btnCheckOut" class="py-6 px-8 bg-red-500 text-white text-xl rounded-lg">ออก</button>
+        </div>
+
+        <div id="checkInForm" class="hidden text-center mt-4" >
+            <input id="checkInTopic" class="mb-4 w-full p-2 rounded-md bg-white bg-opacity-20" type="text"
+                placeholder="เป้าหมายวันนี้" />
+            <input id="checkInGoal" class="w-full p-2 rounded-md bg-white bg-opacity-20" type="text"
+                placeholder="ตัวชี้วัด" />
+            <button id="submitCheckIn" class="text-xl mt-6 py-2 px-8 bg-green-500 text-white rounded-md" disabled>บันทึก</button>
+        </div>
+
+        <div id="checkOutForm" class="hidden">
+    <div class="mb-4 flex flex-col">
+        <label class="block text-white text-left mt-4">เป้าหมายวันนี้: <span id="checkoutTopic"></span></label>
+        <label class="block text-white text-left">ตัวชี้วัด: <span id="checkoutGoal"></span></label>
+    </div>
+    <input id="checkOutResult" class="w-full p-2 rounded-md bg-white bg-opacity-20" type="text"
+           placeholder="ผลที่ทำได้จริง" />
+    <div class="text-center mt-4">
+        <button id="submitCheckOut" class="text-xl mt-6 py-2 px-8 bg-green-500 text-white rounded-md" disabled>บันทึก</button>
+    </div>
+</div>
+
+
+        <div id="notCheckedInMessage" class="hidden text-red-400">ท่านยังไม่ได้ลงชื่อเข้าโอที</div>
+      
+      <!-- Modal Dialog -->
+<div id="modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+  <div class="border shadow-lg rounded-md bg-white p-4">
+    <div class="flex justify-center items-center">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+      <p class="text-lg font-medium text-gray-900 ml-3">โปรดรอสักครู่<span class="dot">...</span></p>
+    </div>
+  </div>
+</div>
+      
+    </div></div>
+  <script>
+document.getElementById('btnCheckIn').addEventListener('click', function () {
+    // เพิ่มคลาสเพื่อแสดงกรอบวิ่ง
+    this.classList.add('border-animated-checkIn');
+    // ลบคลาสกรอบวิ่งจากปุ่ม "ออกงาน"
+    document.getElementById('btnCheckOut').classList.remove('border-animated-checkOut');
+  
+    document.getElementById('checkInForm').classList.remove('hidden');
+    document.getElementById('checkOutForm').classList.add('hidden');
+    document.getElementById('notCheckedInMessage').classList.add('hidden');
+});
+
+document.getElementById('btnCheckOut').addEventListener('click', function () {
+    // เพิ่มคลาสเพื่อแสดงกรอบวิ่ง
+    this.classList.add('border-animated-checkOut');
+    // ลบคลาสกรอบวิ่งจากปุ่ม "เข้างาน"
+    document.getElementById('btnCheckIn').classList.remove('border-animated-checkIn');
+  
+    // ใช้ข้อมูลจาก Local Storage แทน
+    const checkInTopic = localStorage.getItem('checkInTopic');
+    const checkInGoal = localStorage.getItem('checkInGoal');
+
+    if (checkInTopic && checkInGoal) {
+        document.getElementById('checkoutTopic').textContent = checkInTopic;
+        document.getElementById('checkoutGoal').textContent = checkInGoal;
+
+        document.getElementById('checkOutForm').classList.remove('hidden');
+        document.getElementById('notCheckedInMessage').classList.add('hidden');
+    } else {
+        document.getElementById('notCheckedInMessage').classList.remove('hidden');
+    }
+    document.getElementById('checkInForm').classList.add('hidden');
+});
+
+
+</script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+      <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+      <script>
+        liff.init({
+       liffId: '1661371622-4zmvokyQ', withLoginOnExternalBrowser: true,
+     }).catch((err) => {
+       console.log(err);
+     });
+ 
+     liff.ready.then(() => {
+       if (!liff.isLoggedIn()) {
+         liff.login();
+       } else {
+        liff.getProfile().then(profile => {
+            document.getElementById("displayName").textContent = profile.displayName;
+            document.getElementById("picurl").src = profile.pictureUrl;
+        }).catch(err => console.error(err));
+    }
+      
+       const idToken = liff.getDecodedIDToken();
+       const userId = idToken.sub;
+       const displayName = idToken.name;
+       const pictureUrl = idToken.picture;
+       const email = idToken.email;
+       
+
+       document.getElementById("displayName").textContent = displayName;
+       document.getElementById("picurl").src = pictureUrl
+
+
+       $('form').append(`<input type="hidden" name="userId" value="${userId}">`);
+       $('form').append(`<input type="hidden" name="displayName" value="${displayName}">`);
+       $('form').append(`<input type="hidden" name="pictureUrl" value="${pictureUrl}">`);
+       $('form').append(`<input type="hidden" name="email" value="${email}">`);
+       $('form').append(`<input type="hidden" name="checkInTopic" value="${checkInTopic}">`);
+       $('form').append(`<input type="hidden" name="checkInGoal" value="${checkInGoal}">`);
+     })
+        
+document.addEventListener("DOMContentLoaded", function() {
+    const checkInTopic = localStorage.getItem('checkInTopic');
+    const checkInGoal = localStorage.getItem('checkInGoal');
+
+    if (checkInTopic && checkInGoal) {
+        document.getElementById('checkoutTopic').textContent = checkInTopic;
+        document.getElementById('checkoutGoal').textContent = checkInGoal;
+    }
+    getLocation();
+});
+
+let lat, lon;
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            lat = parseFloat(position.coords.latitude.toFixed(4));
+            lon = parseFloat(position.coords.longitude.toFixed(4));
+        });
+    } else {
+        // คำเตือนถ้าเบราเซอร์ไม่รองรับการรับพิกัด
+        Swal.fire('Warning', 'Your browser does not support Geolocation.', 'warning');
+    }
+}
+        
+function validateFields() {
+    const checkInTopic = document.getElementById('checkInTopic').value;
+    const checkInGoal = document.getElementById('checkInGoal').value;
+
+    // ถ้า checkInTopic หรือ checkInGoal ว่าง, ปิดการใช้งานปุ่ม submitCheckIn
+    if (!checkInTopic || !checkInGoal) {
+        document.getElementById('submitCheckIn').disabled = true;
+    } else {
+        document.getElementById('submitCheckIn').disabled = false;
+    }
+}
+// เพิ่ม Event Listener เมื่อมีการเปลี่ยนแปลงในฟิลด์
+document.getElementById('checkInTopic').addEventListener('input', validateFields);
+document.getElementById('checkInGoal').addEventListener('input', validateFields);
+
+// ฟังก์ชันสำหรับการตรวจสอบค่าในช่อง input "ผลที่ทำได้จริง"
+function validateCheckOutFields() {
+    const checkOutResult = document.getElementById('checkOutResult').value;
+
+    // ถ้า checkOutResult ว่าง, ปิดการใช้งานปุ่ม submitCheckOut
+    if (!checkOutResult.trim()) {
+        document.getElementById('submitCheckOut').disabled = true;
+    } else {
+        document.getElementById('submitCheckOut').disabled = false;
+    }
+}
+// เพิ่ม Event Listener เมื่อมีการเปลี่ยนแปลงในฟิลด์ "ผลที่ทำได้จริง"
+document.getElementById('checkOutResult').addEventListener('input', validateCheckOutFields);
+
+document.getElementById('submitCheckIn').addEventListener('click', function () {
+  
+    // ปิดปุ่มบันทึกก่อนส่งข้อมูล
+    document.getElementById('submitCheckIn').disabled = true;
+
+    // ตัวอย่างการเก็บข้อมูลลงใน Local Storage
+    localStorage.setItem('checkInTopic', document.getElementById('checkInTopic').value);
+    localStorage.setItem('checkInGoal', document.getElementById('checkInGoal').value);
+
+    const checkInTopic = document.getElementById('checkInTopic').value;
+    const checkInGoal = document.getElementById('checkInGoal').value;
+    const checkOutResult = "-";
+
+    const data = {
+        userId: liff.getDecodedIDToken().sub,
+        displayName: liff.getDecodedIDToken().name,
+        pictureUrl: liff.getDecodedIDToken().picture,
+        email: liff.getDecodedIDToken().email,
+        checkInTopic: checkInTopic,
+        checkInGoal: checkInGoal,
+        lat: lat, // เพิ่มพิกัดละติจูด
+        lon: lon  // เพิ่มพิกัดลองจิจูด
+    };
+showModal(); 
+    $.post('https://script.google.com/macros/s/AKfycbwDM1D4Jr1DBR_qZiEAJqwKPCnBodOwqI64W_JzRK-JsIJ_-2Jvd8cMUJQv7hB9uafz/exec', data, function(response) {
+        if (response.success) {
+          hideModal();
+            Swal.fire({
+                title: 'สำเร็จ',
+                text: 'บันทึกข้อมูลเรียบร้อยแล้ว',
+                icon: 'success',
+                confirmButtonText: 'OK'
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                    sendFlexMessage(lat, lon, checkInTopic, checkInGoal, checkOutResult);
+                        //liff.closeWindow();
+                  }
+            });
+// เปิดการใช้งานปุ่มบันทึกอีกครั้งหลังจากส่งข้อมูลเสร็จสิ้น
+document.getElementById('submitCheckIn').disabled = false;
+        } else {
+            Swal.fire({
+                title: 'สำเร็จ',
+                text: 'บันทึกข้อมูลเรียบร้อยแล้ว',
+                icon: 'success',
+                confirmButtonText: 'OK'
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                    sendFlexMessage(lat, lon, checkInTopic, checkInGoal, checkOutResult);
+                        //liff.closeWindow();
+                  }
+            });
+// เปิดการใช้งานปุ่มบันทึกอีกครั้งหลังจากส่งข้อมูลเสร็จสิ้น
+document.getElementById('submitCheckIn').disabled = false;
+        }
+      }).fail(function() {
+        // ในกรณีที่เรียก API ไม่สำเร็จ ก็เปิดการใช้งานปุ่มอีกครั้ง
+        document.getElementById('submitCheckIn').disabled = false;
+    });
+});
+
+document.getElementById('submitCheckOut').addEventListener('click', function () {
+  
+    // ปิดปุ่มบันทึกก่อนส่งข้อมูล
+    document.getElementById('submitCheckOut').disabled = true;
+  
+    const checkOutResult = document.getElementById('checkOutResult').value;
+    
+    // ดึงข้อมูลจาก localStorage
+    const checkInTopicStored = localStorage.getItem('checkInTopic');
+    const checkInGoalStored = localStorage.getItem('checkInGoal');
+  
+    const checkInTopic = checkInTopicStored;
+    const checkInGoal = checkInGoalStored;
+  
+    const data = {
+        userId: liff.getDecodedIDToken().sub,
+        displayName: liff.getDecodedIDToken().name,
+        pictureUrl: liff.getDecodedIDToken().picture,
+        email: liff.getDecodedIDToken().email,
+        checkInTopic: checkInTopicStored,
+        checkInGoal: checkInGoalStored,
+        checkOutResult: checkOutResult,
+        lat: lat, // เพิ่มพิกัดละติจูด
+        lon: lon  // เพิ่มพิกัดลองจิจูด
+    };
+showModal();
+    $.post('https://script.google.com/macros/s/AKfycbwDM1D4Jr1DBR_qZiEAJqwKPCnBodOwqI64W_JzRK-JsIJ_-2Jvd8cMUJQv7hB9uafz/exec', data, function(response) {
+        if (response.success) {
+          hideModal();
+            Swal.fire({
+                title: 'สำเร็จ',
+                text: 'บันทึกข้อมูลเรียบร้อยแล้ว',
+                icon: 'success',
+                confirmButtonText: 'OK'
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                    // ตัวอย่างการเรียกใช้ sendFlexMessage หลังจากบันทึกข้อมูลสำเร็จ
+                    sendFlexMessage(lat, lon, checkInTopic, checkInGoal, checkOutResult);
+                        //liff.closeWindow();
+                  }
+            });
+// เปิดการใช้งานปุ่มบันทึกอีกครั้งหลังจากส่งข้อมูลเสร็จสิ้น
+document.getElementById('submitCheckOut').disabled = false;
+        } else {
+            Swal.fire({
+                title: 'สำเร็จ',
+                text: 'บันทึกข้อมูลเรียบร้อยแล้ว',
+                icon: 'success',
+                confirmButtonText: 'OK'
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                    sendFlexMessage(lat, lon, checkInTopic, checkInGoal, checkOutResult);
+                        //liff.closeWindow();
+                  }
+            });
+// เปิดการใช้งานปุ่มบันทึกอีกครั้งหลังจากส่งข้อมูลเสร็จสิ้น
+document.getElementById('submitCheckOut').disabled = false;
+        }
+    }).fail(function() {
+        // ในกรณีที่เรียก API ไม่สำเร็จ ก็เปิดการใช้งานปุ่มอีกครั้ง
+        document.getElementById('submitCheckOut').disabled = false;
+    });
+  // ลบข้อมูล checkInTopic และ checkInGoal ออกจาก localStorage
+    localStorage.removeItem('checkInTopic');
+    localStorage.removeItem('checkInGoal');
+});
+
+     </script>
+  
+  <script>
+// ฟังก์ชันเพื่อแสดง Modal
+function showModal() {
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+// ฟังก์ชันเพื่อซ่อน Modal
+function hideModal() {
+  document.getElementById('modal').classList.add('hidden');
+}
+
+// เรียกใช้ฟังก์ชันเมื่อต้องการแสดงหรือซ่อน Modal
+//showModal(); // เพื่อแสดง
+// hideModal(); // เพื่อซ่อน
+</script>
+  
+<script>
+function sendFlexMessage(lat, lon, checkInTopic, checkInGoal, checkOutResult) {
+    if (!liff.isLoggedIn()) {
+        console.error('User is not logged in');
+        return;
+    }
+
+    // ตำแหน่งออฟฟิศ
+      const officeLat = 16.9237521;
+      const officeLon = 103.6308398;
+
+    // คำนวณระยะห่าง
+    const distance = calculateDistance(lat, lon, officeLat, officeLon);
+
+    const flexMessage = {
+        type: "flex",
+        altText: "ลงเวลาโอที",
+        contents: {
+            type: "bubble",
+            hero: {
+                type: "image",
+                url: liff.getDecodedIDToken().picture,
+                size: "full",
+                aspectRatio: "20:13",
+                aspectMode: "cover",
+            },
+            body: {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                    {
+                        type: "text",
+                        text: "การลงเวลาทำโอทีสำเร็จ",
+                        weight: "bold",
+                        size: "xl"
+                    },
+                    {
+                        type: "text",
+                        text: `เป้าหมายวันนี้: ${checkInTopic}`,
+                        wrap: true,
+                        color: "#666666",
+                        margin: "md"
+                    },
+                    {
+                        type: "text",
+                        text: `ตัวชี้วัด: ${checkInGoal}`,
+                        wrap: true,
+                        color: "#666666",
+                        margin: "md"
+                    },
+                    {
+                        type: "text",
+                        text: `ผลลัพธ์: ${checkOutResult}`,
+                        wrap: true,
+                        color: "#666666",
+                        margin: "md"
+                    },
+                    {
+                        type: "text",
+                        text: `ระยะห่างจากออฟฟิศ: ${distance.toFixed(2)} กม.`,
+                        wrap: true,
+                        color: "#666666",
+                        margin: "md"
+                    },
+                    {
+                        type: "text",
+                        text: `ตำแหน่ง: ${lat}, ${lon}`,
+                        wrap: true,
+                        color: "#666666",
+                        margin: "md"
+                    }
+                ]
+            },
+            footer: {
+                type: "box",
+                layout: "vertical",
+                spacing: "sm",
+                contents: [
+                    {
+                        type: "button",
+                        style: "link",
+                        height: "sm",
+                        action: {
+                            type: "uri",
+                            label: "ดูตำแหน่งบน Google Maps",
+                            uri: `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`
+                        }
+                    }
+                ]
+            }
+        }
+    };
+
+    liff.sendMessages([flexMessage])
+    .then(() => {
+        // หน่วงเวลา 1 วินาทีก่อนปิด LIFF
+    setTimeout(() => {
+        liff.closeWindow();
+    }, 1000); // 1000 มิลลิวินาที = 1 วินาที
+    })
+    .catch((err) => {
+        console.error('Error sending Flex message: ', err);
+    });
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    function toRad(x) {
+        return x * Math.PI / 180;
+    }
+
+    const R = 6371; // Radius of the earth in km
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c; // Distance in km
+    return d;
+}
+
+</script>
+
+</body>
+
+</html>
