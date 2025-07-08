@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประเมินความพึงพอใจลูกค้า</title>
+    <style>
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        img.center-horizontal {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+    <script src="https://static.line-scdn.net/liff/edge/versions/2.3.0/sdk.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<img id="clickable-image" class="center-horizontal" src="https://lh3.googleusercontent.com/d/12u9NJu44z9buy8xga0c8KohpA7DcZd3A?key=123" alt="Map" style="cursor: pointer;">
+
+<script>
+const liffId = "2005939755-k21Da4gg"; // LIFF ID
+
+async function initializeLiff(liffId) {
+    try {
+        await liff.init({ liffId });
+        if (!liff.isLoggedIn()) {
+            liff.login();
+        }
+    } catch (error) {
+        console.error('LIFF Initialization failed', error);
+    }
+}
+
+$(function() {
+    initializeLiff(liffId);
+
+    $('#clickable-image').on('click', async function (event) {
+        if (!liff.isLoggedIn()) return;
+
+        const profile = await liff.getProfile();
+        var x = event.offsetX / this.width;
+        var y = event.offsetY / this.height;
+        var satisfaction = '';
+
+        var areas = [
+            {
+                name: "น้อยที่สุด",
+                coords: [0.065, 0.399074074, 0.242222222, 0.896296296]
+            },
+            {
+                name: "น้อย",
+                coords: [0.246111111, 0.399074074, 0.413888889, 0.896296296]
+            },
+            {
+                name: "ปานกลาง",
+                coords: [0.416666667, 0.397222222, 0.584444444, 0.898148148]
+            },
+            {
+                name: "มาก",
+                coords: [0.587222222, 0.397222222, 0.752777778, 0.898148148]
+            },
+            {
+                name: "มากที่สุด",
+                coords: [0.756111111, 0.397222222, 0.918888889, 0.896296296]
+            }
+        ];
+
+        for (var i = 0; i < areas.length; i++) {
+            var area = areas[i];
+            if (x >= area.coords[0] && x <= area.coords[2] && y >= area.coords[1] && y <= area.coords[3]) {
+                satisfaction = area.name;
+                break;
+            }
+        }
+
+        if (satisfaction) {
+            var isComment = confirm("คุณต้องการเพิ่มความคิดเห็นหรือไม่?");
+            var comment = '';
+            if (isComment) {
+                comment = prompt("กรุณาเพิ่มความคิดเห็นของคุณ:", "");
+            }
+
+            $.ajax({
+                url: "https://script.google.com/macros/s/AKfycbwUN7wPYj7E5PAXqipPxcFdAfoU8XD33nhOWatwSC4QbYTsg7eMFaFk7oTOk96WJJTy/exec",
+                type: "POST",
+                data: "satisfaction=" + encodeURIComponent(satisfaction) + "&comment=" + encodeURIComponent(comment) + "&userId=" + encodeURIComponent(profile.userId) + "&displayName=" + encodeURIComponent(profile.displayName) + "&pictureUrl=" + encodeURIComponent(profile.pictureUrl),
+                contentType: "application/x-www-form-urlencoded",
+                success: function(response) {
+
+    const flexMessage = {
+  "type": "flex",
+  "altText": "ขอบคุณสำหรับการประเมิน",
+  "contents": {
+    "type": "bubble",
+    "hero": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "image",
+              "url": profile.pictureUrl,
+              "size": "full",
+              "aspectRatio": "1:1",
+              "aspectMode": "cover"
+            }
+          ],
+          "cornerRadius": "100px",
+          "width": "80px",
+          "height": "80px",
+          "borderColor": "#FFFFFF",
+          "borderWidth": "2px"
+        },
+        {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "ขอบพระคุณ",
+              "weight": "bold",
+              "size": "xl",
+              "align": "center",
+              "color": "#FFFFFF"
+            },
+            {
+              "type": "text",
+              "text": "สำหรับการประเมิน",
+              "weight": "bold",
+              "size": "xl",
+              "align": "center",
+              "color": "#FFFFFF"
+            }
+          ],
+          "position": "absolute",
+          "offsetStart": "40%",
+          "width": "65%",
+          "height": "80px",
+          "offsetTop": "10px",
+          "paddingTop": "12px"
+        }
+      ],
+      "backgroundColor": "#FF69B4",
+      "paddingAll": "15px"
+    },
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "vertical",
+          "margin": "lg",
+          "spacing": "sm",
+          "contents": [
+            {
+              "type": "text",
+              "text": "ผลการประเมิน",
+              "color": "#FF69B4",
+              "size": "lg",
+              "weight": "bold"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": satisfaction,
+                  "wrap": true,
+                  "color": "#FF69B4",
+                  "size": "3xl",
+                  "align": "center",
+                  "weight": "bold"
+                }
+              ],
+              "backgroundColor": "#FFF0F5",
+              "cornerRadius": "md",
+              "paddingAll": "md"
+            },
+            {
+              "type": "text",
+              "text": "ความคิดเห็น",
+              "color": "#FF69B4",
+              "size": "lg",
+              "weight": "bold",
+              "margin": "lg"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": comment || "-ไม่มี-",
+                  "wrap": true,
+                  "color": "#666666",
+                  "size": "md",
+                  "align": "center"
+                }
+              ],
+              "backgroundColor": "#FFF0F5",
+              "cornerRadius": "md",
+              "paddingAll": "md"
+            }
+          ]
+        }
+      ]
+    },
+    "styles": {
+      "hero": {
+        "separator": false
+      },
+      "body": {
+        "separator": false
+      }
+    }
+  }
+};
+
+    liff.sendMessages([flexMessage]).then(() => {
+        liff.closeWindow();
+    }).catch((err) => {
+        console.log('send message error', err);
+    });
+
+    alert("ข้อมูลถูกบันทึกแล้ว");
+},
+
+                error: function(xhr, status, error) {
+                    alert("เกิดข้อผิดพลาด: " + error);
+                }
+            });
+        }
+    });
+});
+</script>
+
+</body>
+</html>
