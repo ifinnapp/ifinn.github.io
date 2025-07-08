@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เจ้าหน้าที่รับของฝาก-หอพัก iton5</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8">
+  <style>
+    * {
+      font-family: 'line_seed_sans_th';
+    }
+    
+    :root {
+      --primary: #7c3aed;
+      --primary-light: #a78bfa;
+      --secondary: #f472b6;
+      --accent: #0ea5e9;
+      --bg-gradient: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+    }
+    
+    .bg-gradient {
+      background: var(--bg-gradient);
+    }
+    
+    .btn-primary {
+      background: var(--bg-gradient);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2), 0 2px 4px -1px rgba(124, 58, 237, 0.1);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3), 0 4px 6px -2px rgba(124, 58, 237, 0.1);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .btn-secondary {
+      background-color: #f3f4f6;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e5e7eb;
+    }
+    
+    .card {
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      transform: translateY(-4px);
+    }
+    
+    .input-field {
+      transition: all 0.2s ease;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .input-field:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
+    }
+    
+   
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(-20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -468px 0 }
+      100% { background-position: 468px 0 }
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+    
+    .animate-slide-in {
+      animation: slideIn 0.5s ease-out forwards;
+    }
+    
+    .animate-pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    .staggered-item {
+      opacity: 0;
+    }
+    
+   
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid rgba(124, 58, 237, 0.1);
+      border-top-color: var(--primary);
+      animation: spinner 0.8s linear infinite;
+    }
+    
+    @keyframes spinner {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+   
+    .shimmer {
+      background: #f6f7f8;
+      background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+      background-repeat: no-repeat;
+      background-size: 800px 104px; 
+      display: inline-block;
+      position: relative; 
+      animation-duration: 1.5s;
+      animation-fill-mode: forwards; 
+      animation-iteration-count: infinite;
+      animation-name: shimmer;
+      animation-timing-function: linear;
+    }
+    
+   
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 16px 24px;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      transform: translateX(120%);
+      transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+  
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .modal-content {
+      animation: modalFadeIn 0.3s ease-out forwards;
+    }
+    
+   
+    .custom-checkbox {
+      position: relative;
+      padding-left: 35px;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .custom-checkbox input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+    
+    .checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 24px;
+      width: 24px;
+      background-color: #f3f4f6;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    
+    .custom-checkbox:hover input ~ .checkmark {
+      background-color: #e5e7eb;
+    }
+    
+    .custom-checkbox input:checked ~ .checkmark {
+      background-color: var(--primary);
+    }
+    
+    .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+    
+    .custom-checkbox input:checked ~ .checkmark:after {
+      display: block;
+    }
+    
+    .custom-checkbox .checkmark:after {
+      left: 9px;
+      top: 5px;
+      width: 6px;
+      height: 12px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+    
+   
+    @keyframes slideInFromBottom {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .package-item {
+      animation: slideInFromBottom 0.5s ease-out forwards;
+    }
+    
+    
+    .pastel-bg {
+
+       background-image: linear-gradient(0deg,  #7c3aed 0% , #a78bfa 100%);
+    }
+    
+    .pastel-btn {
+      background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+      color: white;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2), 0 2px 4px -1px rgba(124, 58, 237, 0.1);
+    }
+    
+    .pastel-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3), 0 4px 6px -2px rgba(124, 58, 237, 0.1);
+    }
+    
+    .pastel-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .pastel-accent {
+      background-color: #f5f3ff;
+      color: #7c3aed;
+    }
+    
+    * { margin: 0; padding: 0; }
+
+header {
+  height: 15vh;
+  width: 100vw;
+  background-image: linear-gradient(0deg, #a78bfa 0%, #7c3aed 100%);
+  clip-path: ellipse(100% 55% at 48% 33%);
+  
+}
+  </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+  <div class="notification" id="notification">
+    <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+    </svg>
+    <span id="notificationText">บันทึกข้อมูลสำเร็จ</span>
+  </div>
+
+  <div class="min-h-screen flex flex-col">
+    <header class="bg-gradient text-white p-4 shadow-lg">
+      <div class="container mx-auto flex justify-between items-center">
+        <div class="flex items-center animate-slide-in">
+          <img class="h-8 w-8 dark:border-gray-800 mx-auto my-4"
+                src="https://lh3.googleusercontent.com/d/1Ck_OCfEW4dEp3A1k9yfQplYmW7qmwzFF"
+                alt="Load Data">
+          <h1 class="text-2xl font-semibold">หอพัก iton5</h1>
+        </div>
+        
+        <div id="userInfo" class="text-sm flex items-center bg-white bg-opacity-20 rounded-full px-3 py-2 animate-fade-in">
+          <div id="userPic" class="w-8 h-8 rounded-full bg-white mr-2 flex items-center justify-center text-purple-600 font-medium">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+          </div>
+          <span id="userName" class="text-white">กำลังโหลด...</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow container mx-auto p-4 md:p-6">
+      <div class="flex flex-col md:flex-row gap-6">
+        <div id="formSection" class="bg-white rounded-lg shadow-md p-6 mb-6 card animate-fade-in md:w-2/3">
+          <div class="flex items-center mb-6">
+            <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+            </div>
+            <h2 class="text-xl font-medium text-gray-800">บันทึกการรับของฝาก</h2>
+          </div>
+          
+          <form id="packageForm" class="space-y-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div class="staggered-item">
+                <label for="roomNumber" class="block text-sm font-medium text-gray-700 mb-1">เลขห้อง</label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                  </div>
+                  <input type="text" id="roomNumber" name="roomNumber" required class="input-field w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none">
+                </div>
+              </div>
+              
+              <div class="staggered-item">
+                <label for="recipientName" class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้รับ</label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                  </div>
+                  <input type="text" id="recipientName" name="recipientName" required class="input-field w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none">
+                </div>
+              </div>
+              
+              <div class="staggered-item">
+                <label for="packageType" class="block text-sm font-medium text-gray-700 mb-1">ประเภทพัสดุ</label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+
+                    <svg class="w-5 h-5 text-gray-400 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+  <path fill-rule="evenodd" d="M3 6a2 2 0 0 1 2-2h5.532a2 2 0 0 1 1.536.72l1.9 2.28H3V6Zm0 3v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9H3Z" clip-rule="evenodd"/>
+</svg>
+
+                  </div>
+                  <select id="packageType" name="packageType" required class="input-field w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none appearance-none">
+                    <option value="">เลือกประเภท</option>
+                    <option value="กล่องพัสดุ">กล่องพัสดุ</option>
+                    <option value="ซองจดหมาย">ซองจดหมาย</option>
+                    <option value="อาหาร">อาหาร</option>
+                    <option value="เอกสาร">เอกสาร</option>
+                    <option value="อื่นๆ">อื่นๆ</option>
+                  </select>
+                  <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="staggered-item">
+                <label for="courierName" class="block text-sm font-medium text-gray-700 mb-1">บริษัทขนส่ง</label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
+                    </svg>
+                  </div>
+                  <input type="text" id="courierName" name="courierName" required class="input-field w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none">
+                </div>
+              </div>
+            </div>
+            
+            <div class="staggered-item">
+              <label for="packagePhoto" class="block text-sm font-medium text-gray-700 mb-1">รูปภาพพัสดุ</label>
+              <div class="flex flex-wrap items-center gap-3">
+                <button type="button" id="takePhotoBtn" class="pastel-btn px-4 py-2 rounded-lg flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  ถ่ายรูป
+                </button>
+                <input type="file" id="packagePhoto" name="packagePhoto" accept="image/*" capture="environment" class="hidden">
+                <span id="photoStatus" class="text-sm text-gray-500 flex items-center">
+                  <svg class="w-5 h-5 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  ยังไม่มีรูปภาพ
+                </span>
+              </div>
+              <div id="photoPreview" class="mt-3 hidden">
+                <div class="relative inline-block">
+                  <img id="previewImage" class="h-40 object-cover rounded-lg border-2 border-purple-200" alt="ตัวอย่างรูปภาพ">
+                  <button type="button" id="removePhotoBtn" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="staggered-item">
+              <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">หมายเหตุ</label>
+              <div class="relative">
+                <div class="absolute top-3 left-3 text-gray-400">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                  </svg>
+                </div>
+                <textarea id="notes" name="notes" rows="3" class="input-field w-full pl-10 pr-3 py-2 rounded-lg focus:outline-none"></textarea>
+              </div>
+            </div>
+            
+            <div class="staggered-item">
+              <label class="custom-checkbox flex items-center">
+                <input type="checkbox" id="urgent" name="urgent">
+                <span class="checkmark"></span>
+                <svg class="w-6 h-6 text-gray-400 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17h6l3 3v-3h2V9h-2M4 4h11v8H9l-3 3v-3H4V4Z"/>
+</svg>
+
+                <span class="ml-2 text-sm font-medium text-gray-700">ด่วน (แจ้งเตือนผู้รับทันที)</span>
+              </label>
+            </div>
+            
+            <div class="pt-2 staggered-item">
+              <button type="submit" id="submitBtn" class="w-full pastel-btn py-3 rounded-lg text-white font-medium shadow-sm flex items-center justify-center">
+                <svg class="w-5 h-5 text-white-800 dark:text-white mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15v3c0 .5523.44772 1 1 1h10.5M3 15v-4m0 4h11M3 11V6c0-.55228.44772-1 1-1h16c.5523 0 1 .44772 1 1v5M3 11h18m0 0v1M8 11v8m4-8v8m4-8v2m1 4h2m0 0h2m-2 0v2m0-2v-2"/>
+</svg> 
+
+               บันทึกข้อมูล
+              </button>
+            </div>
+          </form>
+        </div>
+        
+        <div class="md:w-1/3">
+          <div id="recentPackages" class="bg-white rounded-lg shadow-md p-6 card animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="flex items-center mb-4">
+              <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <h2 class="text-xl font-medium text-gray-800">พัสดุล่าสุด</h2>
+            </div>
+            
+            <div id="packagesList" class="space-y-3">
+              <div id="loadingPackages" class="py-8">
+                <div class="flex items-center justify-center">
+                  <div class="w-full h-12 shimmer rounded-lg mb-3"></div>
+                </div>
+                <div class="flex items-center justify-center">
+                  <div class="w-full h-12 shimmer rounded-lg mb-3"></div>
+                </div>
+                <div class="flex items-center justify-center">
+                  <div class="w-full h-12 shimmer rounded-lg"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
+        </div>
+      </div>
+    </main>
+
+    <footer class="pastel-bg p-4 text-center text-gray-100 text-sm">
+      <p>🏨 หอพัก iton5</p>
+      
+    </footer>
+  </div>
+
+
+  <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center modal-content">
+      <div class="loading-spinner mb-4"></div>
+      <p id="loadingMessage" class="text-gray-700">กำลังบันทึกข้อมูล...</p>
+    </div>
+  </div>
+
+  
+  <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full modal-content">
+      <div class="text-center">
+        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+          <svg class="h-8 w-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">บันทึกข้อมูลสำเร็จ</h3>
+        <p class="text-gray-600 mb-4">ข้อมูลพัสดุถูกบันทึกเรียบร้อยแล้ว</p>
+        <button id="closeSuccessBtn" class="w-full pastel-btn py-2 rounded-lg text-white font-medium">
+          ตกลง
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let lineUserId = '';
+    let lineDisplayName = '';
+    let lineProfilePic = '';
+    let packageImage = null;
+    const API_URL = 'https://script.google.com/macros/s/xxxxxxxx/exec';
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeLiff();
+      setupEventListeners();
+      
+      
+      const staggeredItems = document.querySelectorAll('.staggered-item');
+      staggeredItems.forEach((item, index) => {
+        setTimeout(() => {
+          item.style.animation = `fadeIn 0.5s ease-out forwards`;
+          item.style.opacity = 1;
+        }, 100 + (index * 100));
+      });
+    });
+    
+    async function initializeLiff() {
+      try {
+        await liff.init({ liffId: 'xxxxxx' });
+        
+        if (liff.isLoggedIn()) {
+          const profile = await liff.getProfile();
+          lineUserId = profile.userId;
+          lineDisplayName = profile.displayName;
+          lineProfilePic = profile.pictureUrl;
+          
+          document.getElementById('userName').textContent = lineDisplayName;
+          
+          if (lineProfilePic) {
+            document.getElementById('userPic').style.backgroundImage = `url(${lineProfilePic})`;
+            document.getElementById('userPic').style.backgroundSize = 'cover';
+            document.getElementById('userPic').innerHTML = '';
+          } else {
+         
+            document.getElementById('userPic').innerHTML = lineDisplayName.charAt(0);
+          }
+          
+          loadRecentPackages();
+        } else {
+          liff.login();
+        }
+      } catch (e) {
+        console.error('LIFF initialization failed', e);
+        alert('เกิดข้อผิดพลาดในการเชื่อมต่อกับ LINE. กรุณาลองใหม่อีกครั้ง');
+      }
+    }
+    
+    function setupEventListeners() {
+      document.getElementById('takePhotoBtn').addEventListener('click', () => {
+        document.getElementById('packagePhoto').click();
+      });
+      
+      document.getElementById('packagePhoto').addEventListener('change', handlePhotoUpload);
+      document.getElementById('packageForm').addEventListener('submit', handleFormSubmit);
+      document.getElementById('closeSuccessBtn').addEventListener('click', () => {
+        document.getElementById('successModal').classList.add('hidden');
+      });
+      
+     
+      document.getElementById('removePhotoBtn').addEventListener('click', function() {
+        document.getElementById('packagePhoto').value = '';
+        packageImage = null;
+        document.getElementById('photoPreview').classList.add('hidden');
+        document.getElementById('photoStatus').innerHTML = `
+          <svg class="w-5 h-5 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          ยังไม่มีรูปภาพ
+        `;
+      });
+    }
+    
+    function handlePhotoUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        packageImage = e.target.result;
+        document.getElementById('previewImage').src = packageImage;
+        document.getElementById('photoPreview').classList.remove('hidden');
+        document.getElementById('photoStatus').innerHTML = `
+          <svg class="w-5 h-5 mr-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          อัพโหลดรูปภาพแล้ว
+        `;
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    function showLoading(message) {
+      document.getElementById('loadingMessage').textContent = message || 'กำลังดำเนินการ...';
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+    }
+    
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.add('hidden');
+    }
+    
+    function showSuccessModal() {
+      document.getElementById('successModal').classList.remove('hidden');
+    }
+    
+    function resetForm() {
+      document.getElementById('packageForm').reset();
+      packageImage = null;
+      document.getElementById('photoPreview').classList.add('hidden');
+      document.getElementById('photoStatus').innerHTML = `
+        <svg class="w-5 h-5 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        ยังไม่มีรูปภาพ
+      `;
+    }
+    
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      if (!packageImage) {
+        alert('กรุณาถ่ายรูปพัสดุก่อนบันทึก');
+        return;
+      }
+      
+      showLoading('กำลังบันทึกข้อมูล...');
+      
+      const formData = {
+        roomNumber: document.getElementById('roomNumber').value,
+        recipientName: document.getElementById('recipientName').value,
+        packageType: document.getElementById('packageType').value,
+        courierName: document.getElementById('courierName').value,
+        notes: document.getElementById('notes').value,
+        packageImage: packageImage,
+        receivedBy: lineDisplayName,
+        receivedById: lineUserId,
+        receivedAt: new Date().toISOString(),
+        status: 'รอรับ',
+        urgent: document.getElementById('urgent').checked
+      };
+      
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          hideLoading();
+          showSuccessModal();
+          resetForm();
+          loadRecentPackages();
+        } else {
+          hideLoading();
+          alert('เกิดข้อผิดพลาด: ' + (result.error || 'ไม่สามารถบันทึกข้อมูลได้'));
+        }
+      } catch (error) {
+        hideLoading();
+        console.error('Error submitting form:', error);
+        alert('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์');
+      }
+    }
+    
+    async function loadRecentPackages() {
+      try {
+        const response = await fetch(`${API_URL}?action=getRecentAll`);
+        const data = await response.json();
+        
+        const packagesList = document.getElementById('packagesList');
+        
+        if (data.success && data.packages && data.packages.length > 0) {
+          packagesList.innerHTML = '';
+          
+          data.packages.forEach((pkg, index) => {
+            const date = new Date(pkg.receivedAt);
+            const formattedDate = `${date.toLocaleDateString('th-TH')} ${date.toLocaleTimeString('th-TH', {hour: '2-digit', minute: '2-digit'})}`;
+            
+            const packageCard = document.createElement('div');
+            packageCard.className = 'package-item p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all';
+            packageCard.style.opacity = '0';
+            packageCard.style.animationDelay = `${index * 150}ms`;
+            
+            let statusClass = 'bg-purple-100 text-purple-800';
+            if (pkg.status === 'รับแล้ว') {
+              statusClass = 'bg-green-100 text-green-800';
+            } else if (pkg.urgent) {
+              statusClass = 'bg-yellow-100 text-yellow-800';
+            }
+            
+            packageCard.innerHTML = `
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="font-medium">ห้อง ${pkg.roomNumber} - ${pkg.recipientName}</p>
+                  <p class="text-sm text-gray-600">${pkg.packageType} (${pkg.courierName})</p>
+                  <p class="text-xs text-gray-500 mt-1">บันทึกเมื่อ: ${formattedDate}</p>
+                </div>
+                <span class="px-2 py-1 text-xs rounded-full ${statusClass}">${pkg.status}</span>
+              </div>
+            `;
+            
+            packagesList.appendChild(packageCard);
+          });
+          
+         
+          
+          
+          const packageItems = document.querySelectorAll('.package-item');
+          packageItems.forEach((item) => {
+            item.style.opacity = '1';
+          });
+        } else {
+          packagesList.innerHTML = '<div class="text-center text-gray-500 py-8">ไม่พบข้อมูลพัสดุล่าสุด</div>';
+        }
+      } catch (error) {
+        console.error('Error loading recent packages:', error);
+        document.getElementById('packagesList').innerHTML = '<div class="text-center text-gray-500 py-8">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>';
+      }
+    }
+
+function sendText(text) {
+            if (!liff.isInClient()) {
+                shareTargetPicker(text);
+            } else {
+                sendflex(text);
+            }
+        }
+        function sendflex(text) {
+            liff.sendMessages(text).then(function () {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'ส่งเข้าแชทเรียบร้อย',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+
+
+            })
+        }
+        function shareTargetPicker(text) {
+            liff.shareTargetPicker(text).then(function (res) {
+                if (res) {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'ส่งเข้าแชทเรียบร้อย',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+
+                } else {
+
+                    console.log("TargetPicker was closed!");
+                }
+            }).catch(function (error) {
+                window.alert("Failed to send message " + error);
+            });
+        }
+  </script>
+</body>
+</html>
