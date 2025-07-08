@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="The title">
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="A one to two sentence description">
+    <meta property="og:url" content="The URL">
+    <meta property="og:site_name" content="The name that represents the overall site">
+    <meta property="og:image" content="An image URL">
+    <title>Happy QR Code for LIFF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8" />
+    <style type="text/css">
+      body {
+        font-family: 'line_seed_sans_th';
+      }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  </head>
+  <body class="bg-teal-100 flex justify-center items-center min-h-screen">
+    <div class="bg-white rounded-lg shadow-md w-96">
+      <div class="px-6 py-4">
+        <div class="flex justify-between items-center">
+          <button class="text-gray-500">สวัสดีคุณ</button>
+          <p class="text-gray-500 text-sm" id="displayname">Name</p>
+        </div>
+        <h1 class="text-center text-lg font-semibold mt-4">My QR Code</h1>
+      </div>
+      <div class="bg-gray-100 px-6 py-6">
+        <center>
+          <div id="qrcode"></div>
+        </center>
+      </div>
+      <div class="px-6 py-4 border-t border-dashed">
+        <p class="text-gray-800 font-semibold">สถานะ LINE OA</p>
+        <p class="text-violet-800" id="friends">---</p>
+        <p class="text-sm text-gray-700 font-semibold mt-4">เพื่อนที่จับคู่กับคุณชื่อ</p>
+        <div class="flex items-center gap-[1rem]">
+          <div class="relative">
+            <div class="w-[1.2rem] h-[1.2rem] flex items-center justify-center bg-blue-600 outline outline-2 outline-gray-200 rounded-full absolute bottom-0 -right-2">
+              <ion-icon class="text-sm text-white" name="person">
+                <svg aria-hidden="true" class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
+                </svg>
+              </ion-icon>
+            </div>
+            <img class="w-11 h-11 object-cover rounded-full" id="friendimage" src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMnlrNjl1OWVlaDduMXUybXJ5dzgzeXl6azJweTEyNWdvZGx0bGdseCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/ekqKSKYrVvrP6VMwsf/giphy.gif" alt="Follower Image" />
+          </div>
+          <!--  -->
+          <div class="flex flex-col justify-center pt-4">
+            <div class="text-lg dark:text-white text-violet-800" id="url">--- </div>
+            <p class="text-sm dark:text-gray-300">Profile Your Friend</p>
+          </div>
+        </div>
+        <p class="text-sm text-gray-700 font-semibold mt-4">สถานะข้อความของเพื่อน</p>
+        <p class="text-violet-800" id="statusMsg">---</p>
+        <p class="text-sm text-gray-700 font-semibold mt-4">ภาษาตัวเครื่องของเพื่อน</p>
+        <p class="text-violet-800" id="language">---</p>
+      </div>
+      <center>
+        <button type="button" id="scanQR" class=" text-white bg-[#FF9119] hover:bg-[#FF9119]/80 focus:ring-4 focus:outline-none focus:ring-[#FF9119]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2 ">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z" />
+          </svg> Click Scan QR code </button>
+      </center>
+    </div>
+    <div id="loading-overlay" class="fixed inset-0 bg-gray-500 bg-opacity-75 z-50 flex items-center justify-center hidden">
+      <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnhzbnR1bTF5eW42NHN1NDVmZGlvZWw5aHNsMzh4eWd3bG50MWc5NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l1KVcrdl7rJpFnY2s/giphy.gif" alt="Loading..." class="w-screen h-auto">
+    </div>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+      window.onload = function() {
+        const defaultLiffId = "1661371622-RwZJGw59";
+        initializeLiff(defaultLiffId);
+      };
+
+      function initializeLiff(defaultLiffId) {
+        liff.init({
+          liffId: defaultLiffId,
+          withLoginOnExternalBrowser: true,
+        })
+        liff.ready.then(() => {
+          if (!liff.isInClient() && !liff.isLoggedIn()) {
+            window.alert("กรุณาเข้าสู่ระบบบัญชี LINE ของคุณ");
+            liff.login({
+              redirectUri: location.href
+            });
+          }
+          liff.getFriendship().then((data) => {
+            if (!data.friendFlag) {
+              Swal.fire('เดี๋ยวก่อน!', 'คุณยังไม่ได้เป็นเพื่อนกับเรา', 'error').then(() => {
+                window.location = 'https://line.me/R/ti/p/@hqg1050l'
+              })
+            }
+          });
+          liff.getProfile().then((profile) => {
+            document.getElementById("friends").innerHTML = "ขอบคุณที่เป็นเพื่อนกับ LINE OA นะ"
+            const name = profile.displayName;
+            document.getElementById("displayname").innerHTML = name
+            const key = profile.userId
+            createQrCode(key)
+          }).catch((err) => {
+            console.log("error", err);
+          });
+        });
+        document.getElementById('scanQR').addEventListener('click', startScanning);
+      }
+
+      function createQrCode(key) {
+        const qrCodeContainer = document.getElementById("qrcode");
+        const qrCodeText = "" + key;
+        new QRCode(qrCodeContainer, {
+          text: qrCodeText,
+          width: 256,
+          height: 256
+        });
+      }
+
+      function startScanning() {
+        const os = liff.getOS();
+        if (os === "ios" || os === "web") {
+          liff.scanCodeV2().then(result => {
+            if (result.value == null) {
+              Swal.fire('ข้อผิดพลาด', 'คุณยังไม่ได้ Scan QR code', 'error')
+              document.getElementById("url").addClass('hidden');
+            } else {
+              handleScanResult(result);
+            }
+          }).catch(err => {
+            Swal.fire("scanCode ล้มเหลว!");
+          });
+        }
+        if (os === "android") {
+          liff.scanCode().then(result => {
+            if (result.value == null) {
+              Swal.fire('ข้อผิดพลาด', 'คุณยังไม่ได้ Scan QR code', 'error')
+              document.getElementById("url").addClass('hidden');
+            } else {
+              handleScanResult(result);
+            }
+          }).catch(err => {
+            Swal.fire("scanCode ล้มเหลว!");
+          });
+        }
+      }
+
+      function handleScanResult(result) {
+        if (!result || !result.value) {
+          Swal.fire("ข้อผิดพลาด", "QR Code ที่คุณสแกนไม่มีข้อมูลหรือเกิดข้อผิดพลาด", "error");
+          return;
+        }
+        const stringifiedResult = result.value;
+        liff.getProfile().then(profile => {
+          const name = profile.displayName || "ไม่มีชื่อ";
+          const userId = profile.userId;
+          const picture = profile.pictureUrl;
+         
+          sendToGoogleSheet(stringifiedResult, userId, name, picture);
+        }).catch(err => {
+          console.error("เกิดข้อผิดพลาดในการเรียกข้อมูลโปรไฟล์:", err);
+          Swal.fire("ข้อผิดพลาด", "ไม่สามารถดึงข้อมูลโปรไฟล์ได้", "error");
+        });
+      }
+
+      function sendToGoogleSheet(value, userId, name, picture) {
+        $('#loading-overlay').removeClass('hidden');
+        $.post('https://script.google.com/macros/s/AKfycbwAptGiIHr_OtiANEDhVTLfD_D8qBz2cTGfQsmKtJf-w42RukMQYLAjYFDfcTszx5p2/exec', {
+          value: value,
+          userId: userId,
+          name: name,
+          picture: picture
+        }).done(function(response) {
+          $('#loading-overlay').addClass('hidden');
+          if (response.statusCode === 200) {
+            const flexMessage = JSON.parse(response.body);
+            const friend = response.friend
+            const friendImage = response.friendImage
+            const statusMsg = response.statusMsg
+            const language = response.language
+            document.getElementById("url").innerHTML = friend
+            document.getElementById("friendimage").src = friendImage
+            document.getElementById("statusMsg").innerHTML = statusMsg || "-"
+            document.getElementById("language").innerHTML = language
+            liff.sendMessages([flexMessage]).then(function(res) {
+              if (res) {
+                Swal.fire('ดำเนินการสำเร็จ', 'คุณได้จับคู่เรียบร้อยแล้ว', 'success')
+              } else {
+                console.log("TargetPicker was closed!");
+              }
+            }).catch(function(error) {
+              console.log("something wrong happen");
+            });
+          }
+        }).fail(function(error) {
+          Swal.fire('ข้อผิดพลาด', 'เกิดข้อผิดพลาดข้อมูลไม่ถูกต้อง', 'error');
+          $('#loading-overlay').addClass('hidden');
+        });
+      }
+    </script>
+  </body>
+</html>
