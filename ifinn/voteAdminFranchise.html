@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โหวตขวัญใจแฟรนไชส์และตัวแทนขาย</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://bit.ly/fontiton5" type="text/css" charset="utf-8">
+    <style>
+        body {
+            font-family: 'line_seed_sans_th';
+            background-color: #0a0a23;
+            background-image:
+                radial-gradient(white, rgba(255, 255, 255, .2) 2px, transparent 40px),
+                radial-gradient(white, rgba(255, 255, 255, .15) 1px, transparent 30px),
+                radial-gradient(white, rgba(255, 255, 255, .1) 2px, transparent 40px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 40px 60px, 130px 270px;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .space-glow {
+            box-shadow: 0 0 15px rgba(66, 220, 255, 0.5),
+                0 0 30px rgba(66, 220, 255, 0.3);
+        }
+
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .candidate-card {
+            backdrop-filter: blur(10px);
+            background: rgba(13, 18, 42, 0.7);
+            border: 1px solid rgba(66, 220, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .candidate-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(66, 220, 255, 0.7);
+        }
+
+        .vote-btn {
+            background: linear-gradient(45deg, #4f39fa, #da62c4);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .vote-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+
+        .vote-btn:hover::before {
+            left: 100%;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #4f39fa, #da62c4);
+            transition: width 0.5s ease-in-out;
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 10, 35, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .rocket {
+            animation: rocketMove 2s infinite;
+        }
+
+        @keyframes rocketMove {
+            0% {
+                transform: translateY(0) rotate(-45deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(-45deg);
+            }
+
+            100% {
+                transform: translateY(0) rotate(-45deg);
+            }
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 1s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            from {
+                opacity: 0.2;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .error-message {
+            background-color: rgba(220, 38, 38, 0.8);
+            border-left: 4px solid #ef4444;
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .cosmic-bg {
+            background: linear-gradient(135deg, #0a0a23 0%, #1a1a4a 100%);
+        }
+
+        .cosmic-border {
+            border: 1px solid rgba(66, 220, 255, 0.3);
+            box-shadow: 0 0 10px rgba(66, 220, 255, 0.2);
+        }
+
+        .cosmic-text {
+            background: linear-gradient(90deg, #4cc9f0, #da62c4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-yellow {
+            background-color: rgba(251, 191, 36, 0.2);
+            color: rgba(251, 191, 36, 1);
+        }
+
+        .badge-red {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: rgba(239, 68, 68, 1);
+        }
+
+        .badge-green {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: rgba(16, 185, 129, 1);
+        }
+
+        .badge-blue {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: rgba(59, 130, 246, 1);
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(66, 220, 255, 0.7);
+            }
+            
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(66, 220, 255, 0);
+            }
+            
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(66, 220, 255, 0);
+            }
+        }
+      
+      .hidden {
+    display: none;
+}
+    </style>
+</head>
+
+<body class="relative overflow-x-hidden">
+
+    <!-- หน้าโหลด -->
+    <div id="loading" class="loading">
+        <div class="text-center">
+            <img class="h-32 w-32 dark:border-gray-800 mx-auto my-4"
+                src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3psdDI1NTBvMnh3d2o5b2FoMzlyNTM1azJxcDI2dmpqb2NvOXY1bCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/kuTMoE30RJwFry8Yqm/giphy.gif"
+                alt="Load Data">
+            <p id="loading-text" class="text-xl font-bold text-white">กำลังโหลดข้อมูล...</p>
+        </div>
+    </div>
+
+    <!-- ข้อความแจ้งเตือนข้อผิดพลาด -->
+    <div id="error-container" class="fixed top-4 right-4 max-w-sm z-50 hidden">
+        <div class="error-message p-4 rounded-lg shadow-lg">
+            <div class="flex items-center">
+                <svg class="w-6 h-6 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p id="error-message" class="text-white"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- เอฟเฟคพลาเน็ต -->
+    <div class="planet bg-purple-700 opacity-20 w-64 h-64 -top-20 -left-20"></div>
+    <div class="planet bg-blue-500 opacity-10 w-96 h-96 bottom-0 right-0"></div>
+
+    <!-- เนื้อหาหลัก -->
+    <div class="container mx-auto px-4 py-8 relative z-10">
+        <header class="text-center mb-10">
+            <h1
+                class="text-4xl md:text-5xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                ให้คะแนนกับคนที่ใช่</h1>
+            <p class="text-lg text-blue-200">โหวตได้ทันที ให้กับคนที่คุณชื่นชอบ <span id="max-votes-info" class="badge badge-blue hidden">(สูงสุด 1 ครั้ง)</span></p>
+        </header>
+
+        <!-- ข้อมูลผู้ใช้ -->
+        <div id="user-info" class="mb-8 space-glow bg-opacity-30 bg-blue-900 rounded-xl p-6 hidden">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <img id="user-picture" class="w-12 h-12 rounded-full mr-4 border-2 border-blue-400" src=""
+                        alt="User Profile">
+                    <div>
+                        <p class="font-bold" id="user-name"></p>
+                        <p id="user-status" class="text-sm text-blue-300">พร้อมโหวต</p>
+                    </div>
+                </div>
+                <div>
+                    <a href="#" id="refresh-btn" onclick="fetchData(); return false;" 
+                       class="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm">
+                        <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        รีเฟรช
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- สถานะการโหวต -->
+        <div class="mb-8 space-glow bg-opacity-30 bg-blue-900 rounded-xl p-6">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold mb-4 md:mb-0 cosmic-text">สถานะการโหวต</h2>
+                <div class="flex space-x-4">
+                    <div class="text-center">
+                        <p class="text-sm text-blue-300">จำนวนผู้มีสิทธิ์</p>
+                        <p id="total-voters" class="text-xl font-bold">0</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-sm text-blue-300">โหวตแล้ว</p>
+                        <p id="voted-count" class="text-xl font-bold">0</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-sm text-blue-300">เปอร์เซ็นต์</p>
+                        <p id="vote-percentage" class="text-xl font-bold">0%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full bg-gray-700 rounded-full h-4 overflow-hidden">
+                <div id="vote-progress" class="progress-bar h-4 rounded-full" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- รายชื่อผู้สมัครและผลคะแนน -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <div class="space-glow bg-opacity-30 bg-blue-900 rounded-xl p-6">
+                <h2 class="text-2xl font-bold mb-4 cosmic-text">ผู้สมัคร</h2>
+                <div id="candidates-container" class="grid grid-cols-1 gap-4">
+                    <div class="animate-pulse">
+                        <div class="candidate-card rounded-xl p-4 flex items-center">
+                            <div class="w-16 h-16 mr-4 flex-shrink-0 bg-blue-700 rounded-full"></div>
+                            <div class="flex-grow">
+                                <div class="h-5 bg-blue-700 rounded w-3/4 mb-2"></div>
+                                <div class="h-4 bg-blue-700 rounded w-1/2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-glow bg-opacity-30 bg-blue-900 rounded-xl p-6">
+                <h2 class="text-2xl font-bold mb-4 cosmic-text">ผลคะแนนปัจจุบัน</h2>
+                <div class="h-64 mb-4">
+                    <canvas id="results-chart"></canvas>
+                </div>
+                <div id="results-container" class="space-y-3">
+                    <!-- โหลดข้อมูล -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ประวัติการโหวต -->
+        <div id="history-section" class="space-glow bg-opacity-30 bg-blue-900 rounded-xl p-6 mb-10">
+            <h2 class="text-2xl font-bold mb-4 cosmic-text">ประวัติการโหวต</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-opacity-50 bg-gray-800 rounded-lg">
+                    <thead>
+                        <tr class="border-b border-gray-700">
+                            <th class="px-4 py-2 text-left">วันเวลา</th>
+                            <th class="px-4 py-2 text-left">ผู้โหวต</th>
+                            <th class="px-4 py-2 text-left">โหวตให้</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vote-history">
+                        <!-- โหลดประวัติข้อมูล-->
+                        <tr>
+                            <td colspan="3" class="px-4 py-2 text-center">กำลังโหลดข้อมูล...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- ส่วนท้าย -->
+        <div class="text-center text-gray-400 text-sm mb-4">
+            <p>© 2025 ระบบโหวตขวัญใจเพื่อนร่วมงาน</p>
+        </div>
+    </div>
+
+    <!-- Modal ยืนยันการโหวต -->
+    <div id="vote-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="cosmic-bg border cosmic-border rounded-xl p-6 max-w-md w-full space-glow">
+            <h3 class="text-xl font-bold mb-4 cosmic-text">ยืนยันการโหวต</h3>
+            <p class="mb-4">คุณต้องการโหวตให้ <span id="selected-candidate-name" class="font-bold text-blue-400"></span>
+                ใช่หรือไม่?</p>
+            <div class="flex justify-end space-x-3">
+                <button id="cancel-vote"
+                    class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition">ยกเลิก</button>
+                <button id="confirm-vote" class="vote-btn px-4 py-2 rounded-lg transition">ยืนยัน</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal แจ้งสำเร็จ -->
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="cosmic-bg border border-green-500 rounded-xl p-6 max-w-md w-full space-glow">
+            <div class="text-center">
+                <svg class="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <h3 class="text-xl font-bold mb-2 cosmic-text">โหวตสำเร็จ!</h3>
+                <p class="mb-4">ขอบคุณสำหรับการโหวต</p>
+                <button id="close-success"
+                    class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition">ปิด</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal แจ้งไม่มีสิทธิ์ -->
+    <div id="unauthorized-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="cosmic-bg border border-red-500 rounded-xl p-6 max-w-md w-full space-glow">
+            <div class="text-center">
+                <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                <h3 class="text-xl font-bold mb-2 cosmic-text">ไม่พบสิทธิ์การโหวต</h3>
+                <p class="mb-4">คุณไม่ได้อยู่ในรายชื่อผู้มีสิทธิ์โหวต กรุณาติดต่อผู้ดูแลระบบ</p>
+                <button id="close-unauthorized"
+                    class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition">ปิด</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ตั้งค่าตัวแปร URL ของ Script และ LIFF ID
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbyIEZSB9THjYnTs6LXQVxMwqXQcF2ppVEprsKRutbgG3jSN3xKGYZThsADhyXOr7gfN/exec';
+    const liffId = '1661371622-q1Yo7yZR';
+
+    // ฟังก์ชันสร้างอวตาร
+    function generateAvatar(name) {
+        const initial = name.charAt(0).toUpperCase();
+        const colors = ["#4f39fa", "#da62c4", "#4cc9f0", "#4361ee"];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+
+        return `<svg class="w-full h-full rounded-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="50" fill="${color}" />
+            <text x="50" y="50" dy=".3em" text-anchor="middle" fill="white" font-size="40" font-weight="bold">${initial}</text>
+        </svg>`;
+    }
+
+async function fetchData() {
+    try {
+        document.getElementById('loading').style.display = 'flex';
+        document.getElementById('loading-text').textContent = 'กำลังโหลดข้อมูล...';
+
+        const res = await fetch(scriptUrl + '?action=getData');
+        const data = await res.json();
+        
+        if (data.success === false) {
+            throw new Error(data.message || 'เกิดข้อผิดพลาดในการโหลดข้อมูล');
+        }
+
+        updateUI(data);
+        checkUserVoteStatus(data);
+
+    } catch (e) {
+        showError('โหลดข้อมูลไม่สำเร็จ: ' + e.message);
+    } finally {
+        document.getElementById('loading').style.display = 'none';
+    }
+}
+
+ // ตรวจสอบสถานะการโหวตของผู้ใช้
+function checkUserVoteStatus(data) {
+    if (!window.userId) return;
+
+    const { settings } = data;
+    const unlimitedAccess = settings.unlimitedAccess === true;
+
+    // ค้นหาผู้ใช้ในรายชื่อผู้มีสิทธิ์โหวต
+    const userVoter = data.voters.find(v => v.userId === window.userId);
+    
+    // ถ้าไม่ได้เปิดใช้งานไม่จำกัดผู้ใช้สิทธิ์ และผู้ใช้ไม่มีสิทธิ์
+    if (!unlimitedAccess && !userVoter) {
+        // ผู้ใช้ไม่มีสิทธิ์โหวต
+        document.getElementById('user-status').textContent = "ไม่พบสิทธิ์การโหวต";
+        document.getElementById('user-status').classList.remove("text-blue-300");
+        document.getElementById('user-status').classList.add("text-red-300");
+
+        // ปิดปุ่มโหวตทั้งหมด
+        const voteButtons = document.querySelectorAll('.vote-btn');
+        voteButtons.forEach(btn => {
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            btn.title = "คุณไม่มีสิทธิ์โหวต";
+        });
+
+        // แสดงข้อความแจ้งไม่มีสิทธิ์
+        document.getElementById('unauthorized-modal').classList.remove('hidden');
+        
+        return;
+    }
+
+    // หาการโหวตของผู้ใช้
+    const userVotes = data.votes.filter(v => v.userId === window.userId);
+    const votedCount = userVoter ? (userVoter.votedCount || userVotes.length) : userVotes.length;
+    const maxVotes = data.settings.maxVotesPerUser;
+    const remainingVotes = maxVotes - votedCount;
+    
+    // รายชื่อตัวเลือกที่ผู้ใช้เคยโหวตแล้ว
+    const votedCandidates = userVotes.map(v => v.choice);
+    
+    // อัปเดตสถานะการโหวตใน UI
+    if (votedCount >= maxVotes) {
+        // ผู้ใช้ใช้สิทธิ์ครบแล้ว
+        document.getElementById('user-status').textContent = "คุณได้ใช้สิทธิ์โหวตครบแล้ว";
+        document.getElementById('user-status').classList.remove("text-blue-300");
+        document.getElementById('user-status').classList.add("text-green-300");
+
+        // ปิดปุ่มโหวตทั้งหมด
+        const voteButtons = document.querySelectorAll('.vote-btn');
+        voteButtons.forEach(btn => {
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            btn.title = "คุณได้ใช้สิทธิ์โหวตครบแล้ว";
+        });
+    } else {
+        // ผู้ใช้ยังมีสิทธิ์โหวตเหลือ
+        document.getElementById('user-status').textContent = `โหวตแล้ว ${votedCount}/${maxVotes} ครั้ง`;
+        document.getElementById('user-status').classList.remove("text-blue-300");
+        
+        if (votedCount > 0) {
+            document.getElementById('user-status').classList.add("text-yellow-300");
+        } else {
+            document.getElementById('user-status').classList.add("text-blue-300");
+        }
+        
+        // ปิดปุ่มโหวตสำหรับตัวเลือกที่เคยโหวตแล้ว
+        const voteButtons = document.querySelectorAll('.vote-btn');
+        voteButtons.forEach(btn => {
+            const candidateName = btn.getAttribute('data-candidate');
+            if (votedCandidates.includes(candidateName)) {
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+                btn.title = "คุณเคยโหวตให้ตัวเลือกนี้แล้ว";
+                btn.innerHTML = "โหวตแล้ว";
+            }
+        });
+    }
+}
+      
+// อัปเดต UI ด้วยข้อมูลที่ดึงมา
+function updateUI(data) {
+    const { candidates, votes, voters, settings } = data;
+    console.log("Settings received:", settings);
+
+    // อัปเดตการตั้งค่าที่เกี่ยวข้องกับ UI
+    const historySection = document.getElementById('history-section');
+    if (settings.showHistory === false) {
+        historySection.classList.add('hidden');
+    } else {
+        historySection.classList.remove('hidden');
+        
+        // เพิ่มปุ่มโหลดซ้ำในส่วนประวัติการโหวต (ถ้ายังไม่มี)
+        let reloadButton = document.getElementById('reload-history-btn');
+        if (!reloadButton) {
+            reloadButton = document.createElement('button');
+            reloadButton.id = 'reload-history-btn';
+            reloadButton.className = 'mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition text-white';
+            reloadButton.innerHTML = `
+                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                โหลดข้อมูลใหม่
+            `;
+            reloadButton.onclick = fetchData;
+            
+            // เพิ่มปุ่มต่อจากตาราง
+            const tableContainer = historySection.querySelector('.overflow-x-auto');
+            historySection.insertBefore(reloadButton, tableContainer.nextSibling);
+        }
+    }
+    
+    // แสดงจำนวนโหวตสูงสุดต่อผู้ใช้ใน UI ถ้ามากกว่า 1
+    if (settings.maxVotesPerUser > 1) {
+        document.getElementById('max-votes-info').textContent = `(สูงสุด ${settings.maxVotesPerUser} ครั้ง)`;
+        document.getElementById('max-votes-info').classList.remove('hidden');
+    } else {
+        document.getElementById('max-votes-info').classList.add('hidden');
+    }
+
+    // แสดงรายชื่อผู้สมัคร
+    const container = document.getElementById('candidates-container');
+    container.innerHTML = '';
+
+    candidates.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'candidate-card rounded-xl p-4 flex items-center justify-between';
+
+        // สร้างรูปภาพหรืออวตาร
+        let imageContent;
+        if (c.image && c.image.trim() !== "") {
+            imageContent = `<img src='${c.image}' class='w-16 h-16 mr-4 rounded-full border-2 border-blue-400' alt="${c.name}"/>`;
+        } else {
+            imageContent = `<div class='w-16 h-16 mr-4 rounded-full border-2 border-blue-400'>${generateAvatar(c.name)}</div>`;
+        }
+
+        div.innerHTML = `
+            <div class='flex items-center'>
+                ${imageContent}
+                <div>
+                    <p class='font-bold text-lg'>${c.name}</p>
+                    ${c.position ? `<p class='text-blue-300 text-sm'>${c.position}</p>` : ''}
+                </div>
+            </div>
+            <button class="vote-btn px-4 py-2 rounded-lg text-sm" data-candidate="${c.name}" onclick="openVoteModal('${c.name}')">โหวต</button>
+        `;
+        container.appendChild(div);
+    });
+
+    // คำนวณและแสดงผลการโหวต
+    const results = {};
+    candidates.forEach(c => results[c.name] = 0);
+    votes.forEach(v => {
+        if (results[v.choice] !== undefined) {
+            results[v.choice]++;
+        }
+    });
+
+    // สร้างกราฟสำหรับผลลัพธ์
+    const ctx = document.getElementById('results-chart').getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(79, 57, 250, 0.8)');
+    gradient.addColorStop(1, 'rgba(218, 98, 196, 0.8)');
+
+    // ลบกราฟเดิมถ้ามี
+    if (window.resultsChart) {
+        window.resultsChart.destroy();
+    }
+
+    window.resultsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(results),
+            datasets: [{
+                label: 'คะแนน',
+                data: Object.values(results),
+                backgroundColor: gradient,
+                borderColor: 'rgba(79, 57, 250, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.7)'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.7)'
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // คำนวณจำนวนสิทธิ์ทั้งหมด (จำนวนผู้มีสิทธิ์ × จำนวนสิทธิ์ต่อคน)
+    const votedCount = votes.length;
+    const totalVoters = voters.length;
+    const totalVotes = totalVoters * settings.maxVotesPerUser;
+
+    // อัปเดตการแสดงผลในหน้าเว็บ (เปลี่ยนจาก "จำนวนผู้มีสิทธิ์" เป็น "จำนวนสิทธิ์")
+    document.querySelector('.flex.space-x-4 div:first-child p:first-child').textContent = "จำนวนสิทธิ์";
+    document.getElementById('voted-count').textContent = votedCount;
+    document.getElementById('total-voters').textContent = totalVotes;
+
+    const percentage = totalVotes > 0 ? ((votedCount / totalVotes) * 100).toFixed(1) : '0.0';
+    document.getElementById('vote-percentage').textContent = `${percentage}%`;
+    document.getElementById('vote-progress').style.width = `${percentage}%`;
+
+    // แสดงประวัติการโหวตถ้าเปิดใช้งาน
+    if (settings.showHistory) {
+        const history = document.getElementById('vote-history');
+        history.innerHTML = '';
+
+        if (votes.length === 0) {
+            history.innerHTML = '<tr><td colspan="3" class="px-4 py-2 text-center">ยังไม่มีประวัติการโหวต</td></tr>';
+        } else {
+            votes.slice().reverse().forEach(v => {
+                const row = document.createElement('tr');
+                row.className = 'bg-opacity-30 hover:bg-opacity-50 hover:bg-blue-900 transition';
+                row.innerHTML = `
+                    <td class='px-4 py-2'>${formatDate(v.timestamp)} น.</td>
+                    <td class="px-4 py-2">${v.displayName}</td>
+                    <td class='px-4 py-2'>${v.choice}</td>
+                `;
+                history.appendChild(row);
+            });
+        }
+    }
+
+    // สร้างและแสดงแถบผลลัพธ์
+    const resultsContainer = document.getElementById('results-container');
+    resultsContainer.innerHTML = '';
+
+    const sortedCandidates = Object.entries(results)
+        .sort((a, b) => b[1] - a[1])
+        .map(([name, votes]) => ({ name, votes }));
+
+    const totalActualVotes = votes.length;
+
+    sortedCandidates.forEach((candidate, index) => {
+        const percentage = totalActualVotes > 0 ? ((candidate.votes / totalActualVotes) * 100).toFixed(1) : 0;
+
+        // ค้นหาข้อมูลผู้สมัคร
+        const candidateData = candidates.find(c => c.name === candidate.name);
+
+        // สร้างรูปภาพหรืออวตาร
+        let imageContent;
+        if (candidateData && candidateData.image && candidateData.image.trim() !== "") {
+            imageContent = `<img src="${candidateData.image}" class="w-full h-full rounded-full border border-blue-400" alt="${candidate.name}">`;
+        } else {
+            imageContent = generateAvatar(candidate.name);
+        }
+
+        const resultEl = document.createElement('div');
+        resultEl.className = 'flex items-center';
+        resultEl.innerHTML = `
+            <div class="w-8 h-8 mr-2 flex-shrink-0">
+                ${imageContent}
+            </div>
+            <div class="flex-grow">
+                <div class="flex justify-between mb-1">
+                    <span>${candidate.name}</span>
+                    <span>${candidate.votes} โหวต (${percentage}%)</span>
+                </div>
+                <div class="w-full bg-gray-700 rounded-full h-2.5">
+                    <div class="h-2.5 rounded-full progress-bar" style="width: ${percentage}%"></div>
+                </div>
+            </div>
+        `;
+        resultsContainer.appendChild(resultEl);
+    });
+}
+
+    // เปิด Modal ยืนยันการโหวต
+    function openVoteModal(candidateName) {
+        document.getElementById('selected-candidate-name').textContent = candidateName;
+        document.getElementById('vote-modal').classList.remove('hidden');
+        window.selectedCandidate = candidateName;
+    }
+
+    // ฟอร์แมตวันที่สำหรับการแสดงผล
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+
+        return date.toLocaleString('th-TH', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+    }
+
+    // แสดงข้อความแจ้งเตือนข้อผิดพลาด
+    function showError(message) {
+        const el = document.getElementById('error-container');
+        document.getElementById('error-message').textContent = message;
+        el.classList.remove('hidden');
+        setTimeout(() => el.classList.add('hidden'), 4000);
+    }
+
+    // ส่งข้อความไปยัง LINE
+    function sendText(text) {
+        if (!liff.isInClient()) {
+            shareTargetPicker(text);
+        } else {
+            sendflex(text);
+        }
+    }
+
+    // ส่ง Flex Message ไปยัง LINE
+    function sendflex(text) {
+        liff.sendMessages(text).then(function () {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'ส่งเข้าแชทเรียบร้อย',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }).catch(function(error) {
+            console.error("ส่งข้อความไม่สำเร็จ:", error);
+        });
+    }
+
+    // ใช้ Target Picker สำหรับ External Browser
+    function shareTargetPicker(text) {
+        liff.shareTargetPicker(text).then(function (res) {
+            if (res) {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'ส่งเข้าแชทเรียบร้อย',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else {
+                console.log("TargetPicker was closed!");
+            }
+        }).catch(function (error) {
+            console.error("Failed to send message:", error);
+            showError("ไม่สามารถส่งข้อความได้: " + error.message);
+        });
+    }
+
+    // ส่งการโหวต
+    async function submitVote() {
+        try {
+            document.getElementById('vote-modal').classList.add('hidden');
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('loading-text').textContent = 'กำลังบันทึกการโหวต...';
+
+            const voteData = {
+                userId: window.userId,
+                displayName: window.displayName,
+                pictureUrl: window.pictureUrl || '',
+                choice: window.selectedCandidate
+            };
+
+            const res = await fetch(`${scriptUrl}?action=vote`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `data=${encodeURIComponent(JSON.stringify(voteData))}`
+            });
+
+            const result = await res.json();
+
+            if (result.success) {
+                let flexMessage;
+                try {
+                    flexMessage = JSON.parse(result.body);
+                    
+                    if (!flexMessage || typeof flexMessage !== "object") {
+                        throw new Error("รูปแบบ Flex Message ไม่ถูกต้อง");
+                    }
+                    
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('success-modal').classList.remove('hidden');
+
+                    // อัปเดตสถานะผู้ใช้
+                    let remainingMsg = '';
+                    if (result.remainingVotes > 0) {
+                        remainingMsg = ` (เหลือสิทธิ์อีก ${result.remainingVotes} ครั้ง)`;
+                    }
+                    
+                    document.getElementById('user-status').textContent = `โหวตแล้ว${remainingMsg}`;
+                    document.getElementById('user-status').classList.remove("text-blue-300");
+                    document.getElementById('user-status').classList.add("text-yellow-300");
+                    
+                    fetchData();
+                    
+                    // ส่ง Flex Message ไปยัง LINE ถ้าอยู่ใน LIFF
+                    if (liff.isInClient()) {
+                        sendText([flexMessage]);
+                    }
+                } catch (e) {
+                    console.error("การแปลง Flex Message ล้มเหลว:", e);
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('success-modal').classList.remove('hidden');
+                    fetchData();
+                }
+            } else {
+                showError(result.message || 'เกิดข้อผิดพลาด');
+                document.getElementById('loading').style.display = 'none';
+            }
+        } catch (e) {
+            showError('ส่งข้อมูลไม่สำเร็จ: ' + e.message);
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+
+    // สร้างเอฟเฟคดาวกระพริบ
+    function createStars() {
+        for (let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.width = `${Math.random() * 3 + 1}px`;
+            star.style.height = star.style.width;
+            star.style.left = `${Math.random() * 100}vw`;
+            star.style.top = `${Math.random() * 100}vh`;
+            star.style.animationDelay = `${Math.random() * 2}s`;
+            document.body.appendChild(star);
+        }
+    }
+
+    // ตั้งค่า Event Listeners
+    function setupEventListeners() {
+        // ปุ่มยกเลิกการโหวต
+        document.getElementById('cancel-vote').addEventListener('click', () => {
+            document.getElementById('vote-modal').classList.add('hidden');
+        });
+
+        // ปุ่มยืนยันการโหวต
+        document.getElementById('confirm-vote').addEventListener('click', submitVote);
+
+        // ปุ่มปิด Modal สำเร็จ
+        document.getElementById('close-success').addEventListener('click', () => {
+            document.getElementById('success-modal').classList.add('hidden');
+        });
+
+        // ปุ่มปิด Modal ไม่มีสิทธิ์
+        document.getElementById('close-unauthorized').addEventListener('click', () => {
+            document.getElementById('unauthorized-modal').classList.add('hidden');
+        });
+    }
+
+    // เพิ่มโค้ดนี้ที่ส่วนท้ายของฟังก์ชัน initLIFF หรือหลังจาก fetchData() ครั้งแรก
+function setupAutoRefresh() {
+    // โหลดข้อมูลใหม่ทุก 120 วินาที
+    const refreshInterval = 120000; // 120 วินาที
+    setInterval(fetchData, refreshInterval);
+    console.log("Auto refresh set up - will refresh every 30 seconds");
+}
+      
+    // เริ่มต้นการทำงานของ LIFF
+    async function initLIFF() {
+        document.getElementById('loading-text').textContent = "กำลังเชื่อมต่อกับ LINE...";
+
+        try {
+            // ตรวจสอบว่าเราถูกเรียกจาก URL parameter หรือไม่
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirected = urlParams.get('redirected');
+            
+            await liff.init({
+                liffId: liffId
+            });
+
+            if (!liff.isLoggedIn()) {
+                // ถ้าใช้ redirect เราไม่ควรมีการ redirect ซ้ำซ้อน
+                if (redirected === 'true') {
+                    showError('ไม่สามารถเข้าสู่ระบบได้ กรุณาลองใหม่อีกครั้ง');
+                    return;
+                }
+                
+                // เราไม่ได้ login, ส่ง redirect URL กลับไปที่ redirect page
+                const currentUrl = encodeURIComponent(window.location.href + '?redirected=true');
+                window.location.href = `https://liff.line.me/${liffId}?url=${currentUrl}`;
+                return;
+            }
+
+            // ตรวจสอบความเป็นเพื่อน
+            try {
+                const friendship = await liff.getFriendship();
+                if (!friendship.friendFlag) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เดี๋ยวก่อน!',
+                        text: 'คุณยังไม่ได้เป็นเพื่อนกับเรา',
+                        confirmButtonText: 'เพิ่มเพื่อน',
+                    }).then(() => {
+                        window.location = 'https://line.me/R/ti/p/@hqg1050l';
+                    });
+                    return;
+                }
+            } catch (friendError) {
+                console.warn("ไม่สามารถตรวจสอบความเป็นเพื่อนได้:", friendError);
+                // ดำเนินการต่อแม้ว่าจะตรวจสอบไม่ได้
+            }
+
+            // รับข้อมูลโปรไฟล์
+            const profile = await liff.getProfile();
+            document.getElementById('user-name').textContent = profile.displayName;
+            document.getElementById('user-picture').src = profile.pictureUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.displayName)}&background=random&color=fff`;
+            document.getElementById('user-info').classList.remove('hidden');
+            
+            window.userId = profile.userId;
+            window.displayName = profile.displayName;
+            window.pictureUrl = profile.pictureUrl;
+            
+            // โหลดข้อมูลการโหวต
+            fetchData();
+            
+        } catch (error) {
+            console.error('LIFF initialization failed', error);
+            showError('ไม่สามารถเชื่อมต่อกับ LINE ได้: ' + error.message);
+            
+            // โหมดทดสอบสำหรับกรณีที่ไม่ได้ทำงานใน LIFF
+            window.userId = 'test-user-id';
+            window.displayName = 'ผู้ใช้ทดสอบ';
+            document.getElementById('user-name').textContent = window.displayName;
+            document.getElementById('user-picture').src = 'https://ui-avatars.com/api/?name=T&background=random&color=fff';
+            document.getElementById('user-info').classList.remove('hidden');
+            fetchData();
+        }
+      
+      // โหลดข้อมูลการโหวต
+    await fetchData();
+    
+    // ตั้งค่าการโหลดข้อมูลอัตโนมัติ
+    setupAutoRefresh();
+      
+    }
+
+    // เริ่มต้นแอปพลิเคชัน
+    window.onload = () => {
+        createStars();
+        setupEventListeners();
+        initLIFF();
+    };
+    </script>
+</body>
+
+</html>
