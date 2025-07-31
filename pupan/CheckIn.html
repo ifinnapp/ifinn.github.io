@@ -269,7 +269,7 @@
             </div>
 
             <!-- Activities -->
-            <h3 class="text-lg font-medium text-gray-200 mb-4">จุดที่ต้องตรวจเช็ค</h3>
+            <h3 class="text-lg font-medium text-gray-200 mb-4">จุดที่ต้องตรวจ</h3>
             <div id="activitiesList" class="space-y-4">
                 <!-- โหลดกิจกรรม -->
                 <div class="text-center py-8 text-gray-500">
@@ -310,7 +310,7 @@
             <!-- Stats Cards -->
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div class="card rounded-xl p-4">
-                    <p class="text-gray-400 text-sm mb-1">ตรวจเช็คแล้ว</p>
+                    <p class="text-gray-400 text-sm mb-1">ตรวจจุดแล้ว</p>
                     <p class="text-2xl font-bold text-yellow-400" id="checkedInCount">0</p>
                     <p class="text-xs text-gray-500">จากทั้งหมด <span id="totalCount">0</span> คน</p>
                 </div>
@@ -575,7 +575,7 @@
             if (nextAvailableActivity) {
                 checkInTimeEl.textContent = nextAvailableActivity.time;
             } else {
-                checkInTimeEl.textContent = activities.every(a => a.checkedIn) ? "ตรวจเช็คครบแล้ว" : "จุดตรวจปิดแล้ว";
+                checkInTimeEl.textContent = activities.every(a => a.checkedIn) ? "ตรวจจุดครบแล้ว" : "จุดตรวจปิดแล้ว";
             }
             
             const lastCheckedIn = activities.filter(a => a.checkedIn).pop();
@@ -590,7 +590,7 @@
                 card.style.animationDelay = `${0.3 + (index * 0.1)}s`;
                 
                 if (activity.checkedIn) {
-                    card.innerHTML = `<div class="flex justify-between items-start mb-3"><h3 class="text-lg font-medium text-white">${activity.name}</h3><span class="px-3 py-1 rounded-full text-xs font-medium ${activity.status === 'ตรงเวลา' ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'}">${activity.status}</span></div><p class="text-gray-400 text-sm mb-4">เวลาตรวจเช็ค: ${activity.time} น.</p><button class="w-full py-3 rounded-lg flex items-center justify-center bg-gray-700 text-gray-300 cursor-not-allowed" disabled><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>ตรวจเช็คแล้ว</button>`;
+                    card.innerHTML = `<div class="flex justify-between items-start mb-3"><h3 class="text-lg font-medium text-white">${activity.name}</h3><span class="px-3 py-1 rounded-full text-xs font-medium ${activity.status === 'ตรงเวลา' ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'}">${activity.status}</span></div><p class="text-gray-400 text-sm mb-4">เวลาตรวจจุด: ${activity.time} น.</p><button class="w-full py-3 rounded-lg flex items-center justify-center bg-gray-700 text-gray-300 cursor-not-allowed" disabled><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>ตรวจจุดแล้ว</button>`;
                 } else {
                     const [startHour, startMinute] = activity.time.split(' - ')[0].split(':').map(Number);
                     const [endHour, endMinute] = activity.time.split(' - ')[1].split(':').map(Number);
