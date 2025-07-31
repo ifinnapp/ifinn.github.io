@@ -233,7 +233,7 @@
 
         <!-- Tabs -->
         <div class="flex border-b border-gray-700 mb-6 animate-fadeIn" style="animation-delay: 0.2s;">
-            <button class="tab-btn flex-1 py-3 text-center tab-active" data-tab="checkIn">เช็คชื่อ</button>
+            <button class="tab-btn flex-1 py-3 text-center tab-active" data-tab="checkIn">จุดตรวจ</button>
             <button class="tab-btn flex-1 py-3 text-center text-gray-400" data-tab="history">ประวัติ</button>
             <button class="tab-btn flex-1 py-3 text-center text-gray-400" data-tab="dashboard">แดชบอร์ด</button>
         </div>
@@ -244,11 +244,11 @@
             <div class="card rounded-xl p-5 mb-6">
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="text-lg font-medium text-gray-200">สถานะวันนี้</h3>
-                    <span id="statusBadge" class="px-3 py-1 rounded-full text-xs font-medium bg-gray-700 text-gray-300">รอเช็คชื่อ</span>
+                    <span id="statusBadge" class="px-3 py-1 rounded-full text-xs font-medium bg-gray-700 text-gray-300">รอเช็คจุดตรวจ</span>
                 </div>
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-400 text-sm">เวลาเช็คชื่อ</p>
+                        <p class="text-gray-400 text-sm">เวลาเช็คจุดตรวจ</p>
                         <p class="text-xl font-bold text-yellow-400" id="checkInTime">--:--</p>
                     </div>
                     <div class="text-right">
@@ -269,7 +269,7 @@
             </div>
 
             <!-- Activities -->
-            <h3 class="text-lg font-medium text-gray-200 mb-4">กิจกรรมที่เปิดให้เช็คชื่อ</h3>
+            <h3 class="text-lg font-medium text-gray-200 mb-4">จุดที่ต้องตรวจเช็ค</h3>
             <div id="activitiesList" class="space-y-4">
                 <!-- โหลดกิจกรรม -->
                 <div class="text-center py-8 text-gray-500">
@@ -283,7 +283,7 @@
 
         <!-- History -->
         <div id="historyTab" class="tab-content hidden animate-fadeIn">
-            <h3 class="text-lg font-medium text-gray-200 mb-4">ประวัติการเช็คชื่อ (7 วันล่าสุด)</h3>
+            <h3 class="text-lg font-medium text-gray-200 mb-4">ประวัติการเช็คจุดตรวจ (7 วันล่าสุด)</h3>
             <div id="historyList" class="space-y-4">
                 <div class="text-center py-8 text-gray-500">
                     <svg class="w-16 h-16 mx-auto text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,7 +310,7 @@
             <!-- Stats Cards -->
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div class="card rounded-xl p-4">
-                    <p class="text-gray-400 text-sm mb-1">เช็คชื่อแล้ว</p>
+                    <p class="text-gray-400 text-sm mb-1">ตรวจเช็คแล้ว</p>
                     <p class="text-2xl font-bold text-yellow-400" id="checkedInCount">0</p>
                     <p class="text-xs text-gray-500">จากทั้งหมด <span id="totalCount">0</span> คน</p>
                 </div>
@@ -325,7 +325,7 @@
             
             <!-- Status -->
             <div class="card rounded-xl p-5 mb-6">
-                <h4 class="text-md font-medium text-gray-200 mb-3">สถานะการเช็คชื่อ</h4>
+                <h4 class="text-md font-medium text-gray-200 mb-3">สถานะการเช็คจุดตรวจ</h4>
                 <div class="space-y-3">
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-300">ตรงเวลา</span>
@@ -393,7 +393,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-1" id="successTitle">เช็คชื่อสำเร็จ!</h3>
+                <h3 class="text-xl font-bold text-white mb-1" id="successTitle">เช็คจุดตรวจสำเร็จ!</h3>
                 <p class="text-gray-400 mb-2" id="successActivity">-</p>
                 <p class="text-yellow-400 font-medium mb-6" id="successTime">-</p>
                 <p class="text-gray-300 text-sm mb-6" id="successStatus">สถานะ: ตรงเวลา</p>
@@ -551,7 +551,7 @@
             activitiesList.innerHTML = '';
             
             if (activities.length === 0) {
-                activitiesList.innerHTML = `<div class="text-center py-8 text-gray-500"><svg class="w-16 h-16 mx-auto text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg><p class="mt-4">ไม่มีกิจกรรมที่เปิดให้เช็คชื่อในขณะนี้</p></div>`;
+                activitiesList.innerHTML = `<div class="text-center py-8 text-gray-500"><svg class="w-16 h-16 mx-auto text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg><p class="mt-4">ไม่มีจุดตรวจที่เปิดให้ตรวจเช็คในขณะนี้</p></div>`;
                 checkInTimeEl.textContent = "ไม่มีกิจกรรม";
                 progressText.textContent = "0/0";
                 dailyProgressBar.style.width = "0%";
@@ -575,7 +575,7 @@
             if (nextAvailableActivity) {
                 checkInTimeEl.textContent = nextAvailableActivity.time;
             } else {
-                checkInTimeEl.textContent = activities.every(a => a.checkedIn) ? "เช็คชื่อครบแล้ว" : "กิจกรรมปิดแล้ว";
+                checkInTimeEl.textContent = activities.every(a => a.checkedIn) ? "ตรวจเช็คครบแล้ว" : "จุดตรวจปิดแล้ว";
             }
             
             const lastCheckedIn = activities.filter(a => a.checkedIn).pop();
@@ -590,7 +590,7 @@
                 card.style.animationDelay = `${0.3 + (index * 0.1)}s`;
                 
                 if (activity.checkedIn) {
-                    card.innerHTML = `<div class="flex justify-between items-start mb-3"><h3 class="text-lg font-medium text-white">${activity.name}</h3><span class="px-3 py-1 rounded-full text-xs font-medium ${activity.status === 'ตรงเวลา' ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'}">${activity.status}</span></div><p class="text-gray-400 text-sm mb-4">เวลาเช็คชื่อ: ${activity.time} น.</p><button class="w-full py-3 rounded-lg flex items-center justify-center bg-gray-700 text-gray-300 cursor-not-allowed" disabled><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>เช็คชื่อแล้ว</button>`;
+                    card.innerHTML = `<div class="flex justify-between items-start mb-3"><h3 class="text-lg font-medium text-white">${activity.name}</h3><span class="px-3 py-1 rounded-full text-xs font-medium ${activity.status === 'ตรงเวลา' ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'}">${activity.status}</span></div><p class="text-gray-400 text-sm mb-4">เวลาตรวจเช็ค: ${activity.time} น.</p><button class="w-full py-3 rounded-lg flex items-center justify-center bg-gray-700 text-gray-300 cursor-not-allowed" disabled><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>ตรวจเช็คแล้ว</button>`;
                 } else {
                     const [startHour, startMinute] = activity.time.split(' - ')[0].split(':').map(Number);
                     const [endHour, endMinute] = activity.time.split(' - ')[1].split(':').map(Number);
@@ -604,17 +604,17 @@
                     if (isPast) {
                         statusText = 'หมดเวลา';
                         statusClass = 'bg-red-900 text-red-300';
-                        buttonHtml = `<button class="w-full py-3 rounded-lg flex items-center justify-center bg-gray-700 text-gray-300 cursor-not-allowed" disabled><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>ขาดการเช็คชื่อ</button>`;
+                        buttonHtml = `<button class="w-full py-3 rounded-lg flex items-center justify-center bg-gray-700 text-gray-300 cursor-not-allowed" disabled><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>ขาดการตรวจจุด</button>`;
                     } else if (isActive) {
-                        statusText = 'เปิดให้เช็คชื่อ';
+                        statusText = 'เปิดให้ตรวจจุด';
                         statusClass = 'bg-green-900 text-green-300';
-                        buttonHtml = `<button class="check-in-btn btn-gradient w-full py-3 rounded-lg flex items-center justify-center" data-activity-id="${activity.id}" data-activity-name="${activity.name}"><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>สแกน QR Code เพื่อเช็คชื่อ</button>`;
+                        buttonHtml = `<button class="check-in-btn btn-gradient w-full py-3 rounded-lg flex items-center justify-center" data-activity-id="${activity.id}" data-activity-name="${activity.name}"><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>สแกน QR Code เพื่อเช็คอิน</button>`;
                     } else {
                         statusText = 'ยังไม่เปิด';
                         statusClass = 'bg-gray-700 text-gray-400';
                         buttonHtml = `<button class="w-full py-3 rounded-lg flex items-center justify-center bg-gray-800 text-gray-500 cursor-not-allowed" disabled><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>ยังไม่ถึงเวลา</button>`;
                     }
-                    card.innerHTML = `<div class="flex justify-between items-start mb-3"><h3 class="text-lg font-medium text-white">${activity.name}</h3><span class="px-3 py-1 rounded-full text-xs font-medium ${statusClass}">${statusText}</span></div><p class="text-gray-400 text-sm mb-4">เวลาเช็คชื่อ: ${activity.time} น.</p>${buttonHtml}`;
+                    card.innerHTML = `<div class="flex justify-between items-start mb-3"><h3 class="text-lg font-medium text-white">${activity.name}</h3><span class="px-3 py-1 rounded-full text-xs font-medium ${statusClass}">${statusText}</span></div><p class="text-gray-400 text-sm mb-4">เวลาตรวจจุด: ${activity.time} น.</p>${buttonHtml}`;
                 }
                 activitiesList.appendChild(card);
             });
@@ -633,7 +633,7 @@
             historyList.innerHTML = '';
             
             if (historyData.length === 0) {
-                historyList.innerHTML = `<div class="text-center py-8 text-gray-500"><svg class="w-16 h-16 mx-auto text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><p class="mt-4">ไม่มีประวัติการเช็คชื่อ</p></div>`;
+                historyList.innerHTML = `<div class="text-center py-8 text-gray-500"><svg class="w-16 h-16 mx-auto text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><p class="mt-4">ไม่มีประวัติการตรวจจุด</p></div>`;
                 return;
             }
             
@@ -649,7 +649,7 @@
                     statusClass = 'bg-red-900 text-red-300';
                 }
                 
-                card.innerHTML = `<div class="flex justify-between items-start"><div><p class="text-sm text-gray-400">${formatDate(item.date)}</p><h4 class="text-md font-medium text-white mt-1">${item.activity}</h4><p class="text-sm text-yellow-400 mt-1">${item.time !== '-' ? 'เวลาเช็คชื่อ: ' + item.time + ' น.' : 'ไม่ได้เช็คชื่อ'}</p></div><span class="px-3 py-1 rounded-full text-xs font-medium ${statusClass}">${item.status}</span></div>`;
+                card.innerHTML = `<div class="flex justify-between items-start"><div><p class="text-sm text-gray-400">${formatDate(item.date)}</p><h4 class="text-md font-medium text-white mt-1">${item.activity}</h4><p class="text-sm text-yellow-400 mt-1">${item.time !== '-' ? 'เวลาตรวจจุด: ' + item.time + ' น.' : 'ไม่ได้ตรวจจุด'}</p></div><span class="px-3 py-1 rounded-full text-xs font-medium ${statusClass}">${item.status}</span></div>`;
                 historyList.appendChild(card);
             });
         }
@@ -839,7 +839,7 @@
                 }
             } catch (error) {
                 hideLoading();
-                showError('เช็คชื่อไม่สำเร็จ', error.message || 'กรุณาลองใหม่อีกครั้ง');
+                showError('ตรวจจุดไม่สำเร็จ', error.message || 'กรุณาลองใหม่อีกครั้ง');
             }
         }
 
@@ -847,7 +847,7 @@
             const statusColor = status === 'ตรงเวลา' ? '#1DB446' : '#FFC107';
             return {
                 "type": "flex",
-                "altText": "การเช็คชื่อ",
+                "altText": "การตรวจจุด",
                 "contents": {
                     "type": "bubble",
                     "hero": {
@@ -880,7 +880,7 @@
                         "contents": [
                             {
                                 "type": "text",
-                                "text": "รายละเอียดการเช็คชื่อ",
+                                "text": "รายละเอียดการตรวจจุด",
                                 "size": "sm",
                                 "weight": "bold",
                                 "color": "#aaaaaa"
@@ -893,7 +893,7 @@
                                 "margin": "lg",
                                 "contents": [
                                     { "type": "box", "layout": "horizontal", "contents": [ { "type": "text", "text": "กิจกรรม:", "flex": 1, "color": "#aaaaaa", "size": "sm" }, { "type": "text", "text": activityName, "flex": 2,"color": "#ffffff", "wrap": true, "weight": "bold", "align": "end", "size": "sm" } ] },
-                                    { "type": "box", "layout": "horizontal", "contents": [ { "type": "text", "text": "ผู้เช็คชื่อ:", "flex": 1, "color": "#aaaaaa", "size": "sm" }, { "type": "text", "text": userName, "flex": 2,"color": "#ffffff", "wrap": true, "weight": "bold", "align": "end", "size": "sm" } ] },
+                                    { "type": "box", "layout": "horizontal", "contents": [ { "type": "text", "text": "ผู้ตรวจจุด:", "flex": 1, "color": "#aaaaaa", "size": "sm" }, { "type": "text", "text": userName, "flex": 2,"color": "#ffffff", "wrap": true, "weight": "bold", "align": "end", "size": "sm" } ] },
                                     { "type": "box", "layout": "horizontal", "contents": [ { "type": "text", "text": "เวลา:", "flex": 1, "color": "#aaaaaa", "size": "sm" }, { "type": "text", "text": checkInTime, "flex": 2,"color": "#ffffff", "wrap": true, "weight": "bold", "align": "end", "size": "sm" } ] },
                                     { "type": "box", "layout": "horizontal", "contents": [ { "type": "text", "text": "สถานะ:", "flex": 1, "color": "#aaaaaa", "size": "sm" }, { "type": "text", "text": status, "flex": 2, "wrap": true, "weight": "bold", "align": "end", "size": "sm", "color": statusColor } ] }
                                 ]
