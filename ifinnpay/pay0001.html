@@ -453,7 +453,7 @@
                 const submissionData = await prepareSubmissionData(formData);
 
                 showStatus('กำลังอัพโหลดข้อมูล...', 40);
-                const result = await submitData(submissionData);
+                const result = await submitDataWithRetry(submissionData); // เปลี่ยนเป็น submitDataWithRetry
 
                 showStatus('กำลังส่งข้อความ...', 80);
                 await sendLineNotification(submissionData, result.imageUrl);
@@ -486,6 +486,52 @@
 
             return true;
         }
+
+async function submitDataWithRetry(data) {
+   const maxRetries = 3;
+   
+   for (let attempt = 1; attempt <= maxRetries; attempt++) {
+       try {
+           showStatus(`กำลังส่งข้อมูล... (ครั้งที่ ${attempt})`, 40 + (attempt * 5));
+           
+           const formData = {
+               userId: data.userId,
+               transferDate: data.transferDate,
+               name: data.name,
+               contractChannel: 'สำนักงานใหญ่',
+               serviceType: data.serviceType,
+               amount: data.amount,
+               bankAccount: data.bankAccount,
+               image: data.image.split(',')[1]
+           };
+
+           const response = await fetch(CONFIG.SCRIPT_URL, {
+               method: 'POST',
+               body: new URLSearchParams(formData)
+           });
+
+           const result = await response.json();
+           if (result.result !== 'success') {
+               throw new Error(result.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+           }
+           return result;
+           
+       } catch (error) {
+           console.error(`Attempt ${attempt} failed:`, error);
+           
+           if (attempt === maxRetries) {
+               // หากลองครั้งสุดท้ายแล้วยังไม่ได้ ให้แสดงข้อความเฉพาะสำหรับ True move
+               if (error.message.includes('fetch') || error.name === 'TypeError') {
+                   throw new Error('ไม่สามารถส่งข้อมูลได้ กรุณาลองเปลี่ยนเครือข่าย (เช่น จาก True เป็น AIS หรือใช้ WiFi)');
+               }
+               throw error;
+           }
+           
+           // รอ 2 วินาทีก่อนลองใหม่
+           await new Promise(resolve => setTimeout(resolve, 2000));
+       }
+   }
+}
 
 async function prepareSubmissionData(formData) {
     const file = formData.get('evidence');
