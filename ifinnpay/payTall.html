@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,8 +26,8 @@
         }
         .loading-spinner {
             position: absolute;
-            width: 100px; /* ขนาดของ spinner /
-            height: 100px; / ขนาดของ spinner */
+            width: 100px;
+            height: 100px;
             animation: spin 1s linear infinite;
         }
         .text-container {
@@ -61,6 +61,10 @@
                     .5em 0 0 black;
             }
         }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -75,21 +79,91 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
         $(document).ready(function() {
+            // รับ URL parameters หลายแหล่ง
             var params = new URL(document.location).searchParams;
+            var targetUrl = null;
+            
+            // วิธีที่ 1: จาก URL parameter
+            targetUrl = params.get("url");
+            
             liff.init({
                 liffId: "1661371622-0pZDWJqj",
             }).then(() => {
                 if (liff.isInClient()) {
+                    // วิธีที่ 2: จาก liff.state (สำหรับ LIFF v2)
+                    if (!targetUrl && liff.getContext && liff.getContext().state) {
+                        try {
+                            var stateData = JSON.parse(liff.getContext().state);
+                            targetUrl = stateData.url;
+                        } catch (e) {
+                            targetUrl = liff.getContext().state;
+                        }
+                    }
+                    
+                    // วิธีที่ 3: จาก hash fragment
+                    if (!targetUrl && window.location.hash) {
+                        var hashParams = new URLSearchParams(window.location.hash.substring(1));
+                        targetUrl = hashParams.get("url");
+                    }
+                    
+                    // วิธีที่ 4: จาก LIFF permanent link state
+                    if (!targetUrl && liff.permanentLink && liff.permanentLink.state) {
+                        try {
+                            var linkState = JSON.parse(liff.permanentLink.state);
+                            targetUrl = linkState.url;
+                        } catch (e) {
+                            targetUrl = liff.permanentLink.state;
+                        }
+                    }
+                    
                     if (liff.getOS() == "ios" || liff.getOS() == "android" || liff.getOS() == "web") {
-                        var key = params.get("url");
-                        window.location.replace(key);
+                        if (targetUrl) {
+                            // ลอง redirect หลายวิธี
+                            try {
+                                window.location.replace(targetUrl);
+                            } catch (e) {
+                                try {
+                                    window.location.href = targetUrl;
+                                } catch (e2) {
+                                    // Fallback: แสดงลิงก์ให้คลิก
+                                    document.querySelector('.loading-container').innerHTML = 
+                                        '<div class="text-center p-4">' +
+                                        '<p class="text-lg font-medium text-gray-900 mb-4">กรุณาคลิกที่ลิงก์ด้านล่าง</p>' +
+                                        '<a href="' + targetUrl + '" class="inline-block bg-green-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-600 transition-colors">เข้าสู่ระบบ</a>' +
+                                        '</div>';
+                                }
+                            }
+                        } else {
+                            // ไม่พบ URL ปลายทาง
+                            document.querySelector('.loading-container').innerHTML = 
+                                '<div class="text-center p-4">' +
+                                '<p class="text-lg font-medium text-red-600 mb-4">ไม่พบ URL ปลายทาง</p>' +
+                                '<p class="text-sm text-gray-600">กรุณาลองใหม่อีกครั้ง</p>' +
+                                '<button onclick="location.reload()" class="mt-3 bg-blue-500 text-white px-4 py-2 rounded">ลองใหม่</button>' +
+                                '</div>';
+                        }
                     } else {
                         setTimeout(function() {
                             liff.closeWindow();
                         }, 3000);
                     }
+                } else {
+                    // ไม่ได้อยู่ใน LINE App
+                    document.querySelector('.loading-container').innerHTML = 
+                        '<div class="text-center p-4">' +
+                        '<p class="text-lg font-medium text-red-600 mb-4">กรุณาเปิดใน LINE App</p>' +
+                        '</div>';
                 }
-            }).catch((err) => {});
+            }).catch((err) => {
+                console.error('LIFF Error:', err);
+                // แสดงข้อผิดพลาด
+                document.querySelector('.loading-container').innerHTML = 
+                    '<div class="text-center p-4">' +
+                    '<p class="text-lg font-medium text-red-600 mb-4">เกิดข้อผิดพลาด</p>' +
+                    '<p class="text-sm text-gray-600 mb-3">ไม่สามารถเชื่อมต่อกับ LINE ได้</p>' +
+                    '<button onclick="location.reload()" class="bg-blue-500 text-white px-4 py-2 rounded">ลองใหม่</button>' +
+                    '</div>';
+            });
         });
     </script>
 </body>
