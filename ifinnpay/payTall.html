@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,8 +26,8 @@
         }
         .loading-spinner {
             position: absolute;
-            width: 100px;
-            height: 100px;
+            width: 100px; /* ขนาดของ spinner /
+            height: 100px; / ขนาดของ spinner */
             animation: spin 1s linear infinite;
         }
         .text-container {
@@ -36,12 +36,6 @@
         }
         .dot {
             animation: dots 1s steps(5, end) infinite;
-        }
-        .error-text {
-            color: #ef4444;
-            font-size: 14px;
-            margin-top: 10px;
-            display: none;
         }
         @keyframes dots {
             0%, 20% {
@@ -67,18 +61,13 @@
                     .5em 0 0 black;
             }
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
     <div class="loading-container">
         <div class="text-container">
-            <p class="text-lg font-medium text-gray-900" id="statusText">โปรดรอ</p>
+            <p class="text-lg font-medium text-gray-900">โปรดรอ</p>
             <p class="text-lg font-medium text-gray-900">สักครู่.<span class="dot">..</span></p>
-            <p class="error-text" id="errorText"></p>
         </div>
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 loading-spinner"></div>
     </div>
@@ -87,60 +76,20 @@
     <script>
         $(document).ready(function() {
             var params = new URL(document.location).searchParams;
-            
-            // เพิ่ม timeout หากใช้เวลานานเกินไป
-            setTimeout(function() {
-                var userAgent = navigator.userAgent.toLowerCase();
-                if (userAgent.includes('true') || userAgent.includes('truemove')) {
-                    document.getElementById('statusText').textContent = 'เกิดปัญหาการเชื่อมต่อ';
-                    document.getElementById('errorText').textContent = 'ผู้ใช้เครือข่าย True move กรุณาเปลี่ยนไปใช้ WiFi หรือเครือข่าย AIS/dtac';
-                    document.getElementById('errorText').style.display = 'block';
-                } else {
-                    document.getElementById('statusText').textContent = 'การเชื่อมต่อใช้เวลานานเกินไป';
-                    document.getElementById('errorText').textContent = 'กรุณาลองใหม่อีกครั้ง';
-                    document.getElementById('errorText').style.display = 'block';
-                }
-            }, 10000); // 10 วินาที
-            
             liff.init({
                 liffId: "1661371622-0pZDWJqj",
             }).then(() => {
                 if (liff.isInClient()) {
                     if (liff.getOS() == "ios" || liff.getOS() == "android" || liff.getOS() == "web") {
                         var key = params.get("url");
-                        
-                        // ลอง redirect หลายวิธี
-                        try {
-                            window.location.replace(key);
-                        } catch (e) {
-                            try {
-                                window.location.href = key;
-                            } catch (e2) {
-                                // แสดงลิงก์ให้คลิกเอง
-                                document.querySelector('.loading-container').innerHTML = 
-                                    '<div class="text-center p-4">' +
-                                    '<p class="text-lg font-medium text-gray-900 mb-4">กรุณาคลิกที่ลิงก์ด้านล่าง</p>' +
-                                    '<a href="' + key + '" class="inline-block bg-green-500 text-white px-6 py-3 rounded-lg font-medium">เข้าสู่ระบบ</a>' +
-                                    '</div>';
-                            }
-                        }
+                        window.location.replace(key);
                     } else {
                         setTimeout(function() {
                             liff.closeWindow();
-                        }, 5000); // เพิ่มเป็น 5 วินาที
+                        }, 3000);
                     }
                 }
-            }).catch((err) => {
-                // แสดงข้อผิดพลาด
-                document.getElementById('statusText').textContent = 'ไม่สามารถเชื่อมต่อได้';
-                var userAgent = navigator.userAgent.toLowerCase();
-                if (userAgent.includes('true') || userAgent.includes('truemove')) {
-                    document.getElementById('errorText').textContent = 'ผู้ใช้เครือข่าย True move กรุณาเปลี่ยนเครือข่าย';
-                } else {
-                    document.getElementById('errorText').textContent = 'กรุณาลองใหม่อีกครั้ง';
-                }
-                document.getElementById('errorText').style.display = 'block';
-            });
+            }).catch((err) => {});
         });
     </script>
 </body>
