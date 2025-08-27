@@ -37,11 +37,10 @@
         .dot {
             animation: dots 1s steps(5, end) infinite;
         }
-        .error-message {
+        .error-text {
             color: #ef4444;
             font-size: 14px;
             margin-top: 10px;
-            text-align: center;
             display: none;
         }
         @keyframes dots {
@@ -79,164 +78,69 @@
         <div class="text-container">
             <p class="text-lg font-medium text-gray-900" id="statusText">โปรดรอ</p>
             <p class="text-lg font-medium text-gray-900">สักครู่.<span class="dot">..</span></p>
-            <div class="error-message" id="errorMessage"></div>
+            <p class="error-text" id="errorText"></p>
         </div>
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 loading-spinner"></div>
     </div>
-    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
-        let liffLoaded = false;
-        let redirectTimeout;
-        
-        // ฟังก์ชันแสดงข้อผิดพลาด
-        function showError(message) {
-            document.getElementById('statusText').textContent = 'เกิดข้อผิดพลาด';
-            document.getElementById('errorMessage').textContent = message;
-            document.getElementById('errorMessage').style.display = 'block';
-        }
-        
-        // ฟังก์ชันอัปเดตสถานะ
-        function updateStatus(message) {
-            document.getElementById('statusText').textContent = message;
-        }
-        
-        // ฟังก์ชันการ redirect แบบปลอดภัย
-        function safeRedirect(url) {
-            try {
-                updateStatus('กำลังเปิดหน้าเว็บ...');
-                
-                // ลอง window.location.replace ก่อน
-                setTimeout(() => {
-                    try {
-                        window.location.replace(url);
-                    } catch (e) {
-                        // หากไม่ได้ ลอง window.location.href
-                        try {
-                            window.location.href = url;
-                        } catch (e2) {
-                            // หากยังไม่ได้ ให้ผู้ใช้คลิกเอง
-                            showManualLink(url);
-                        }
-                    }
-                }, 1000);
-            } catch (error) {
-                showManualLink(url);
-            }
-        }
-        
-        // แสดงลิงก์ให้คลิกเอง
-        function showManualLink(url) {
-            document.querySelector('.loading-container').innerHTML = `
-                <div class="text-center p-4">
-                    <p class="text-lg font-medium text-gray-900 mb-4">กรุณาคลิกที่ลิงก์ด้านล่าง</p>
-                    <a href="${url}" class="inline-block bg-green-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-600 transition-colors">
-                        เข้าสู่ระบบ
-                    </a>
-                    <p class="text-sm text-gray-600 mt-4">หากไม่สามารถเข้าได้ กรุณาลองเปลี่ยนเครือข่าย</p>
-                </div>
-            `;
-        }
-        
-        // โหลด LIFF SDK แบบ fallback
-        function loadLiffSDK() {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = 'https://static.line-scdn.net/liff/edge/2/sdk.js';
-                script.onload = () => {
-                    liffLoaded = true;
-                    resolve();
-                };
-                script.onerror = () => {
-                    // ลอง CDN อื่น (ถ้ามี) หรือแสดง error
-                    reject(new Error('ไม่สามารถโหลด LINE LIFF ได้'));
-                };
-                
-                // ตั้ง timeout สำหรับการโหลด script
-                setTimeout(() => {
-                    if (!liffLoaded) {
-                        script.remove();
-                        reject(new Error('โหลด LIFF ใช้เวลานานเกินไป'));
-                    }
-                }, 10000); // 10 วินาที
-                
-                document.head.appendChild(script);
-            });
-        }
-        
-        // ฟังก์ชันหลักเริ่มต้นระบบ
-        async function initializeApp() {
-            try {
-                updateStatus('กำลังเชื่อมต่อ LINE...');
-                
-                // โหลด LIFF SDK
-                await loadLiffSDK();
-                updateStatus('กำลังตรวจสอบสิทธิ์...');
-                
-                const params = new URL(document.location).searchParams;
-                
-                // Initialize LIFF
-                await liff.init({
-                    liffId: "1661371622-0pZDWJqj",
-                });
-                
-                updateStatus('กำลังเตรียมข้อมูล...');
-                
+        $(document).ready(function() {
+            var params = new URL(document.location).searchParams;
+            
+            // เพิ่ม timeout หากใช้เวลานานเกินไป
+            setTimeout(function() {
+                var userAgent = navigator.userAgent.toLowerCase();
+                if (userAgent.includes('true') || userAgent.includes('truemove')) {
+                    document.getElementById('statusText').textContent = 'เกิดปัญหาการเชื่อมต่อ';
+                    document.getElementById('errorText').textContent = 'ผู้ใช้เครือข่าย True move กรุณาเปลี่ยนไปใช้ WiFi หรือเครือข่าย AIS/dtac';
+                    document.getElementById('errorText').style.display = 'block';
+                } else {
+                    document.getElementById('statusText').textContent = 'การเชื่อมต่อใช้เวลานานเกินไป';
+                    document.getElementById('errorText').textContent = 'กรุณาลองใหม่อีกครั้ง';
+                    document.getElementById('errorText').style.display = 'block';
+                }
+            }, 10000); // 10 วินาที
+            
+            liff.init({
+                liffId: "1661371622-0pZDWJqj",
+            }).then(() => {
                 if (liff.isInClient()) {
-                    const os = liff.getOS();
-                    if (os === "ios" || os === "android" || os === "web") {
-                        const key = params.get("url");
-                        if (key) {
-                            safeRedirect(key);
-                        } else {
-                            showError('ไม่พบ URL ปลายทาง');
+                    if (liff.getOS() == "ios" || liff.getOS() == "android" || liff.getOS() == "web") {
+                        var key = params.get("url");
+                        
+                        // ลอง redirect หลายวิธี
+                        try {
+                            window.location.replace(key);
+                        } catch (e) {
+                            try {
+                                window.location.href = key;
+                            } catch (e2) {
+                                // แสดงลิงก์ให้คลิกเอง
+                                document.querySelector('.loading-container').innerHTML = 
+                                    '<div class="text-center p-4">' +
+                                    '<p class="text-lg font-medium text-gray-900 mb-4">กรุณาคลิกที่ลิงก์ด้านล่าง</p>' +
+                                    '<a href="' + key + '" class="inline-block bg-green-500 text-white px-6 py-3 rounded-lg font-medium">เข้าสู่ระบบ</a>' +
+                                    '</div>';
+                            }
                         }
                     } else {
-                        updateStatus('กำลังปิดหน้าต่าง...');
-                        setTimeout(() => {
+                        setTimeout(function() {
                             liff.closeWindow();
-                        }, 5000); // เพิ่มเวลาเป็น 5 วินาที
+                        }, 5000); // เพิ่มเป็น 5 วินาที
                     }
-                } else {
-                    showError('กรุณาเปิดใน LINE App');
                 }
-                
-            } catch (error) {
-                console.error('LIFF Error:', error);
-                let errorMsg = 'ไม่สามารถเข้าสู่ระบบได้';
-                
-                if (error.message.includes('โหลด')) {
-                    errorMsg = 'ปัญหาการเชื่อมต่อ กรุณาลองเปลี่ยนเครือข่าย';
-                } else if (error.message.includes('LIFF')) {
-                    errorMsg = 'ไม่สามารถเชื่อมต่อ LINE ได้';
-                }
-                
-                showError(errorMsg);
-                
-                // หากเป็น True move ให้แนะนำการแก้ไข
-                const userAgent = navigator.userAgent.toLowerCase();
+            }).catch((err) => {
+                // แสดงข้อผิดพลาด
+                document.getElementById('statusText').textContent = 'ไม่สามารถเชื่อมต่อได้';
+                var userAgent = navigator.userAgent.toLowerCase();
                 if (userAgent.includes('true') || userAgent.includes('truemove')) {
-                    setTimeout(() => {
-                        const currentError = document.getElementById('errorMessage').textContent;
-                        document.getElementById('errorMessage').innerHTML = 
-                            currentError + '<br><small>แนะนำ: เปลี่ยนจาก True เป็น AIS/dtac หรือใช้ WiFi</small>';
-                    }, 2000);
+                    document.getElementById('errorText').textContent = 'ผู้ใช้เครือข่าย True move กรุณาเปลี่ยนเครือข่าย';
+                } else {
+                    document.getElementById('errorText').textContent = 'กรุณาลองใหม่อีกครั้ง';
                 }
-            }
-        }
-        
-        // เริ่มต้นเมื่อ DOM พร้อม
-        $(document).ready(function() {
-            // เพิ่ม delay เล็กน้อยเพื่อให้ทุกอย่างโหลดเสร็จ
-            setTimeout(initializeApp, 500);
-            
-            // ตั้ง timeout สำรอง
-            setTimeout(() => {
-                if (document.getElementById('statusText').textContent.includes('โปรดรอ') || 
-                    document.getElementById('statusText').textContent.includes('กำลัง')) {
-                    showError('การเชื่อมต่อใช้เวลานานเกินไป กรุณาลองใหม่');
-                }
-            }, 15000); // 15 วินาที
+                document.getElementById('errorText').style.display = 'block';
+            });
         });
     </script>
 </body>
