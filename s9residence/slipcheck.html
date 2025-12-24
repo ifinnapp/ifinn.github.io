@@ -485,8 +485,8 @@
           
            <form id="paymentFormData">
                 <div class="text-left" style="margin-bottom: 8px;">
-                     <label for="customerName" style="color: #888; margin-bottom: 4px; display: inline-block;">อาคาร ห้อง เช่น A201 </label>
-                     <input class="form-input" type="text" id="customerName" name="customerName" placeholder="A201" required />
+                     <label for="customerName" style="color: #888; margin-bottom: 4px; display: inline-block;">อาคาร-เลขห้อง เช่น A-201 </label>
+                     <input class="form-input" type="text" id="customerName" name="customerName" placeholder="" required />
                 </div>
                 
        <div class="text-left" style="margin-bottom: 8px;">
@@ -543,6 +543,10 @@
                             <img src="https://lh3.googleusercontent.com/d/144q7WYzIqeHcckiRQBkQxXK_B0_bsKqH?key=123" alt="ค่าล้างแอร์ Icon" />
                             ค่าล้างแอร์
                         </div>
+                        <div class="dropdown-option" onclick="selectOption('dropdownPaymentType', 'ค่าจองห้อง', 'reservation', this)" data-branch="reservation">
+                            <img src="https://lh3.googleusercontent.com/d/1CCEVM9E4fDSlpHAOlpk1DyXR8bK4M55F?key=123" alt="Reservation Icon" />
+                            ค่าจองห้อง
+                        </div>
                         <div class="dropdown-option" onclick="selectOption('dropdownPaymentType', 'ค่าอื่นๆ', 'appLoadingFee', this)" data-branch="appLoadingFee">
                             <img src="https://lh3.googleusercontent.com/d/1QMuGtmVGsoTuxj51v_WSgkoBWOpGbmCT?key=123" alt="App Loading Fee Icon" />
                             ค่าอื่นๆ
@@ -553,7 +557,7 @@
              
                 <div class="text-left" style="margin-bottom: 8px;">
                      <label for="serviceFee" style="color: #888; margin-bottom: 4px; display: inline-block;">จำนวนเงิน</label>
-                     <input class="form-input" type="number" id="serviceFee" name="serviceFee" placeholder="xxxx.xx" required />
+                     <input class="form-input" type="number" id="serviceFee" name="serviceFee" placeholder="พิมพ์เฉพาะตัวเลข" required />
                 </div>
                 <div class="text-left" style="margin-bottom: 8px;">
                      <label for="paymentTime" style="color: #888; margin-bottom: 4px; display: inline-block;">วัน/เวลาที่โอน (ดูจากสลิป)</label>
