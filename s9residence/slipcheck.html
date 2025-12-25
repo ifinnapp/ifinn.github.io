@@ -492,7 +492,7 @@
        <div class="text-left" style="margin-bottom: 8px;">
           <label for="AccountTransfer" style="color: #888; margin-bottom: 4px; display: inline-block;">บัญชีรับโอน</label>
             <div class="custom-dropdown" id="dropdownAccountTransfer">
-              <div class="dropdown-selected" onclick="toggleDropdown('dropdownAccountTransfer')">เลือกบัญชีรับโอน</div>
+              <div class="dropdown-selected" onclick="toggleDropdown('dropdownAccountTransfer')">เลือกบัญชีโอนเงิน</div>
                 <div class="dropdown-options hidden">
                   <div class="dropdown-option" onclick="selectOption('dropdownAccountTransfer', 'KBANK : 1218345006 (บริษัท เอสไนน์ เรสซิเด้นซ์ 2021 จำกัด)', 'kbankA', this)" data-branch="kbankA">
                     <img src="https://lh3.googleusercontent.com/d/1BkSPDWn1LY3lzJmbqbZ4KBVpZnfRoB11?key=123" alt="kbankA Icon" />
@@ -518,6 +518,10 @@
                         <img src="https://lh3.googleusercontent.com/d/1ctWpWxTRztcKjkao9Y_U1snSGvDmeAJj?key=123" alt="gsbA Icon" />
                         C : 1252211287 (สุรชน อ่อนทอง)
                     </div>
+                    <div class="dropdown-option" onclick="selectOption('dropdownAccountTransfer', 'KTB : 7660538403 (สุรชน อ่อนทอง)', 'ktbA', this)" data-branch="ktbA">
+                        <img src="https://lh3.googleusercontent.com/d/1MHoJdbtt4K5w9Vxnvnbiemm4yzZ4haEK?key=123" alt="ktbA Icon" />
+                        7660538403 (สุรชน อ่อนทอง)
+                    </div>
                 </div>
             </div>
         </div>
@@ -535,6 +539,10 @@
                         <img src="https://lh3.googleusercontent.com/d/1pk8zNaxlSYaZmHemYv-2acdOsZohCyZM?key=123" alt="Installment Icon" />
                           ค่าแรกเข้า
                       </div>
+                        <div class="dropdown-option" onclick="selectOption('dropdownPaymentType', 'ค่าจองห้อง', 'reservation', this)" data-branch="reservation">
+                            <img src="https://lh3.googleusercontent.com/d/1CCEVM9E4fDSlpHAOlpk1DyXR8bK4M55F?key=123" alt="Reservation Icon" />
+                            ค่าจองห้อง
+                        </div>
                         <div class="dropdown-option" onclick="selectOption('dropdownPaymentType', 'ค่าทำความสะอาด', 'fine', this)" data-branch="fine">
                             <img src="https://lh3.googleusercontent.com/d/1iiAlXWJpVhQ6vMsZ6L_TLci8l04JXvdl?key=123" alt="Fine Icon" />
                             ค่าทำความสะอาด
@@ -542,10 +550,6 @@
                         <div class="dropdown-option" onclick="selectOption('dropdownPaymentType', 'ค่าล้างแอร์', 'defermentFee', this)" data-branch="defermentFee">
                             <img src="https://lh3.googleusercontent.com/d/144q7WYzIqeHcckiRQBkQxXK_B0_bsKqH?key=123" alt="ค่าล้างแอร์ Icon" />
                             ค่าล้างแอร์
-                        </div>
-                        <div class="dropdown-option" onclick="selectOption('dropdownPaymentType', 'ค่าจองห้อง', 'reservation', this)" data-branch="reservation">
-                            <img src="https://lh3.googleusercontent.com/d/1CCEVM9E4fDSlpHAOlpk1DyXR8bK4M55F?key=123" alt="Reservation Icon" />
-                            ค่าจองห้อง
                         </div>
                         <div class="dropdown-option" onclick="selectOption('dropdownPaymentType', 'ค่าอื่นๆ', 'appLoadingFee', this)" data-branch="appLoadingFee">
                             <img src="https://lh3.googleusercontent.com/d/1QMuGtmVGsoTuxj51v_WSgkoBWOpGbmCT?key=123" alt="App Loading Fee Icon" />
@@ -557,7 +561,7 @@
              
                 <div class="text-left" style="margin-bottom: 8px;">
                      <label for="serviceFee" style="color: #888; margin-bottom: 4px; display: inline-block;">จำนวนเงิน</label>
-                     <input class="form-input" type="number" id="serviceFee" name="serviceFee" placeholder="พิมพ์เฉพาะตัวเลข" required />
+                     <input class="form-input" type="number" id="serviceFee" name="serviceFee" placeholder="xxxx.xx" required />
                 </div>
                 <div class="text-left" style="margin-bottom: 8px;">
                      <label for="paymentTime" style="color: #888; margin-bottom: 4px; display: inline-block;">วัน/เวลาที่โอน (ดูจากสลิป)</label>
